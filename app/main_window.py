@@ -31,15 +31,18 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from app.add_word_dialog import AddWordDialog
 from app.ai_client import translate_multiline
 from app.ai_settings_dialog import AiSettingsDialog
 from app.ai_settings_store import load_ai_settings
 from app.asset_validation import check_asset
+from app.history_writer import append_translation_record
 from app.material_service import (
     import_material_files,
     load_snapshot_if_any,
     refresh_materials_from_disk,
 )
+from app.rule_translator import RuleTranslationResult, translate_multiline_rule
 from app.storage import JsonStorage
 from app.ui_theme import UITheme
 
@@ -71,6 +74,12 @@ class MainWindow(QMainWindow):
 
         self._material_by_lang: Dict[str, Dict] = {}
         self._ai_settings: Dict = load_ai_settings(self.storage.base_dir)
+
+        # 阶段四新增 —— 单句翻译统计与未匹配词管理
+        self._stats_label: Optional[QLabel] = None
+        self._add_word_btn: Optional[QPushButton] = None
+        self._last_unmatched: List[str] = []
+        self._last_rule_result: Optional[RuleTranslationResult] = None
 
         self._build_menu()
         self._build_central()
@@ -196,36 +205,105 @@ class MainWindow(QMainWindow):
         outer.setContentsMargins(8, 8, 8, 8)
         outer.setSpacing(10)
 
+        # ── 单句翻译区 ──────────────────────────────────────────────
         single = QGroupBox("单句翻译")
-        grid = QGridLayout(single)
+        single_layout = QVBoxLayout(single)
+        single_layout.setSpacing(6)
+
+        # 输入 / 输出 并排区域
+        io_grid = QGridLayout()
+        io_grid.setColumnStretch(0, 1)
+        io_grid.setColumnStretch(1, 1)
+        io_grid.setSpacing(4)
+
+        # 中文输入 — 标题行
+        src_hdr = QHBoxLayout()
+        src_hdr.addWidget(QLabel("中文输入"))
+        src_hdr.addStretch(1)
+        btn_copy_src = QPushButton("复制")
+        btn_copy_src.setFixedWidth(54)
+        btn_copy_src.setToolTip("复制中文输入文本")
+        src_hdr.addWidget(btn_copy_src)
+        io_grid.addLayout(src_hdr, 0, 0)
+
+        # 自创语输出 — 标题行
+        con_hdr = QHBoxLayout()
+        con_hdr.addWidget(QLabel("自创语输出"))
+        con_hdr.addStretch(1)
+        btn_copy_con = QPushButton("复制")
+        btn_copy_con.setFixedWidth(54)
+        btn_copy_con.setToolTip("复制自创语翻译结果")
+        con_hdr.addWidget(btn_copy_con)
+        io_grid.addLayout(con_hdr, 0, 1)
 
         self.source_input = QPlainTextEdit()
-        self.source_input.setPlaceholderText("输入中文（多行）…")
+        self.source_input.setPlaceholderText("输入中文（可多行）…")
         self.target_output = QPlainTextEdit()
         self.target_output.setReadOnly(True)
-        self.target_output.setPlaceholderText("自创语输出")
+        self.target_output.setPlaceholderText("自创语输出（【词】表示未在词库中匹配）")
+        io_grid.addWidget(self.source_input, 1, 0)
+        io_grid.addWidget(self.target_output, 1, 1)
+
+        single_layout.addLayout(io_grid)
+
+        # 翻译按钮行
+        btn_row = QHBoxLayout()
+        btn_row.addStretch(1)
+        btn_translate = QPushButton("翻译")
+        btn_translate.setMinimumWidth(88)
+        btn_translate.setToolTip("规则翻译（AI 辅助可在「工具→AI 辅助翻译设置」中开启）")
+        btn_translate.clicked.connect(self._on_translate_clicked)
+        btn_row.addWidget(btn_translate)
+        single_layout.addLayout(btn_row)
+
+        # TTS 音译区
+        tts_hdr = QHBoxLayout()
+        tts_hdr.addWidget(QLabel("TTS 音译"))
+        tts_hdr.addStretch(1)
+        btn_copy_tts = QPushButton("复制")
+        btn_copy_tts.setFixedWidth(54)
+        btn_copy_tts.setToolTip("复制 TTS 友好音译")
+        tts_hdr.addWidget(btn_copy_tts)
+        single_layout.addLayout(tts_hdr)
+
         self.tts_output = QPlainTextEdit()
         self.tts_output.setReadOnly(True)
-        self.tts_output.setPlaceholderText("TTS 友好音译")
+        self.tts_output.setPlaceholderText("TTS 友好音译（供语音合成使用）")
+        self.tts_output.setMaximumHeight(90)
+        single_layout.addWidget(self.tts_output)
 
-        btn_translate = QPushButton("翻译")
-        btn_translate.clicked.connect(self._on_translate_clicked)
+        # 统计行
+        stats_row = QHBoxLayout()
+        self._stats_label = QLabel("")
+        self._stats_label.setStyleSheet("color: #555; font-size: 12px;")
+        stats_row.addWidget(self._stats_label, 1)
 
-        grid.addWidget(QLabel("中文输入"), 0, 0)
-        grid.addWidget(QLabel("自创语输出"), 0, 1)
-        grid.addWidget(self.source_input, 1, 0)
-        grid.addWidget(self.target_output, 1, 1)
+        self._add_word_btn = QPushButton("将未匹配词添加到词库…")
+        self._add_word_btn.setVisible(False)
+        self._add_word_btn.clicked.connect(self._on_add_unmatched_words)
+        stats_row.addWidget(self._add_word_btn)
+        single_layout.addLayout(stats_row)
 
-        mid_row = QHBoxLayout()
-        mid_row.addStretch(1)
-        mid_row.addWidget(btn_translate)
-        grid.addLayout(mid_row, 2, 0, 1, 2)
-
-        grid.addWidget(QLabel("TTS 音译"), 3, 0, 1, 2)
-        grid.addWidget(self.tts_output, 4, 0, 1, 2)
+        # 连接复制按钮
+        btn_copy_src.clicked.connect(
+            lambda: QApplication.clipboard().setText(
+                self.source_input.toPlainText() if self.source_input else ""
+            )
+        )
+        btn_copy_con.clicked.connect(
+            lambda: QApplication.clipboard().setText(
+                self.target_output.toPlainText() if self.target_output else ""
+            )
+        )
+        btn_copy_tts.clicked.connect(
+            lambda: QApplication.clipboard().setText(
+                self.tts_output.toPlainText() if self.tts_output else ""
+            )
+        )
 
         outer.addWidget(single, 1)
 
+        # ── 批量翻译区（可折叠） ────────────────────────────────────
         batch_wrap = QWidget()
         batch_outer = QVBoxLayout(batch_wrap)
         batch_outer.setContentsMargins(0, 0, 0, 0)
@@ -242,17 +320,17 @@ class MainWindow(QMainWindow):
         batch_box = QGroupBox("批量翻译")
         inner = QVBoxLayout(batch_box)
 
-        btn_row = QHBoxLayout()
+        btn_row2 = QHBoxLayout()
         btn_pick = QPushButton("选择 Excel")
         btn_pick.clicked.connect(self._pick_excel)
         btn_start = QPushButton("开始翻译")
         btn_start.clicked.connect(self._on_batch_start)
         btn_export = QPushButton("导出文件")
         btn_export.clicked.connect(self._on_batch_export)
-        btn_row.addWidget(btn_pick)
-        btn_row.addWidget(btn_start)
-        btn_row.addWidget(btn_export)
-        btn_row.addStretch(1)
+        btn_row2.addWidget(btn_pick)
+        btn_row2.addWidget(btn_start)
+        btn_row2.addWidget(btn_export)
+        btn_row2.addStretch(1)
 
         self.batch_path_display = QLabel("未选择文件")
         self.batch_path_display.setWordWrap(True)
@@ -268,7 +346,7 @@ class MainWindow(QMainWindow):
         self.batch_log.setPlaceholderText("日志：批量翻译进度将显示在这里")
         self.batch_log.setMaximumHeight(120)
 
-        inner.addLayout(btn_row)
+        inner.addLayout(btn_row2)
         inner.addWidget(self.batch_path_display)
         inner.addWidget(self.batch_progress)
         inner.addWidget(QLabel("日志"))
@@ -716,26 +794,133 @@ class MainWindow(QMainWindow):
 
         self._ensure_material_bundle(lang)
         bundle = self._material_by_lang.get(lang["id"], {})
+
+        # 规范化词库和 TTS 映射（过滤空键）
+        raw_lexicon = bundle.get("lexicon") or {}
+        lexicon: Dict[str, str] = {
+            str(k): str(v)
+            for k, v in raw_lexicon.items()
+            if isinstance(k, str) and k.strip()
+        }
+        raw_tts = bundle.get("tts_map") or {}
+        tts_map: Dict[str, str] = {
+            str(k): str(v)
+            for k, v in raw_tts.items()
+            if isinstance(k, str) and k.strip()
+        }
+
+        # ── 第一级 / 第二级：规则翻译（始终执行，提供匹配统计）────
+        rule_result = translate_multiline_rule(text, lexicon, tts_map)
+        self._last_rule_result = rule_result
+
+        conlang_out = rule_result.conlang
+        tts_out = rule_result.phonetic
+        translation_mode = "rule"
+        ai_tail = ""
+
+        # ── 可选 AI 辅助：仅在启用且存在未匹配词时调用 ─────────────
         self._ai_settings = load_ai_settings(self.storage.base_dir)
+        if self._ai_settings.get("enabled") and rule_result.unmatched_words:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            try:
+                ai_conlang, ai_tts, ai_tail = translate_multiline(
+                    self._ai_settings, bundle, text
+                )
+            finally:
+                QApplication.restoreOverrideCursor()
 
-        QApplication.setOverrideCursor(Qt.WaitCursor)
-        try:
-            conlang, tts, tail = translate_multiline(self._ai_settings, bundle, text)
-        finally:
-            QApplication.restoreOverrideCursor()
+            if ai_conlang:
+                conlang_out = ai_conlang
+                tts_out = ai_tts
+                translation_mode = "ai_assisted"
 
+        # ── 更新输出框 ────────────────────────────────────────────
         if self.target_output is not None:
-            self.target_output.setPlainText(conlang)
+            self.target_output.setPlainText(conlang_out)
         if self.tts_output is not None:
-            self.tts_output.setPlainText(tts)
+            self.tts_output.setPlainText(tts_out)
 
-        if tail:
-            err_hint = ("失败", "未填写", "缺少依赖", "未知提供商")
-            if any(k in tail for k in err_hint):
-                QMessageBox.warning(self, "翻译提示", tail)
-            self.statusBar().showMessage(tail.replace("\n", " ")[:240], 12000)
+        # ── 更新统计栏 ────────────────────────────────────────────
+        rate_pct = int(rule_result.match_rate * 100)
+        elapsed = rule_result.elapsed_ms
+        unmatched = rule_result.unmatched_words
+        emotion = rule_result.emotion
+
+        stat_parts: List[str] = [
+            f"匹配率 {rate_pct}%",
+            f"耗时 {elapsed:.0f} ms",
+        ]
+        if unmatched:
+            stat_parts.append(f"{len(unmatched)} 个词汇未找到")
+        if translation_mode == "ai_assisted":
+            stat_parts.append("AI 辅助")
+        if emotion.label != "neutral":
+            stat_parts.append(f"情绪: {emotion.display_name}")
+
+        stats_text = "  ·  ".join(stat_parts)
+        if self._stats_label is not None:
+            self._stats_label.setText(stats_text)
+
+        # ── 控制「添加到词库」按钮 ───────────────────────────────
+        self._last_unmatched = unmatched
+        if self._add_word_btn is not None:
+            self._add_word_btn.setVisible(bool(unmatched))
+
+        # ── 第三级：写入翻译历史 ──────────────────────────────────
+        try:
+            hist_path = self.storage.asset_path(lang, "translation_history")
+            append_translation_record(
+                hist_path,
+                source=text,
+                conlang=conlang_out,
+                phonetic=tts_out,
+                unmatched_words=unmatched,
+                target_language=lang["name"],
+                translation_mode=translation_mode,
+                emotion_label=emotion.label,
+                emotion_intensity=emotion.intensity,
+                tts_pitch_hint=emotion.tts_pitch_hint,
+                tts_rate_hint=emotion.tts_rate_hint,
+            )
+        except Exception:
+            pass  # 历史写入失败不阻断翻译主流程
+
+        # ── 状态栏 & AI 错误提示 ──────────────────────────────────
+        if ai_tail:
+            err_keywords = ("失败", "未填写", "缺少依赖", "未知提供商")
+            if any(k in ai_tail for k in err_keywords):
+                QMessageBox.warning(self, "AI 翻译提示", ai_tail)
+            self.statusBar().showMessage(
+                f"翻译完成 · {stats_text}", 10000
+            )
         else:
-            self.statusBar().showMessage("翻译完成", 4000)
+            self.statusBar().showMessage(f"翻译完成 · {stats_text}", 8000)
+
+    def _on_add_unmatched_words(self) -> None:
+        """打开「将未匹配词添加到词库」对话框，成功后刷新内存词库。"""
+        if not self._last_unmatched:
+            return
+        lang = self.get_current_language()
+        if lang is None:
+            return
+
+        dlg = AddWordDialog(
+            unmatched_words=self._last_unmatched,
+            master_library_path=self.storage.asset_path(lang, "master_library"),
+            mapping_rules_path=self.storage.asset_path(lang, "mapping_rules"),
+            parent=self,
+        )
+        if dlg.exec_() == QDialog.Accepted:
+            report = refresh_materials_from_disk(self.storage, lang)
+            self._material_by_lang[lang["id"]] = report.bundle
+            self._refresh_list_item_for_language(lang["id"])
+            self._refresh_asset_status()
+            self._last_unmatched = []
+            if self._add_word_btn is not None:
+                self._add_word_btn.setVisible(False)
+            self.statusBar().showMessage(
+                "词库已更新，重新翻译即可看到效果", 5000
+            )
 
     def _pick_excel(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -765,5 +950,6 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段三：资料导入与解析索引已接入。",
+            "阶段四：单句规则翻译核心已接入。<br>"
+            "支持三级转换流水线、翻译历史记录、未匹配词汇管理。",
         )
