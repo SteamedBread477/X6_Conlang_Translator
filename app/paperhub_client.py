@@ -174,6 +174,38 @@ def test_paperhub_connection(
         return False, f"连接失败：{exc}"
 
 
+def fetch_paperhub_models(
+    api_key: str,
+    base_url: str,
+) -> Tuple[bool, List[str], str]:
+    """
+    从 PaperHub 拉取可用模型列表。
+    返回 (success, model_id_list, error_message)。
+
+    使用 OpenAI SDK 的 client.models.list() 接口；
+    列表按模型 ID 字母序排列，方便用户查找。
+    """
+    if not api_key.strip():
+        return False, [], "请先填写 API Key。"
+    try:
+        from openai import OpenAI
+    except ImportError:
+        return False, [], "缺少 openai 包，请执行：pip install openai"
+
+    try:
+        client = OpenAI(api_key=api_key, base_url=base_url)
+        response = client.models.list()
+        model_ids: List[str] = sorted(
+            {m.id for m in response.data if m.id},
+            key=str.lower,
+        )
+        if not model_ids:
+            return False, [], "未获取到模型列表，请检查 API Key 权限。"
+        return True, model_ids, ""
+    except Exception as exc:
+        return False, [], f"获取模型列表失败：{exc}"
+
+
 # ---------------------------------------------------------------------------
 # 翻译接口
 # ---------------------------------------------------------------------------

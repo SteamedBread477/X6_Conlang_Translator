@@ -7,7 +7,7 @@ PaperHub AI 设置对话框。
   - 启用/禁用 AI 辅助翻译开关
   - API Key 输入（密码模式 + 显示/隐藏切换）
   - 服务地址（只读显示）
-  - 模型选择（4 个单选按钮）
+  - 模型选择（动态从 PaperHub 拉取列表，初始用内置备用列表）
   - AI 使用策略（3 种单选）
   - 高级参数（思考模式、Temperature、Max Tokens）
   - 测试连接（后台线程，不阻塞 UI）
@@ -17,7 +17,7 @@ PaperHub AI 设置对话框。
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtGui import QDesktopServices
@@ -25,6 +25,7 @@ from PyQt5.QtWidgets import (
     QApplication,
     QButtonGroup,
     QCheckBox,
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QDoubleSpinBox,
@@ -51,21 +52,19 @@ from app.paperhub_settings import (
     save_paperhub_settings,
 )
 
+# 内置备用模型列表（仅在未能联网拉取时使用）
+_BUILTIN_MODEL_IDS: List[str] = [m[1] for m in PAPERHUB_MODELS]
+
 
 # ---------------------------------------------------------------------------
-# 后台连接测试线程（避免阻塞 UI 主线程）
+# 后台线程：测试连接
 # ---------------------------------------------------------------------------
 
 class _TestConnectionThread(QThread):
     result_ready = pyqtSignal(bool, str)
 
-    def __init__(
-        self,
-        api_key: str,
-        base_url: str,
-        model: str,
-        parent: Optional[QWidget] = None,
-    ) -> None:
+    def __init__(self, api_key: str, base_url: str, model: str,
+                 parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self._api_key = api_key
         self._base_url = base_url
@@ -75,6 +74,26 @@ class _TestConnectionThread(QThread):
         from app.paperhub_client import test_paperhub_connection
         ok, msg = test_paperhub_connection(self._api_key, self._base_url, self._model)
         self.result_ready.emit(ok, msg)
+
+
+# ---------------------------------------------------------------------------
+# 后台线程：拉取模型列表
+# ---------------------------------------------------------------------------
+
+class _FetchModelsThread(QThread):
+    """从 PaperHub 异步拉取可用模型列表。"""
+    result_ready = pyqtSignal(bool, list, str)   # (success, model_ids, error)
+
+    def __init__(self, api_key: str, base_url: str,
+                 parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._api_key = api_key
+        self._base_url = base_url
+
+    def run(self) -> None:
+        from app.paperhub_client import fetch_paperhub_models
+        ok, model_ids, err = fetch_paperhub_models(self._api_key, self._base_url)
+        self.result_ready.emit(ok, model_ids, err)
 
 
 # ---------------------------------------------------------------------------
@@ -89,9 +108,10 @@ class PaperHubSettingsDialog(QDialog):
         self._data_dir = data_dir
         self._settings: Dict[str, Any] = load_paperhub_settings(data_dir)
         self._test_thread: Optional[_TestConnectionThread] = None
+        self._fetch_thread: Optional[_FetchModelsThread] = None
 
         self.setWindowTitle("PaperHub AI 设置")
-        self.setMinimumWidth(540)
+        self.setMinimumWidth(560)
         self.setMinimumHeight(600)
 
         self._build_ui()
@@ -105,7 +125,7 @@ class PaperHubSettingsDialog(QDialog):
         root = QVBoxLayout(self)
         root.setSpacing(10)
 
-        # ── 滚动区域（对话框内容较多，适配小屏） ──────────────────
+        # ── 滚动区域 ───────────────────────────────────────────────
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.NoFrame)
@@ -125,9 +145,7 @@ class PaperHubSettingsDialog(QDialog):
         api_layout = QVBoxLayout(api_grp)
         api_layout.setSpacing(6)
 
-        key_lbl = QLabel("PaperHub API Key（llm_api 类型）：")
-        api_layout.addWidget(key_lbl)
-
+        api_layout.addWidget(QLabel("PaperHub API Key（llm_api 类型）："))
         key_row = QHBoxLayout()
         self._api_key_edit = QLineEdit()
         self._api_key_edit.setEchoMode(QLineEdit.Password)
@@ -150,16 +168,33 @@ class PaperHubSettingsDialog(QDialog):
 
         layout.addWidget(api_grp)
 
-        # ── 模型选择 ───────────────────────────────────────────────
-        model_grp = QGroupBox("推荐模型")
+        # ── 模型选择（动态） ───────────────────────────────────────
+        model_grp = QGroupBox("模型选择")
         model_layout = QVBoxLayout(model_grp)
-        model_layout.setSpacing(4)
-        self._model_group = QButtonGroup(self)
-        for i, (display_name, model_id, description) in enumerate(PAPERHUB_MODELS):
-            rb = QRadioButton(f"{display_name}（{description}）")
-            rb.setProperty("model_id", model_id)
-            model_layout.addWidget(rb)
-            self._model_group.addButton(rb, i)
+        model_layout.setSpacing(6)
+
+        combo_row = QHBoxLayout()
+        self._model_combo = QComboBox()
+        self._model_combo.setMinimumWidth(300)
+        self._model_combo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        combo_row.addWidget(self._model_combo, 1)
+
+        self._fetch_models_btn = QPushButton("刷新模型列表")
+        self._fetch_models_btn.setToolTip(
+            "从 PaperHub 拉取最新可用模型（需先填写 API Key）"
+        )
+        self._fetch_models_btn.clicked.connect(self._on_fetch_models)
+        combo_row.addWidget(self._fetch_models_btn)
+        model_layout.addLayout(combo_row)
+
+        self._model_status_lbl = QLabel(
+            f"内置备用列表，共 {len(_BUILTIN_MODEL_IDS)} 个模型。"
+            "填写 API Key 后点击「刷新模型列表」获取完整列表。"
+        )
+        self._model_status_lbl.setStyleSheet("color: #666; font-size: 11px;")
+        self._model_status_lbl.setWordWrap(True)
+        model_layout.addWidget(self._model_status_lbl)
+
         layout.addWidget(model_grp)
 
         # ── AI 使用策略 ────────────────────────────────────────────
@@ -261,6 +296,29 @@ class PaperHubSettingsDialog(QDialog):
         root.addWidget(btn_box)
 
     # ------------------------------------------------------------------
+    # 模型下拉填充
+    # ------------------------------------------------------------------
+
+    def _populate_model_combo(
+        self,
+        model_ids: List[str],
+        selected: Optional[str] = None,
+    ) -> None:
+        """用给定 model_ids 重新填充下拉框，尽量保持当前选中项。"""
+        current = selected or self._model_combo.currentData() or ""
+        self._model_combo.blockSignals(True)
+        self._model_combo.clear()
+        for mid in model_ids:
+            self._model_combo.addItem(mid, mid)
+        # 尝试恢复之前选中的模型
+        idx = self._model_combo.findData(current)
+        if idx >= 0:
+            self._model_combo.setCurrentIndex(idx)
+        elif model_ids:
+            self._model_combo.setCurrentIndex(0)
+        self._model_combo.blockSignals(False)
+
+    # ------------------------------------------------------------------
     # 数据加载 / 收集
     # ------------------------------------------------------------------
 
@@ -269,15 +327,13 @@ class PaperHubSettingsDialog(QDialog):
         self._enabled_cb.setChecked(bool(s.get("paperhub_enabled")))
         self._api_key_edit.setText(str(s.get("paperhub_api_key") or ""))
 
-        target_model = str(s.get("paperhub_model") or PAPERHUB_MODELS[0][1])
-        for btn in self._model_group.buttons():
-            if btn.property("model_id") == target_model:
-                btn.setChecked(True)
-                break
-        else:
-            first_btn = self._model_group.button(0)
-            if first_btn:
-                first_btn.setChecked(True)
+        # 填充内置备用列表，选中已保存的模型
+        saved_model = str(s.get("paperhub_model") or _BUILTIN_MODEL_IDS[0])
+        # 如果保存的模型不在内置列表里，也加进去（避免丢失已选模型）
+        initial_ids = list(_BUILTIN_MODEL_IDS)
+        if saved_model and saved_model not in initial_ids:
+            initial_ids.insert(0, saved_model)
+        self._populate_model_combo(initial_ids, selected=saved_model)
 
         target_strategy = str(s.get("paperhub_strategy") or "unmatched_only")
         for btn in self._strategy_group.buttons():
@@ -285,20 +341,20 @@ class PaperHubSettingsDialog(QDialog):
                 btn.setChecked(True)
                 break
         else:
-            first_btn = self._strategy_group.button(0)
-            if first_btn:
-                first_btn.setChecked(True)
+            first = self._strategy_group.button(0)
+            if first:
+                first.setChecked(True)
 
         self._reasoning_cb.setChecked(bool(s.get("paperhub_reasoning_enabled", True)))
         self._temperature_spin.setValue(float(s.get("paperhub_temperature", 0.7)))
         self._max_tokens_spin.setValue(int(s.get("paperhub_max_tokens", 2048)))
 
     def _collect_values(self) -> Dict[str, Any]:
-        selected_model = PAPERHUB_MODELS[0][1]
-        for btn in self._model_group.buttons():
-            if btn.isChecked():
-                selected_model = btn.property("model_id")
-                break
+        selected_model = (
+            self._model_combo.currentData()
+            or self._model_combo.currentText()
+            or _BUILTIN_MODEL_IDS[0]
+        )
 
         selected_strategy = "unmatched_only"
         for btn in self._strategy_group.buttons():
@@ -327,6 +383,45 @@ class PaperHubSettingsDialog(QDialog):
         )
         self._toggle_key_btn.setText("隐藏" if checked else "显示")
 
+    # ── 拉取模型列表 ────────────────────────────────────────────────
+
+    def _on_fetch_models(self) -> None:
+        api_key = self._api_key_edit.text().strip()
+        if not api_key:
+            self._model_status_lbl.setText("❌ 请先填写 API Key 再刷新。")
+            self._model_status_lbl.setStyleSheet("color: #cc0000; font-size: 11px;")
+            return
+
+        base_url = DEFAULT_PAPERHUB_SETTINGS["paperhub_base_url"]
+        self._fetch_models_btn.setEnabled(False)
+        self._fetch_models_btn.setText("获取中…")
+        self._model_status_lbl.setText("正在从 PaperHub 拉取模型列表，请稍候…")
+        self._model_status_lbl.setStyleSheet("color: #888; font-size: 11px;")
+
+        self._fetch_thread = _FetchModelsThread(api_key, base_url, self)
+        self._fetch_thread.result_ready.connect(self._on_fetch_models_result)
+        self._fetch_thread.start()
+
+    def _on_fetch_models_result(
+        self, ok: bool, model_ids: List[str], err: str
+    ) -> None:
+        self._fetch_models_btn.setEnabled(True)
+        self._fetch_models_btn.setText("刷新模型列表")
+
+        if ok and model_ids:
+            self._populate_model_combo(model_ids)
+            self._model_status_lbl.setText(
+                f"✓ 已获取 {len(model_ids)} 个可用模型。"
+            )
+            self._model_status_lbl.setStyleSheet("color: #007700; font-size: 11px;")
+        else:
+            self._model_status_lbl.setText(
+                f"✗ 获取失败：{err}\n（当前使用内置备用列表）"
+            )
+            self._model_status_lbl.setStyleSheet("color: #cc0000; font-size: 11px;")
+
+    # ── 测试连接 ─────────────────────────────────────────────────────
+
     def _on_test_connection(self) -> None:
         settings = self._collect_values()
         api_key = settings["paperhub_api_key"]
@@ -342,7 +437,6 @@ class PaperHubSettingsDialog(QDialog):
         self._test_btn.setText("测试中…")
         self._test_status_lbl.setText("正在连接，请稍候…")
         self._test_status_lbl.setStyleSheet("color: #888;")
-        QApplication.processEvents()
 
         self._test_thread = _TestConnectionThread(api_key, base_url, model, self)
         self._test_thread.result_ready.connect(self._on_test_result)
@@ -357,6 +451,8 @@ class PaperHubSettingsDialog(QDialog):
         else:
             self._test_status_lbl.setText(f"✗ {message}")
             self._test_status_lbl.setStyleSheet("color: #cc0000;")
+
+    # ── 保存 ─────────────────────────────────────────────────────────
 
     def _on_save(self) -> None:
         values = self._collect_values()
@@ -373,7 +469,7 @@ class PaperHubSettingsDialog(QDialog):
 
 
 # ---------------------------------------------------------------------------
-# 辅助组件
+# 辅助
 # ---------------------------------------------------------------------------
 
 def _separator() -> QFrame:

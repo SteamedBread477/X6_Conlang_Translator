@@ -76,5 +76,8 @@ def save_paperhub_settings(base_dir: Path, settings: Dict[str, Any]) -> None:
     out["paperhub_max_tokens"] = int(out["paperhub_max_tokens"])
     out["paperhub_enabled"] = bool(out["paperhub_enabled"])
     out["paperhub_reasoning_enabled"] = bool(out["paperhub_reasoning_enabled"])
+    # paperhub_model 允许为平台返回的任意模型 ID，不限于内置列表
+    if settings.get("paperhub_model"):
+        out["paperhub_model"] = str(settings["paperhub_model"])
     with path.open("w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=2)
