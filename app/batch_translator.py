@@ -60,6 +60,8 @@ class BatchTranslateResult:
     tts: str = ""              # TTS 音译
     ssml_tag: str = ""         # SSML 语音标签
     mode_used: str = ""        # 实际使用的翻译模式
+    ai_generated: bool = False  # 是否使用 PaperHub AI 生成
+    ai_model: str = ""          # AI 模型名（如 "qwen3-max"）
     unmatched_words: List[str] = field(default_factory=list)
     new_words: List[NewWord] = field(default_factory=list)
     error: str = ""
@@ -272,6 +274,12 @@ class BatchTranslateWorker(QThread):
                 tts_phonetic=result.tts,
             )
 
+            # ── 标记 AI 参与情况 ──────────────────────────────────
+            ai_modes = {"hybrid_ai", "ai", "ai_rule_fallback"}
+            result.ai_generated = result.mode_used in ai_modes
+            if result.ai_generated:
+                result.ai_model = self._settings.model
+
             # ── 日志反馈 ────────────────────────────────────────────
             if result.error:
                 self.log_message.emit(f"  ↳ ⚠ {result.mode_used} — {result.error}")
@@ -477,16 +485,50 @@ class BatchTranslateWorker(QThread):
 # 导出功能
 # --------------------------------------------------------------------------- 
 
+def generate_timestamp_filename(original_path: str) -> str:
+    """
+    生成带时间戳的输出文件名。
+
+    格式：原文件名_TTS_Ready_时间戳.xlsx
+    例如：NPC_Script_TTS_Ready_20250429_143052.xlsx
+    """
+    stem = Path(original_path).stem if original_path else "Translation"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"{stem}_TTS_Ready_{timestamp}.xlsx"
+
+
 def export_results_to_excel(
     results: List[BatchTranslateResult],
     original_rows: List[ExcelRow],
     output_path: str,
-) -> bool:
-    """将翻译结果导出为 Excel 文件（在原数据基础上增加三列翻译数据）。"""
+) -> Dict[str, Any]:
+    """
+    将翻译结果导出为 Excel 文件（阶段十规范）。
+
+    新增列：
+      Translation_ID   — 翻译记录ID，格式 "TH_序号"
+      Conlang_Text     — 自创语文本
+      TTS_Phonetic     — TTS 友好音译
+      SSML_Tag         — SSML 语音标签
+      Unmatched_Words  — 未匹配词汇（如有）
+      AI_Generated     — 是否AI生成（Yes/No）
+      AI_Model         — AI模型名
+
+    返回导出统计字典：
+      {
+        "success": bool,
+        "total_rows": int,
+        "success_count": int,
+        "failed_count": int,
+        "ai_generated_count": int,
+        "new_words_count": int,
+        "ai_model": str,
+      }
+    """
     try:
         import pandas as pd
     except ImportError:
-        return False
+        return {"success": False}
 
     # 构建导出数据
     rows_out: List[Dict[str, Any]] = []
@@ -495,42 +537,64 @@ def export_results_to_excel(
         original = original_rows[idx] if idx < len(original_rows) else ExcelRow(data={})
         row_dict = dict(original.data)
 
-        # ── 新增三列翻译数据（阶段九规范命名）──────────────────────
-        row_dict["Conlang_Text"] = result.conlang      # 自创语文本
-        row_dict["TTS_Phonetic"] = result.tts           # TTS 友好音译
-        row_dict["SSML_Tag"] = result.ssml_tag          # SSML 语音标签
-
-        # ── 辅助列 ──────────────────────────────────────────────────
-        row_dict["Translation_Mode"] = result.mode_used
-
-        if result.unmatched_words:
-            row_dict["Unmatched_Words"] = ", ".join(result.unmatched_words)
-        else:
-            row_dict["Unmatched_Words"] = ""
-
-        if result.error:
-            row_dict["Error"] = result.error
-        else:
-            row_dict["Error"] = ""
+        # ── 阶段十新增列 ─────────────────────────────────────────────
+        seq = idx + 1
+        row_dict["Translation_ID"] = f"TH_{seq:04d}"
+        row_dict["Conlang_Text"] = result.conlang
+        row_dict["TTS_Phonetic"] = result.tts
+        row_dict["SSML_Tag"] = result.ssml_tag
+        row_dict["Unmatched_Words"] = ", ".join(result.unmatched_words) if result.unmatched_words else ""
+        row_dict["AI_Generated"] = "Yes" if result.ai_generated else "No"
+        row_dict["AI_Model"] = result.ai_model if result.ai_generated else ""
 
         rows_out.append(row_dict)
 
     df = pd.DataFrame(rows_out)
 
-    # ── 列顺序：原始列 → Conlang_Text → TTS_Phonetic → SSML_Tag → 辅助列
+    # ── 列顺序：原始列 → 新增列
     original_cols = list(original_rows[0].data.keys()) if original_rows else []
-    new_cols = ["Conlang_Text", "TTS_Phonetic", "SSML_Tag", "Translation_Mode", "Unmatched_Words", "Error"]
-    # 确保所有列都在 DataFrame 中
+    new_cols = [
+        "Translation_ID",
+        "Conlang_Text",
+        "TTS_Phonetic",
+        "SSML_Tag",
+        "Unmatched_Words",
+        "AI_Generated",
+        "AI_Model",
+    ]
+    # 去重 + 只保留实际存在的列
     all_cols = original_cols + [c for c in new_cols if c not in original_cols]
-    # 只保留 DataFrame 中实际存在的列
     all_cols = [c for c in all_cols if c in df.columns]
     df = df[all_cols]
 
+    # ── 统计数据 ─────────────────────────────────────────────────────
+    total_rows = len(results)
+    success_count = sum(1 for r in results if r.conlang and not r.error)
+    failed_count = sum(1 for r in results if r.error)
+    ai_generated_count = sum(1 for r in results if r.ai_generated)
+    new_words_count = sum(len(r.new_words) for r in results)
+    # 取第一个 AI 行的模型名作为代表
+    ai_model = ""
+    for r in results:
+        if r.ai_model:
+            ai_model = r.ai_model
+            break
+
+    stats = {
+        "success": True,
+        "total_rows": total_rows,
+        "success_count": success_count,
+        "failed_count": failed_count,
+        "ai_generated_count": ai_generated_count,
+        "new_words_count": new_words_count,
+        "ai_model": ai_model,
+    }
+
     try:
         df.to_excel(output_path, index=False, engine="openpyxl")
-        return True
+        return stats
     except Exception:
-        return False
+        return {"success": False}
 
 
 def export_unmatched_report(

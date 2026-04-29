@@ -228,10 +228,10 @@ original_rows = [ExcelRow(data={
 
 tmp_dir = tempfile.mkdtemp()
 output_path = os.path.join(tmp_dir, "test_output.xlsx")
-success = export_results_to_excel(results, original_rows, output_path)
-check("export succeeds", success, True)
+stats = export_results_to_excel(results, original_rows, output_path)
+check("export succeeds", stats.get("success", False), True)
 
-if success:
+if stats.get("success"):
     try:
         import pandas as pd
         df = pd.read_excel(output_path)

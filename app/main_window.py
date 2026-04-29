@@ -43,7 +43,9 @@ from app.batch_translator import (
     BatchTranslateWorker,
     export_results_to_excel,
     export_unmatched_report,
+    generate_timestamp_filename,
 )
+from app.export_result_dialog import ExportResultDialog
 from app.excel_import import (
     ExcelImportResult,
     ExcelRow,
@@ -1686,7 +1688,6 @@ class MainWindow(QMainWindow):
             if error_msg:
                 self.batch_log.appendPlainText(f"⚠ 批量翻译中断：{error_msg}")
             else:
-                # 统计结果
                 success_count = sum(1 for r in results if r.conlang and not r.error)
                 error_count = sum(1 for r in results if r.error)
                 skip_count = sum(1 for r in results if r.mode_used == "skip")
@@ -1709,7 +1710,6 @@ class MainWindow(QMainWindow):
         unfilled_unmatched = [e for e in unmatched_entries if not e.conlang]
 
         if unfilled_unmatched and self._batch_translate_settings:
-            # 弹出未匹配词汇对话框
             bundle = dict(self.get_language_material_bundle())
             dlg = UnmatchedWordsDialog(
                 unmatched_words=[e.chinese for e in unfilled_unmatched],
@@ -1734,13 +1734,114 @@ class MainWindow(QMainWindow):
                     )
                 else:
                     report_path = Path.home() / "unmatched_report.csv"
-                success = export_unmatched_report(unmatched_entries, str(report_path))
-                if success and self.batch_log is not None:
+                report_ok = export_unmatched_report(unmatched_entries, str(report_path))
+                if report_ok and self.batch_log is not None:
                     self.batch_log.appendPlainText(f"未匹配词汇报告已导出：{report_path}")
+
+        # ── 自动弹出「另存为」对话框（阶段十）───────────────────────
+        if results and not error_msg:
+            self._do_auto_export(results)
 
         # 刷新资料状态（可能已更新词库）
         self._refresh_asset_status()
         self._refresh_materials()
+
+    def _do_auto_export(self, results: List[BatchTranslateResult]) -> None:
+        """自动弹出另存为并执行导出（阶段十）。"""
+        if self._excel_import_result is None or not self._excel_import_result.ok:
+            return
+
+        # ── 默认文件名：原文件名_TTS_Ready_时间戳.xlsx ────────────
+        ts_filename = generate_timestamp_filename(self._excel_path)
+        if self._excel_path:
+            default_dir = str(Path(self._excel_path).parent)
+        else:
+            default_dir = str(Path.home() / "Documents")
+        default_save = str(Path(default_dir) / ts_filename)
+
+        output_path, _ = QFileDialog.getSaveFileName(
+            self, "导出翻译结果",
+            default_save,
+            "Excel Files (*.xlsx);;All Files (*)",
+        )
+        if not output_path:
+            return
+
+        stats = export_results_to_excel(
+            results=results,
+            original_rows=self._excel_import_result.rows,
+            output_path=output_path,
+        )
+
+        if not stats.get("success"):
+            QMessageBox.critical(
+                self, "导出失败",
+                "导出 Excel 文件失败，请检查文件路径和 pandas / openpyxl 是否已安装。",
+            )
+            return
+
+        # ── 同步追加到 Translation_History.json ────────────────────
+        self._append_results_to_history(results)
+
+        # ── 汇总新创词汇 ──────────────────────────────────────────
+        all_new_words = []
+        for r in results:
+            all_new_words.extend(r.new_words)
+
+        # ── 弹出导出完成对话框 ────────────────────────────────────
+        dlg = ExportResultDialog(stats, output_path, all_new_words, parent=self)
+        dlg.exec_()
+
+        # ── 如果用户选择了「全部添加到词库」────────────────────────
+        # （NewWordsReportDialog 通过 get_added_to_lexicon 返回标记）
+        # ExportResultDialog 内嵌了 NewWordsReportDialog，
+        # 我们需要在 ExportResultDialog 中追踪此状态
+        # 已在 NewWordsReportDialog._add_to_lexicon 中标记，
+        # ExportResultDialog 暂时无回传机制，词库更新由 Worker 的
+        # auto_add_new_words 处理，或由用户手动触发
+
+        # ── 日志反馈 ──────────────────────────────────────────────
+        if self.batch_log is not None:
+            self.batch_log.appendPlainText(f"导出成功：{output_path}")
+
+    def _append_results_to_history(
+        self,
+        results: List[BatchTranslateResult],
+    ) -> None:
+        """将所有翻译结果追加到 Translation_History.json。"""
+        lang = self.get_current_language()
+        if lang is None:
+            return
+
+        # 获取语言配置
+        lang_id = lang.get("id", "")
+        bundle = self._material_by_lang.get(lang_id, {})
+        lang_name = lang.get("name", lang_id)
+
+        # 找到 history 文件路径
+        history_path = bundle.get("translation_history_path")
+        if not history_path:
+            return
+
+        history_file = Path(history_path)
+        for r in results:
+            if not r.conlang:
+                continue  # 跳过空行/跳过行
+
+            append_translation_record(
+                history_file,
+                source=r.chinese_text,
+                conlang=r.conlang,
+                phonetic=r.tts,
+                unmatched_words=r.unmatched_words,
+                source_language="中文",
+                target_language=lang_name,
+                translation_mode=r.mode_used,
+                emotion_label=r.emotion.lower() if r.emotion else "neutral",
+                emotion_intensity=0.5,
+                tts_pitch_hint="normal",
+                tts_rate_hint="normal",
+            )
 
     def _on_batch_log(self, msg: str) -> None:
         """接收 Worker 的实时日志消息。"""
@@ -1796,7 +1897,7 @@ class MainWindow(QMainWindow):
             self._material_by_lang[bid] = rep.bundle
 
     def _on_batch_export(self) -> None:
-        """导出翻译结果为 Excel 文件。"""
+        """手动重新导出翻译结果为 Excel 文件（阶段十增强版）。"""
         if not self._batch_results:
             QMessageBox.warning(
                 self, "无翻译结果",
@@ -1804,14 +1905,18 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # 默认导出路径：基于原 Excel 文件位置，若无则回退到用户文档目录
+        if self._excel_import_result is None or not self._excel_import_result.ok:
+            QMessageBox.warning(self, "导出失败", "原始 Excel 数据不可用。")
+            return
+
+        # 默认导出路径：使用时间戳命名
         if self._excel_path:
-            default_save = str(
-                Path(self._excel_path).parent /
-                (Path(self._excel_path).stem + "_translated.xlsx")
-            )
+            default_dir = str(Path(self._excel_path).parent)
+            default_name = generate_timestamp_filename(self._excel_path)
         else:
-            default_save = str(Path.home() / "Documents" / "translated.xlsx")
+            default_dir = str(Path.home() / "Documents")
+            default_name = generate_timestamp_filename("")
+        default_save = str(Path(default_dir) / default_name)
 
         output_path, _ = QFileDialog.getSaveFileName(
             self, "导出翻译结果",
@@ -1821,28 +1926,35 @@ class MainWindow(QMainWindow):
         if not output_path:
             return
 
-        if self._excel_import_result is None or not self._excel_import_result.ok:
-            QMessageBox.warning(self, "导出失败", "原始 Excel 数据不可用。")
-            return
-
-        success = export_results_to_excel(
+        stats = export_results_to_excel(
             results=self._batch_results,
             original_rows=self._excel_import_result.rows,
             output_path=output_path,
         )
 
-        if success:
-            QMessageBox.information(
-                self, "导出成功",
-                f"翻译结果已导出到：\n{output_path}",
-            )
-            if self.batch_log is not None:
-                self.batch_log.appendPlainText(f"导出成功：{output_path}")
-        else:
+        if not stats.get("success"):
             QMessageBox.critical(
                 self, "导出失败",
                 "导出 Excel 文件失败，请检查文件路径和 pandas / openpyxl 是否已安装。",
             )
+            return
+
+        # 同步到翻译历史
+        self._append_results_to_history(self._batch_results)
+
+        # 收集所有新词汇
+        all_new_words: List = []
+        for r in self._batch_results:
+            if r.new_words:
+                all_new_words.extend(r.new_words)
+
+        # 展示导出完成对话框
+        from app.export_result_dialog import ExportResultDialog
+        dlg = ExportResultDialog(stats, output_path, all_new_words, parent=self)
+        dlg.exec_()
+
+        if self.batch_log is not None:
+            self.batch_log.appendPlainText("导出成功：" + output_path)
 
     def _show_about(self) -> None:
         QMessageBox.about(
@@ -1850,11 +1962,12 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段九：SSML 语音标签生成与批量翻译增强已完成。<br>"
+            "阶段十：导出增强与历史同步已完成。<br>"
             "支持规则翻译 / 混合翻译 / AI翻译三种模式<br>"
             " + SSML 语音标签（基于 Emotion / Body_Type / Age）<br>"
-            " + 暂停 / 继续 / 取消批量翻译<br>"
-            " + AI 请求限流重试（指数退避）<br>"
-            " + Excel 台本导入（预览+统计+验证）<br>"
-            " + 翻译结果导出为 Excel + 未匹配词报告。",
+            " + 暂停 / 继续 / 取消批量翻译 + AI限流重试<br>"
+            " + Excel 导入（预览+统计+验证）<br>"
+            " + 时间戳命名导出 + 统计对话框 + 新创词汇报告<br>"
+            " + 翻译结果自动同步到 Translation_History.json<br>"
+            " + AI生成追踪（AI_Generated / AI_Model列）。",
         )

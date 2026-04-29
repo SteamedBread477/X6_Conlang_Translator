@@ -1,6 +1,6 @@
 # Nikki Conlang Forge — 项目状态
 
-## 当前阶段：阶段九（已完成）
+## 当前阶段：阶段十（已完成）
 
 ---
 
@@ -44,7 +44,7 @@
 - 未匹配词添加对话框（`app/add_word_dialog.py`）
 
 ### 阶段五（完成）
-- **PaperHub AI 接入模块**（替换原 Claude/Gemini 方案）：
+- **PaperHub AI 接入模块**：
   - `app/paperhub_settings.py`：配置存取，写入 `data/app_config.json`
   - `app/paperhub_client.py`：OpenAI SDK 兼容客户端
   - `app/paperhub_settings_dialog.py`：完整设置对话框
@@ -59,35 +59,31 @@
 - **新词入库**：AI 翻译新词弹窗询问 → 确认写入词库
 
 ### 阶段七（完成）— 未匹配词汇处理（AI辅助）
-- **未匹配词汇对话框**（`app/unmatched_words_dialog.py`）：
-  - 表格显示所有未匹配词汇（中文 / 自创语 / TTS拼写 / 操作）
-  - 单词 AI 生成 / 全部 AI 生成 / 全部手动填写 / 跳过 / 保存到词库
-- **AI 单词生成 Prompt**：白皮书 + 词库示例 → JSON `{chinese, conlang, ipa, tts, logic}`
-- **批量 AI 生成优化**：多个词汇合并为一个请求
-- **保存到词库**：追加到 `Conlang_Master_Library.json`（含 `created_by/created_time/model`）+ `Mapping_Rules.csv`
-- **翻译完成后自动弹出**处理对话框
+- **未匹配词汇对话框**（`app/unmatched_words_dialog.py`）
+- AI 单词生成 / 全部 AI 生成 / 全部手动填写 / 跳过 / 保存到词库
+- 保存到词库：追加到 `Conlang_Master_Library.json` + `Mapping_Rules.csv`
 
 ### 阶段八（完成）— Excel 台本导入与批量翻译
-- **Excel 导入模块**（`app/excel_import.py`）：
-  - 8 列必需列验证（不写死列顺序，保留额外列）
-  - 统计信息：总行数 / 角色数量 / 角色列表 / 情绪类型数
-  - 前 5 行预览（QTableWidget 预览对话框）
-- **批量翻译设置对话框**（`app/batch_translate_dialog.py`）：
-  - 3 翻译模式（规则/混合/AI），模型下拉，3 复选框
-  - 并发设置（1-5 并发，0-10s 间隔）
-  - API Key 缺失验证
-- **批量翻译引擎**（`app/batch_translator.py`）：
-  - `BatchTranslateWorker(QThread)`：三种模式逻辑 + AI 回退
-  - `_auto_add_new_words`：自动写入词库（含富元数据）
-  - 请求间隔防限流
-  - `export_results_to_excel`：翻译结果 Excel（新增 Conlang/TTS/Translation_Mode/Unmatched_Words/Error 列）
-  - `export_unmatched_report`：未匹配词汇 CSV 报告
-- **主窗口集成**：
-  - `_pick_excel()`：导入 → 验证 → 预览 → 统计
-  - `_on_batch_start()`：设置对话框 → bundle 构建 → 启动 Worker
-  - `_on_batch_progress()`：进度条 + 逐行日志
-  - `_on_batch_finished()`：结果统计 → 未匹配词对话框 → 报告导出 → 资料刷新
-  - `_on_batch_export()`：导出翻译结果 Excel
+- Excel 导入模块（8列验证+统计+预览）
+- 批量翻译设置对话框（3模式+并发设置）
+- 批量翻译引擎（Worker + 三模式 + 导出）
+
+### 阶段九（完成）— SSML 语音标签 + 重试 + 暂停/取消
+- SSML 语音标签生成模块（7情绪映射+体型pitch叠加+年龄rate微调）
+- 批量翻译暂停/继续/取消控制
+- AI请求限流重试（指数退避，retryable: 429/503/0）
+- S9 bug fixes: rate="medium" no-op, Path("") fallback, status_code retryable
+
+### 阶段十（完成）— 导出增强与历史同步
+- **时间戳命名导出**（`generate_timestamp_filename`）：`NPC_Script_TTS_Ready_20250429_143052.xlsx`
+- **导出统计对话框**（`app/export_result_dialog.py`）：成功/失败/AI生成/新创词汇统计 + 查看新创词汇/打开文件夹/打开文件按钮
+- **新创词汇报告对话框**（`app/new_words_report_dialog.py`）：表格展示 + 导出CSV + 全部添加到词库标记
+- **导出 Excel 列名更新**：Translation_ID / Conlang_Text / TTS_Phonetic / SSML_Tag / Unmatched_Words / AI_Generated / AI_Model（移除旧 Translation_Mode 和 Error 列）
+- **翻译结果自动同步到 Translation_History.json**（`_append_results_to_history`）：每行成功翻译自动追加历史记录
+- **AI 生成追踪**：`BatchTranslateResult.ai_generated` + `ai_model` 字段，Excel 中 AI_Generated="Yes"/"No" + AI_Model 列
+- **导出返回 stats dict**：`export_results_to_excel` 返回 `{success, total_rows, success_count, failed_count, ai_generated_count, new_words_count, ai_model}`
+- **手动导出按钮 S10 更新**：`_on_batch_export` 使用时间戳命名 + stats dict + ExportResultDialog + 历史同步
+- **CRLF f-string 修复**：`export_result_dialog.py` 和 `new_words_report_dialog.py` 的多行字符串改用 `"\n".join()` 避免字面 `\r\n`
 
 ---
 
@@ -100,14 +96,16 @@ X6_Conlang_Translator/
 │  ├─ add_word_dialog.py           ← Phase 4（保留，不再调用）
 │  ├─ asset_validation.py          ← Phase 1
 │  ├─ batch_translate_dialog.py    ← Phase 8
-│  ├─ batch_translator.py          ← Phase 8
+│  ├─ batch_translator.py          ← Phase 8→10（引擎+导出+时间戳命名）
 │  ├─ excel_import.py              ← Phase 8
+│  ├─ export_result_dialog.py      ← Phase 10 NEW（导出完成对话框）
 │  ├─ history_writer.py            ← Phase 4
 │  ├─ import_classify.py           ← Phase 1
 │  ├─ lexicon_segment.py           ← Phase 2
-│  ├─ main_window.py               ← Phase 8（批量功能集成）
+│  ├─ main_window.py               ← Phase 10（S10全部集成）
 │  ├─ material_service.py          ← Phase 3
-│  ├─ paperhub_client.py           ← Phase 6
+│  ├─ new_words_report_dialog.py   ← Phase 10 NEW（新创词汇报告对话框）
+│  ├─ paperhub_client.py           ← Phase 6→9（status_code增强）
 │  ├─ paperhub_confirm_dialog.py   ← Phase 6
 │  ├─ paperhub_settings.py         ← Phase 5
 │  ├─ paperhub_settings_dialog.py  ← Phase 6
@@ -116,6 +114,7 @@ X6_Conlang_Translator/
 │  ├─ parse_mapping_csv.py         ← Phase 2
 │  ├─ parse_whitepaper.py          ← Phase 2
 │  ├─ rule_translator.py           ← Phase 4
+│  ├─ ssml_generator.py            ← Phase 9（SSML语音标签）
 │  ├─ storage.py                   ← Phase 0
 │  ├─ unmatched_words_dialog.py    ← Phase 7
 │  └─ ui_theme.py
@@ -128,6 +127,8 @@ X6_Conlang_Translator/
 ├─ PROJECT_STATUS.md
 ├─ README.md
 ├─ requirements.txt
+├─ test_stage9.py
+├─ test_stage10.py
 └─ X6_Conlang_Translator_PROJECT_STATUS.md
 ```
 
@@ -147,16 +148,39 @@ X6_Conlang_Translator/
 
 ## 当前已知问题
 
-1. `paperhub_client.py` 默认 `max_tokens=4096`，旧配置 `2048` 仍会被覆盖
-2. `AddWordDialog` 保留但未使用（阶段七 `UnmatchedWordsDialog` 替代）
-3. `paperhub_confirm_dialog.py` 有 `\r\n` 行尾，字符串中 `\r\n` 可能导致解析问题
-4. `_whitepaper_full` 默认 `max_chars=3000`，批量翻译 AI 调用时可能截断长白皮书
+1. **Translation_ID 不一致**：Excel 导出用 `TH_{idx+1:04d}`（位置序号），`append_translation_record` 用 `TH_{n:04d}`（基于已有记录数），同一行在 Excel 和 History JSON 中 ID 不同
+2. **`NewWordsReportDialog._add_to_lexicon` 标志未被消费**：按钮设置 `_added_to_lexicon=True` 但 ExportResultDialog 不从子对话框获取该标志
+3. **`AddWordDialog` 保留但未使用**：`app/add_word_dialog.py` 仍被导入但不调用
+4. **`paperhub_confirm_dialog.py` CRLF 行尾**：全文 `\r\n` 行尾
+5. **`_whitepaper_full` max_chars=3000**：批量翻译 AI 调用时可能截断长白皮书
+6. **`os.startfile` Windows-specific**：ExportResultDialog 的"打开文件夹/打开文件"按钮
+7. **线程安全**：`_paused`/`_cancelled` bool 标志无互斥锁保护
 
 ---
 
-## 下一阶段建议（阶段九）
+## 下一阶段建议（阶段十一）
 
-1. TTS 批量生成（读取翻译结果 Excel → 根据 TTS 拼写生成音频）
-2. 批量翻译增强（中断续翻 / 翻译缓存 / 精细并发控制）
-3. UI 美化（深色主题 / 实时预览 / 拖放导入 / 键盘快捷键）
-4. 代码清理（移除 `add_word_dialog.py` / 统一 LF 行尾 / 单元测试）
+1. **TTS 批量音频生成**：读取 SSML_Tag 列批量调用 TTS API
+2. **批量翻译增强**：中断续翻 / 翻译缓存 / 精细并发控制
+3. **UI 美化**：深色主题 / 实时预览 / 拖放导入 / 键盘快捷键
+4. **代码清理**：移除 `add_word_dialog.py` / 统一 LF 行尾 / Translation_ID 对齐
+
+---
+
+## 续聊入口（新会话时发给 AI）
+
+```text
+请继续开发 H:\QvQ_X6\X6_Tools\X6_Conlang_Translator（Nikki Conlang Forge，无限暖暖自创语翻译器）。
+GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
+
+请先阅读以下文件：
+- X6_Conlang_Translator_PROJECT_STATUS.md
+- README.md
+- app/main_window.py
+- app/paperhub_client.py
+- app/batch_translator.py
+
+当前已完成阶段0到阶段10。
+规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译（暂停/取消/重试） + 导出增强（时间戳命名+统计对话框+新创词汇报告+历史同步+AI追踪）已完整。
+现在继续做：……（写你当前的需求）
+```

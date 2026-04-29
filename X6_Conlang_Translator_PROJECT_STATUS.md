@@ -1,6 +1,6 @@
 # Nikki Conlang Forge — 项目状态
 
-## 当前阶段：阶段九（已完成）
+## 当前阶段：阶段十（已完成）
 
 ---
 
@@ -65,123 +65,92 @@
 - **新词入库**：AI 翻译新词弹窗询问 → 确认写入 `Conlang_Master_Library.json`
 
 ### 阶段七（完成）— 未匹配词汇处理（AI辅助）
-- **未匹配词汇对话框**（`app/unmatched_words_dialog.py`）：
-  - 表格显示所有未匹配词汇（中文 / 自创语 / TTS拼写 / 操作）
-  - 每行可手动填写自创语和TTS拼写
-  - 单词 AI 生成按钮：调用 PaperHub 为该词生成翻译
-  - 全部 AI 生成按钮：批量调用 PaperHub AI 翻译所有未匹配词
-  - 全部手动填写 / 跳过 / 保存到词库按钮
-- **AI 单词生成 Prompt**：
-  - 系统提示词：包含语言白皮书 + 已有词库示例
-  - 用户提示词：指定 JSON 格式 `{chinese, conlang, ipa, tts, logic}`
-- **批量 AI 生成优化**：多个词汇合并为一个请求，减少 API 调用
-- **保存到词库**：
-  - 追加到 `Conlang_Master_Library.json`：含 `created_by`、`created_time`、`model` 等富元数据
-  - 追加到 `Mapping_Rules.csv`：自创语 + IPA + TTS友好拼写
-  - 自动去重（检查词库是否已存在）
-- **翻译完成后自动弹出**：有未匹配词汇时自动弹出处理对话框（若 PaperHub 已启用）
+- **未匹配词汇对话框**（`app/unmatched_words_dialog.py`）
+- AI 单词生成 / 全部 AI 生成 / 全部手动填写 / 跳过 / 保存到词库
+- 保存到词库：追加到 `Conlang_Master_Library.json`（含富元数据）+ `Mapping_Rules.csv`
 
 ### 阶段八（完成）— Excel 台本导入与批量翻译
 - **Excel 导入模块**（`app/excel_import.py`）：
-  - `ExcelRow(data)` 数据类：保留所有列数据（含额外列），不写死列顺序
-  - `ExcelStatistics` 数据类：总行数 / 角色数量 / 角色列表 / 情绪类型数 / 情绪列表
-  - `ExcelImportResult(ok, path, rows, columns, missing_columns, statistics, preview_rows, error)` 数据类
-  - `read_excel(path)`：读取 .xlsx → 验证必需列（8列：台本ID/Character/Age/Gender/Body_Type/Emotion/Scene_Context/Text） → 计算统计 → 提取前5行预览
-  - `get_texts_from_rows(rows)`：提取非空 Text 列值
-  - **设计约束**：只验证列存在性，不硬编码列顺序；保留所有额外列在 `ExcelRow.data` 中
+  - 8 列必需列验证 + 统计 + 前5行预览
+  - `ExcelRow(data)` / `ExcelStatistics` / `ExcelImportResult` 数据类
 - **批量翻译设置对话框**（`app/batch_translate_dialog.py`）：
-  - `BatchTranslateSettings` 数据类：mode/rule/hybrid/ai，model，reasoning_enabled，auto_add_new_words，export_unmatched_report，concurrency(3)，request_interval(0.5)
-  - `BatchTranslateDialog(QDialog)`：
-    - 翻译模式：3 个 QRadioButton（规则翻译/混合翻译/AI翻译）
-    - PaperHub AI 设置 QGroupBox（混合/AI模式可见）：
-      - 模型下拉框（从 PAPERHUB_MODELS 加载，默认 qwen3-max）
-      - ☑ 开启思考模式 / ☑ 自动将新创词汇添加到词库 / ☑ 翻译完成后导出未匹配词汇报告
-    - 并发设置：并发请求数 QSpinBox(1-5) / 每次请求间隔 QDoubleSpinBox(0-10s)
-    - [开始翻译] / [取消] 按钮
-    - API Key 缺失验证（混合/AI模式时检查）
+  - 3 翻译模式 / 模型下拉 / 并发设置
 - **批量翻译引擎**（`app/batch_translator.py`）：
-  - `BatchTranslateResult` 数据类：row_index/row_id/character/emotion/chinese_text/conlang/tts/mode_used/unmatched_words/new_words/error
-  - `BatchTranslateWorker(QThread)`：
-    - `progress` 信号：`(row_index, total, BatchTranslateResult)`
-    - `finished` 信号：`(results, unmatched_entries, error_msg)`
-    - `cancel()` 方法：设置 `_cancelled` 标志
-    - 三种翻译模式逻辑：
-      - **rule**：纯规则翻译
-      - **hybrid**：规则优先 → 未匹配词 AI 补全 → AI 失败则规则回退
-      - **ai**：全 AI 翻译 → AI 失败则规则回退
-    - `_call_ai_translate(text)`：调用 `translate_with_paperhub(strategy="always")`
-    - `_auto_add_new_words(new_words)`：自动写入 master_library JSON + mapping_rules CSV（含富元数据）
-    - 请求间隔：`time.sleep(request_interval)` 防限流
-    - 空行跳过（mode_used="skip"）
-  - `export_results_to_excel(results, original_rows, output_path)`：导出翻译结果 Excel（新增 Conlang/TTS/Translation_Mode/Unmatched_Words/Error 列）
-  - `export_unmatched_report(entries, output_path)`：导出未匹配词汇 CSV报告（中文/自创语/IPA/TTS/构词逻辑/创建方式/创建时间/AI模型）
-- **主窗口批量功能集成**（`app/main_window.py` 修改）：
-  - `_pick_excel()`：选择 Excel → `read_excel()` → 列缺失警告 → 预览对话框（QTableWidget 前5行 + 统计标签） → batch_log 统计文本
-  - `_on_batch_start()`：检查 Excel 已导入 → `BatchTranslateDialog` → 构建 bundle（含 master_library_path/mapping_rules_path） → 启动 `BatchTranslateWorker`
-  - `_on_batch_progress()`：更新进度条 + batch_log 逐行日志
-  - `_on_batch_finished()`：存储结果 + 统计摘要 → 未匹配词弹出 `UnmatchedWordsDialog` → 自动导出未匹配报告（如设置要求） → 刷新资料
-  - `_on_batch_export()`：导出翻译结果 Excel
-  - `_show_about()`：更新为阶段八文本
+  - `BatchTranslateWorker(QThread)` 三种模式 + AI回退
+  - `export_results_to_excel` + `export_unmatched_report`
+- **主窗口集成**：导入 → 预览 → 翻译 → 导出完整流程
 
-### 阶段九（完成）— Excel 批量翻译核心逻辑（SSML + 重试 + 暂停/取消）
-
+### 阶段九（完成）— SSML 语音标签 + 重试 + 暂停/取消
 - **SSML 语音标签生成模块**（`app/ssml_generator.py`）：
-  - `EMOTION_MAP`：7种情绪 → SSML 配置（rate/pitch/volume）映射表
-    - Sad: rate="slow" pitch="-10%"
-    - Happy: rate="fast" pitch="+10%"
-    - Urgent: rate="fast" volume="loud"
-    - Calm: rate="medium"
-    - Angry: rate="fast" pitch="+5%" volume="loud"
-    - Fear: rate="slow" pitch="+5%"
-    - Neutral: rate="medium"
-  - `BODY_TYPE_PITCH`：体型 pitch 调整叠加表（Normal/Strong/Heavy → 0/-5%/−10%）
-  - `AGE_RATE_ADJUST`：年龄 rate 微调映射表（9种组合：slow×3 + fast×3 + medium×3）
-  - `_parse_pct()` / `_format_pct()` / `_add_pcts()`：百分比代数运算工具（如 "-10%" + "-10%" → "-20%"）
-  - `ProsodyAttrs` 数据类：rate / pitch / volume 属性
-  - `compute_prosody_attrs(emotion, body_type, age)` → `ProsodyAttrs`：
-    1. 情绪取基础 rate/pitch/volume
-    2. 体型 pitch 叠加到基础 pitch
-    3. 字面 rate（slow/fast/medium）按 age 查映射表微调
-    4. 百分比 rate 与 age 百分比代数叠加
-  - `generate_ssml_tag(emotion, body_type, age, tts_phonetic)` → SSML `<speak>` 标签：
-    - 示例：Sad+Heavy+Old+"kuthara lomae" → `<speak>\n<prosody rate="x-slow" pitch="-20%">\nkuthara lomae\n</prosody>\n</speak>`
-- **BatchTranslateResult 增强**（`app/batch_translator.py`）：
-  - 新增 `ssml_tag: str` 字段：SSML 语音标签
-  - 新增 `body_type: str` / `age: str` 字段：从 ExcelRow 提取
-- **BatchTranslateWorker 核心逻辑升级**：
-  - `log_message` 信号：实时日志消息（`pyqtSignal(str)`），格式："正在翻译 [15/128] NPC_015…"
-  - `pause()` / `resume()` / `is_paused` 属性：暂停/继续翻译
-  - `cancel()` 更新：取消时解除暂停，让线程能退出
-  - `_wait_if_paused()`：暂停时阻塞等待，循环 0.2s 检查恢复/取消
-  - `_call_ai_translate(text)` 重试机制：
-    - `_MAX_RETRIES = 3`，`_RETRY_BASE_DELAY = 2.0` 秒
-    - 限流（429/503）或网络错误时指数退避（2s → 4s → 8s）
-    - 暂停感知等待：重试间隔分段 sleep，支持暂停/取消中断
-    - `PaperHubError.status_code` 属性：标记 HTTP 状态码，供重试逻辑判断
-  - `run()` 方法增强：
-    - 每行翻译前日志：`"正在翻译 [idx+1/total] label…"`
-    - 提取 `Body_Type` 和 `Age` 字段（默认 Normal/Middle）
-    - 每行翻译完成后生成 `generate_ssml_tag()` → `result.ssml_tag`
-    - 空行/错误行也生成空 SSML 标签
-    - 请求间隔改为暂停感知分段 sleep（0.5s 一段）
-    - 翻译完成汇总：统计失败行数 + 成功/总数
-    - 自动添加新词前增加日志提示
-- **PaperHubError 增强**（`app/paperhub_client.py`）：
-  - `status_code: int = 0` 属性：标记 HTTP 状态码
-  - 限流错误（429）传入 `status_code=429`
-- **主窗口批量翻译 UI 增强**（`app/main_window.py`）：
-  - 暂停/继续按钮（`_btn_batch_pause`）：翻译进行中显示，点击切换暂停/继续
-  - 取消按钮（`_btn_batch_cancel`）：翻译进行中显示，点击弹出确认对话框后取消
-  - 开始翻译按钮（`_btn_batch_start`）：翻译进行中禁用，完成后恢复
-  - `_on_batch_log(msg)`：接收 Worker 实时日志消息，追加到 batch_log
-  - `_on_batch_pause_resume()`：暂停/继续切换 + 状态栏/日志反馈
-  - `_on_batch_cancel()`：确认对话框 → 取消 Worker → 日志反馈
-  - `_on_batch_start()` 增加信号连接 `log_message` + 暂停/取消按钮显示
-  - `_on_batch_finished()` 增加按钮状态恢复
-- **导出 Excel 列名更新**：
-  - 新增三列翻译数据：`Conlang_Text`（自创语文本）/ `TTS_Phonetic`（TTS音译）/ `SSML_Tag`（SSML标签）
-  - 保留辅助列：`Translation_Mode` / `Unmatched_Words` / `Error`
-  - 列顺序：原始列 → Conlang_Text → TTS_Phonetic → SSML_Tag → 辅助列
+  - `EMOTION_MAP`：7种情绪 → (rate, pitch, volume) 映射
+  - `BODY_TYPE_PITCH`：体型 pitch 调整叠加（Normal/Strong/Heavy → 0/-5%/−10%）
+  - `AGE_RATE_ADJUST`：9种年龄×速度组合 → rate 微调映射
+  - `_parse_pct` / `_format_pct` / `_add_pcts`：百分比代数运算
+  - `ProsodyAttrs` 数据类 + `compute_prosody_attrs()` + `generate_ssml_tag()`
+- **BatchTranslateResult 增强**：`ssml_tag` / `body_type` / `age` 字段
+- **Worker 核心逻辑升级**：
+  - `log_message` 信号：实时日志
+  - `pause()` / `resume()` / `cancel()` + `_wait_if_paused()`
+  - `_call_ai_translate()` 重试机制：3次指数退避，retryable: 429/503/0
+  - `PaperHubError.status_code` 属性
+- **S9 bug fixes**：
+  1. `rate="medium"` no-op：不写入 `<prosody>`，除非配对 pitch/volume
+  2. `Path("")` fallback → `Path.home()/Documents`
+  3. `_show_about` 更新为阶段九
+  4. `_call_ai_translate` retryable 判断修复：4xx 非限流错误不重试
+
+### 阶段十（完成）— 导出增强与历史同步
+
+- **时间戳命名导出**（`generate_timestamp_filename`，`app/batch_translator.py`）：
+  - 格式：`{stem}_TTS_Ready_{YYYYMMDD_HHMMSS}.xlsx`
+  - 例：`NPC_Script_TTS_Ready_20250429_143052.xlsx`
+  - 空/无路径时回退 stem 为 "Translation"
+- **导出统计对话框**（`app/export_result_dialog.py`，阶段十新增）：
+  - 标题："✓ 文件已保存"（绿色 16px 粗体）
+  - 路径显示（灰色 #555，自动换行）
+  - 统计块：总行数/成功/失败/AI生成/新增词汇/模型（背景 #f5f5f5）
+  - 四按钮：[查看新创词汇] [打开文件夹] [打开文件] [关闭]
+  - "查看新创词汇"：lazy-import `NewWordsReportDialog`，传 `new_words` + `ai_model`
+  - "打开文件夹/打开文件"：`os.startfile()`（Windows-specific）
+- **新创词汇报告对话框**（`app/new_words_report_dialog.py`，阶段十新增）：
+  - 标题："本次翻译共创造 N 个新词汇："
+  - QTableWidget 4列（中文/自创语/TTS拼写/构词逻辑），stretch，只读
+  - AI来源说明："※ 所有新创词汇均由 PaperHub AI（{model}）生成"
+  - 三按钮：[导出词汇表] [全部添加到词库] [关闭]
+  - "导出词汇表"：CSV（utf-8-sig，5列含AI模型）
+  - "全部添加到词库"：设置 `_added_to_lexicon=True` 标志
+  - `get_added_to_lexicon()` 公开方法
+
+- **导出 Excel 列名更新**（S10）：
+  - 列顺序：原始列 → Translation_ID → Conlang_Text → TTS_Phonetic → SSML_Tag → Unmatched_Words → AI_Generated → AI_Model
+  - Translation_ID：`TH_{seq:04d}`（位置序号）
+  - AI_Generated："Yes" / "No" 字符串
+  - AI_Model：模型名或空字符串
+  - 移除旧列：Translation_Mode / Error
+  - 去重逻辑：`original_cols + [c for c in new_cols if c not in original_cols]`，`[c for c in all_cols if c in df.columns]`
+
+- **导出返回 stats dict**（S10）：
+  - `export_results_to_excel` 返回 `{success, total_rows, success_count, failed_count, ai_generated_count, new_words_count, ai_model}`
+  - `ai_model` 取第一个 AI 行的模型名作为代表
+  - 失败时返回 `{success: False}`
+
+- **BatchTranslateResult S10 增强**：
+  - 新增 `ai_generated: bool = False`：`mode_used in {"hybrid_ai", "ai", "ai_rule_fallback"}` 时为 True
+  - 新增 `ai_model: str = ""`：AI 行的模型名
+
+- **翻译结果自动同步到 Translation_History.json**（`_append_results_to_history`）：
+  - 遍历所有 BatchTranslateResult 行，跳过 `not r.conlang` 的行
+  - 对每行成功翻译调用 `append_translation_record`
+  - 参数：source, conlang, phonetic, unmatched_words, source/target language, mode, emotion, hints
+
+- **主窗口 S10 方法更新**（`app/main_window.py`）：
+  - `_do_auto_export(results)`：导出完成后自动流程（时间戳命名 → stats dict → ExportResultDialog）
+  - `_on_batch_finished` 重写：先处理未匹配词 → 自动导出（仅 `results and not error_msg`）
+  - `_on_batch_export` 重写：使用时间戳命名 + stats dict + ExportResultDialog + 历史同步
+  - `_show_about` 更新为阶段十
+
+- **CRLF f-string 修复**：
+  - `export_result_dialog.py` 和 `new_words_report_dialog.py` 的多行字符串改用 `"\n".join()` 避免字面 `\r\n`
 
 ---
 
@@ -194,15 +163,17 @@ X6_Conlang_Translator/
 │  ├─ add_word_dialog.py           ← Phase 4（保留，不再调用）
 │  ├─ asset_validation.py          ← Phase 1
 │  ├─ batch_translate_dialog.py    ← Phase 8（批量翻译设置对话框）
-│  ├─ batch_translator.py          ← Phase 8（批量翻译引擎+导出）
+│  ├─ batch_translator.py          ← Phase 8→10（引擎+导出+时间戳命名+stats dict）
 │  ├─ excel_import.py              ← Phase 8（Excel台本导入）
+│  ├─ export_result_dialog.py      ← Phase 10 NEW（导出完成对话框）
 │  ├─ history_writer.py            ← Phase 4
 │  ├─ import_classify.py           ← Phase 1
 │  ├─ lexicon_segment.py           ← Phase 2
-│  ├─ main_window.py               ← Phase 8（批量功能集成+预览+进度）
+│  ├─ main_window.py               ← Phase 10（S10全部集成）
 │  ├─ material_service.py          ← Phase 3
-│  ├─ paperhub_client.py           ← Phase 6（完整Prompt+策略+JSON解析）
-│  ├─ paperhub_confirm_dialog.py   ← Phase 6（AI建议确认对话框）
+│  ├─ new_words_report_dialog.py   ← Phase 10 NEW（新创词汇报告对话框）
+│  ├─ paperhub_client.py           ← Phase 6→9（status_code增强+NewWord类）
+│  ├─ paperhub_confirm_dialog.py   ← Phase 6（AI建议确认对话框，⚠ CRLF行尾）
 │  ├─ paperhub_settings.py         ← Phase 5
 │  ├─ paperhub_settings_dialog.py  ← Phase 6
 │  ├─ parse_history_json.py        ← Phase 2
@@ -210,7 +181,7 @@ X6_Conlang_Translator/
 │  ├─ parse_mapping_csv.py         ← Phase 2
 │  ├─ parse_whitepaper.py          ← Phase 2
 │  ├─ rule_translator.py           ← Phase 4
-│  ├─ ssml_generator.py            ← Phase 9（SSML语音标签生成）
+│  ├─ ssml_generator.py            ← Phase 9（SSML语音标签+rate="medium" no-op fix）
 │  ├─ storage.py                   ← Phase 0
 │  ├─ unmatched_words_dialog.py    ← Phase 7（未匹配词汇处理对话框）
 │  └─ ui_theme.py
@@ -229,6 +200,8 @@ X6_Conlang_Translator/
 ├─ PROJECT_STATUS.md
 ├─ README.md
 ├─ requirements.txt
+├─ test_stage9.py
+├─ test_stage10.py
 └─ X6_Conlang_Translator_PROJECT_STATUS.md
 ```
 
@@ -249,29 +222,23 @@ X6_Conlang_Translator/
 
 ## 当前已知问题
 
-1. **`paperhub_client.py` 默认 `max_tokens=4096`**：用户若已有旧配置 `2048` 仍会被读取覆盖——建议后续引导用户更新
-2. **`AddWordDialog` 保留但未使用**：`app/add_word_dialog.py` 仍被 main_window.py 导入但不再调用（阶段七的 `UnmatchedWordsDialog` 替代了它的功能）。建议后续清理此导入和文件。
-3. **`paperhub_confirm_dialog.py` 有 `\r\n` 行尾**：该文件全文使用 CRLF 行尾，在字符串中出现 `\r\n` 时可能导致 Python 解析问题。建议后续统一为 LF 行尾或修复字符串中的 `\r\n`。
-4. **`_whitepaper_full` 默认 `max_chars=3000`**：批量翻译 AI 调用时未显式指定 max_chars，白皮书超过 3000 字符时会被截断。建议后续根据实际白皮书长度调整此参数。
+1. **Translation_ID 不一致**：Excel 导出用 `TH_{idx+1:04d}`（位置序号），`append_translation_record` 用 `TH_{n:04d}`（基于已有记录数），同一行在 Excel 和 History JSON 中 ID 不同。这是已知设计权衡——Excel ID 是位置性的，History ID 是持久性/唯一性的。
+2. **`NewWordsReportDialog._add_to_lexicon` 标志未被消费**：按钮设置 `_added_to_lexicon=True` 但 ExportResultDialog 不从子对话框获取该标志。实际词库写入由 Worker 的 `_auto_add_new_words` 或手动触发处理。
+3. **`AddWordDialog` 保留但未使用**：`app/add_word_dialog.py` 仍被 main_window.py 导入但不再调用（阶段七 `UnmatchedWordsDialog` 替代）
+4. **`paperhub_confirm_dialog.py` CRLF 行尾**：全文 `\r\n` 行尾，字符串中 `\r\n` 可能导致解析问题
+5. **`_whitepaper_full` max_chars=3000**：批量翻译 AI 调用时可能截断长白皮书
+6. **`os.startfile` Windows-specific**：ExportResultDialog 的"打开文件夹/打开文件"按钮
+7. **线程安全**：`_paused`/`_cancelled` bool 标志无互斥锁保护（PyQt5实践中风险低）
+8. **`_do_auto_export` silent skip**：`_excel_import_result is None or not ok` 时无反馈静默跳过
 
 ---
 
-## 下一阶段建议（阶段十：TTS 批量音频生成 / 调优 / UI 美化）
+## 下一阶段建议（阶段十一）
 
-1. **TTS 批量音频生成**：读取翻译结果 Excel 中的 SSML_Tag 列，批量调用 TTS API 生成音频文件
-2. **批量翻译增强**：
-   - 中断续翻（记录翻译进度，下次从断点继续）
-   - 翻译结果缓存（避免重复翻译相同文本）
-   - 更精细的并发控制（semaphore 替代简单间隔）
-3. **UI 美化与体验**：
-   - 深色主题 / 自定义主题
-   - 翻译结果实时预览（每行翻译完立即显示在表格中）
-   - 拖放文件导入
-   - 键盘快捷键
-4. **代码清理**：
-   - 移除 `add_word_dialog.py` 及其导入
-   - 统一文件行尾为 LF
-   - 添加单元测试
+1. **TTS 批量音频生成**：读取 SSML_Tag 列批量调用 TTS API 生成音频文件
+2. **批量翻译增强**：中断续翻 / 翻译缓存 / 精细并发控制
+3. **UI 美化与体验**：深色主题 / 实时预览 / 拖放导入 / 键盘快捷键
+4. **代码清理**：移除 `add_word_dialog.py` 及导入 / 统一 LF 行尾 / Translation_ID 对齐
 
 ---
 
@@ -286,9 +253,9 @@ GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
 - README.md
 - app/main_window.py
 - app/paperhub_client.py
-- app/material_service.py
+- app/batch_translator.py
 
-当前已完成阶段0到阶段9。
-规则翻译 + PaperHub AI 翻译核心 + 未匹配词汇处理 + Excel 台本导入 + 批量翻译核心逻辑（SSML生成+重试+暂停/取消）已完整。
+当前已完成阶段0到阶段10。
+规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译（暂停/取消/重试） + 导出增强（时间戳命名+统计对话框+新创词汇报告+历史同步+AI追踪）已完整。
 现在继续做：……（写你当前的需求）
 ```
