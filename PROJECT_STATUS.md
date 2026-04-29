@@ -1,6 +1,6 @@
 # Nikki Conlang Forge — 项目状态
 
-## 当前阶段：阶段四（已完成）
+## 当前阶段：阶段五（已完成）
 
 ---
 
@@ -33,36 +33,35 @@
 - 语言包 ZIP 导出/导入
 - 语言删除、右键菜单
 - 语言备注功能
-- 可选 AI 辅助翻译（`app/ai_client.py`）
-  - 支持 Claude（Anthropic）和 Gemini（Google）
-  - AI 设置对话框（`app/ai_settings_dialog.py`）
-  - 仅在词库外词汇存在时调用 AI（节约 API 用量）
+- 可选 AI 辅助翻译（初版，Claude/Gemini，已被阶段五替换）
 
 ### 阶段四（完成）
-- **单句翻译核心 — 规则模式三级流水线**：
-  1. **第一级：中文 → 自创语**（`app/rule_translator.py`）
-     - 预处理：去除多余空格
-     - 按标点分句（`。！？，、`），保留标点
-     - 词库最长匹配分词
-     - 未命中词用 `【词】` 标记，连续未命中字符自动合并
-  2. **第二级：自创语 → TTS 友好音译**
-     - 逐 token 查 `Mapping_Rules.csv`
-     - 已匹配 → TTS 拼写；Level-1 未命中 → 保留 `【词】`
-  3. **第三级：翻译历史写入**（`app/history_writer.py`）
-     - 追加到 `Translation_History.json`（JSON 数组格式）
-     - 记录字段：id、timestamp、source、conlang、phonetic、unmatched_words、emotion 等
-- **情绪检测存根**（`detect_emotion()`，预留 TTS 批量生成接口）
-  - 基于关键字规则，返回 `EmotionResult`（label / intensity / tts_pitch_hint / tts_rate_hint）
-  - 后续可替换为 NLP 模型，接口兼容
-- **UI 增强**（`app/main_window.py`）：
-  - 三个输出框各配「复制」按钮（中文输入 / 自创语输出 / TTS 音译）
-  - 统计栏：匹配率 / 耗时 / 未命中数 / 情绪标签 / AI 辅助标记
-  - AI 模式：规则翻译始终先行（提供统计），AI 仅在启用且有未匹配词时补全
-  - 未匹配词汇时显示「将未匹配词添加到词库…」按钮
-- **未匹配词添加对话框**（`app/add_word_dialog.py`）：
-  - 逐词填写自创语翻译 + TTS 拼写
-  - 一键写入 `Conlang_Master_Library.json` 与 `Mapping_Rules.csv`
-  - 写入后自动刷新内存词库索引
+- **单句翻译核心 — 规则模式三级流水线**（`app/rule_translator.py`）：
+  1. 中文 → 自创语：词库最长匹配，未命中用 `【词】` 标记
+  2. 自创语 → TTS 友好音译：逐 token 查 Mapping_Rules.csv
+  3. 翻译历史写入（`app/history_writer.py`），JSON 数组格式
+- 情绪检测存根（`detect_emotion()`），预留 TTS 批量生成接口
+- UI 增强：三输出框各加「复制」按钮、统计栏（匹配率/耗时/未命中数/情绪）
+- 未匹配词添加对话框（`app/add_word_dialog.py`）
+
+### 阶段五（完成）
+- **PaperHub AI 接入模块**（替换原 Claude/Gemini 方案）：
+  - `app/paperhub_settings.py`：配置存取，写入 `data/app_config.json`
+  - `app/paperhub_client.py`：OpenAI SDK 兼容客户端
+    - `test_paperhub_connection()` — 后台线程测试连接
+    - `translate_multiline_paperhub()` — 多行 AI 辅助翻译
+    - 支持 reasoning 思考模式（`extra_body: {"reasoning": {"enabled": true}}`）
+  - `app/paperhub_settings_dialog.py`：完整设置对话框
+    - API Key 输入（密码模式 + 显示/隐藏切换）
+    - 服务地址只读显示（`https://tc-paperhub.diezhi.net/v1`）
+    - 4 个模型单选按钮（qwen3-max / glm-5 / doubao-seed-2-0-pro / qwen3.5-plus）
+    - 3 种 AI 使用策略（仅未匹配 / 全部 / 候选确认[预留]）
+    - 高级参数：思考模式 / Temperature / Max Tokens
+    - 「测试连接」按钮（QThread 后台，不阻塞 UI）
+    - 底部 PaperHub 工作台帮助链接
+- **菜单调整**：「工具」→「设置」，入口改为「PaperHub 设置…」
+- **翻译流程更新**：规则翻译始终先行；PaperHub AI 根据策略（未匹配/全部）补全
+- **requirements.txt**：移除 anthropic / google-generativeai，新增 openai
 
 ---
 
@@ -72,24 +71,28 @@
 X6_Conlang_Translator/
 ├─ app/
 │  ├─ __init__.py
-│  ├─ add_word_dialog.py        ← Phase 4 新增
-│  ├─ ai_client.py
-│  ├─ ai_settings_dialog.py
-│  ├─ ai_settings_store.py
+│  ├─ add_word_dialog.py           ← Phase 4
+│  ├─ ai_client.py                 （遗留，暂保留）
+│  ├─ ai_settings_dialog.py        （遗留，暂保留）
+│  ├─ ai_settings_store.py         （遗留，暂保留）
 │  ├─ asset_validation.py
-│  ├─ history_writer.py         ← Phase 4 新增
+│  ├─ history_writer.py            ← Phase 4
 │  ├─ import_classify.py
 │  ├─ lexicon_segment.py
 │  ├─ main_window.py
 │  ├─ material_service.py
+│  ├─ paperhub_client.py           ← Phase 5
+│  ├─ paperhub_settings.py         ← Phase 5
+│  ├─ paperhub_settings_dialog.py  ← Phase 5
 │  ├─ parse_history_json.py
 │  ├─ parse_lexicon.py
 │  ├─ parse_mapping_csv.py
 │  ├─ parse_whitepaper.py
-│  ├─ rule_translator.py        ← Phase 4 新增
+│  ├─ rule_translator.py           ← Phase 4
 │  ├─ storage.py
 │  └─ ui_theme.py
 ├─ data/
+│  ├─ app_config.json              ← Phase 5（PaperHub 配置）
 │  ├─ config.json
 │  └─ <语言资料夹>/
 │     ├─ Conlang_Master_Library.json
@@ -105,10 +108,10 @@ X6_Conlang_Translator/
 
 ---
 
-## 下一阶段建议（阶段五：批量翻译）
+## 下一阶段建议（阶段六：批量翻译）
 
 1. 读取 Excel（openpyxl），遍历指定列
-2. 对每行调用 `translate_multiline_rule`（+ 可选 AI 补全）
+2. 对每行调用 `translate_multiline_rule`（+ 可选 PaperHub 补全）
 3. 写回翻译结果列
 4. 进度条与日志实时更新（QThread 后台执行）
 5. 导出结果 Excel

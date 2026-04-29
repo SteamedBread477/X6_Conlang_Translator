@@ -32,9 +32,6 @@ from PyQt5.QtWidgets import (
 )
 
 from app.add_word_dialog import AddWordDialog
-from app.ai_client import translate_multiline
-from app.ai_settings_dialog import AiSettingsDialog
-from app.ai_settings_store import load_ai_settings
 from app.asset_validation import check_asset
 from app.history_writer import append_translation_record
 from app.material_service import (
@@ -42,6 +39,9 @@ from app.material_service import (
     load_snapshot_if_any,
     refresh_materials_from_disk,
 )
+from app.paperhub_client import translate_multiline_paperhub
+from app.paperhub_settings import load_paperhub_settings
+from app.paperhub_settings_dialog import PaperHubSettingsDialog
 from app.rule_translator import RuleTranslationResult, translate_multiline_rule
 from app.storage import JsonStorage
 from app.ui_theme import UITheme
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         self._excel_path: str = ""
 
         self._material_by_lang: Dict[str, Dict] = {}
-        self._ai_settings: Dict = load_ai_settings(self.storage.base_dir)
+        self._paperhub_settings: Dict = load_paperhub_settings(self.storage.base_dir)
 
         # 阶段四新增 —— 单句翻译统计与未匹配词管理
         self._stats_label: Optional[QLabel] = None
@@ -112,9 +112,9 @@ class MainWindow(QMainWindow):
         edit_menu.addSeparator()
         edit_menu.addAction(act_notes)
 
-        tools_menu = menubar.addMenu("工具")
-        act_ai = QAction("AI 辅助翻译设置…", self)
-        act_ai.triggered.connect(self._open_ai_settings)
+        tools_menu = menubar.addMenu("设置")
+        act_ai = QAction("PaperHub 设置…", self)
+        act_ai.triggered.connect(self._open_paperhub_settings)
         tools_menu.addAction(act_ai)
 
         help_menu = menubar.addMenu("帮助")
@@ -426,11 +426,11 @@ class MainWindow(QMainWindow):
             rep = refresh_materials_from_disk(self.storage, lang)
             self._material_by_lang[bid] = rep.bundle
 
-    def _open_ai_settings(self) -> None:
-        dlg = AiSettingsDialog(self.storage.base_dir, self)
+    def _open_paperhub_settings(self) -> None:
+        dlg = PaperHubSettingsDialog(self.storage.base_dir, self)
         if dlg.exec_() == QDialog.Accepted:
-            self._ai_settings = load_ai_settings(self.storage.base_dir)
-            self.statusBar().showMessage("AI 设置已保存", 4000)
+            self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+            self.statusBar().showMessage("PaperHub 设置已保存", 4000)
 
     def _language_by_id(self, lang_id: str) -> Optional[Dict]:
         for lang in self.state.get("languages", []):
@@ -818,13 +818,21 @@ class MainWindow(QMainWindow):
         translation_mode = "rule"
         ai_tail = ""
 
-        # ── 可选 AI 辅助：仅在启用且存在未匹配词时调用 ─────────────
-        self._ai_settings = load_ai_settings(self.storage.base_dir)
-        if self._ai_settings.get("enabled") and rule_result.unmatched_words:
+        # ── 可选 AI 辅助（PaperHub）：根据策略决定是否调用 ──────────
+        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+        ph_enabled = bool(self._paperhub_settings.get("paperhub_enabled"))
+        strategy = str(self._paperhub_settings.get("paperhub_strategy") or "unmatched_only")
+
+        need_ai = ph_enabled and (
+            strategy == "always"
+            or (strategy == "unmatched_only" and bool(rule_result.unmatched_words))
+        )
+
+        if need_ai:
             QApplication.setOverrideCursor(Qt.WaitCursor)
             try:
-                ai_conlang, ai_tts, ai_tail = translate_multiline(
-                    self._ai_settings, bundle, text
+                ai_conlang, ai_tts, ai_tail = translate_multiline_paperhub(
+                    self._paperhub_settings, bundle, text
                 )
             finally:
                 QApplication.restoreOverrideCursor()
@@ -885,11 +893,11 @@ class MainWindow(QMainWindow):
         except Exception:
             pass  # 历史写入失败不阻断翻译主流程
 
-        # ── 状态栏 & AI 错误提示 ──────────────────────────────────
+        # ── 状态栏 & PaperHub 错误提示 ───────────────────────────────
         if ai_tail:
-            err_keywords = ("失败", "未填写", "缺少依赖", "未知提供商")
+            err_keywords = ("失败", "未填写", "缺少依赖", "API Key")
             if any(k in ai_tail for k in err_keywords):
-                QMessageBox.warning(self, "AI 翻译提示", ai_tail)
+                QMessageBox.warning(self, "PaperHub 翻译提示", ai_tail)
             self.statusBar().showMessage(
                 f"翻译完成 · {stats_text}", 10000
             )
@@ -950,6 +958,6 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段四：单句规则翻译核心已接入。<br>"
-            "支持三级转换流水线、翻译历史记录、未匹配词汇管理。",
+            "阶段五：PaperHub AI 接入已完成。<br>"
+            "支持规则翻译 + PaperHub AI 辅助补全（qwen3-max 等模型）。",
         )
