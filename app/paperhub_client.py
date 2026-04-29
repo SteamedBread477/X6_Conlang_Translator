@@ -1,17 +1,27 @@
 """
-PaperHub AI 客户端模块。
+PaperHub AI 翻译核心模块（阶段六）。
 
 使用 OpenAI SDK（openai 库）与 PaperHub 平台通信：
   - 服务地址：https://tc-paperhub.diezhi.net/v1
   - 协议：OpenAI Chat Completions（兼容 OpenAI SDK）
   - 认证：Bearer Token（llm_api 类型 API Key）
 
+三种翻译策略：
+  - unmatched_only：仅在词汇未匹配时使用 AI（先规则翻译，再 AI 补全）
+  - always：所有翻译都使用 AI
+  - confirm：AI 生成候选，用户确认后采用
+
 公开接口：
   test_paperhub_connection(api_key, base_url, model) -> (ok: bool, message: str)
-  translate_with_paperhub(settings, bundle, text)   -> (conlang, tts, tail)
+  fetch_paperhub_models(api_key, base_url) -> (ok, model_ids, error)
+  translate_with_paperhub(settings, bundle, text) -> PaperHubResult
 """
 from __future__ import annotations
 
+import json
+import re
+import time
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.lexicon_segment import (
@@ -19,35 +29,91 @@ from app.lexicon_segment import (
     lexicon_hits_preview,
     segment_with_lexicon,
 )
+from app.rule_translator import translate_multiline_rule
 
 
 # ---------------------------------------------------------------------------
-# 提示词构建（与 ai_client 保持一致风格）
+# 数据结构
 # ---------------------------------------------------------------------------
 
-def _whitepaper_brief(bundle: Dict[str, Any], max_chars: int = 1800) -> str:
+@dataclass
+class NewWord:
+    """AI 创造的新词汇。"""
+    chinese: str
+    conlang: str
+    ipa: str
+    tts: str
+    logic: str
+
+
+@dataclass
+class PaperHubResult:
+    """PaperHub 翻译结果。"""
+    conlang: str = ""
+    tts: str = ""
+    new_words: List[NewWord] = field(default_factory=list)
+    strategy_used: str = ""
+    error: str = ""
+    raw_response: str = ""
+
+
+# ---------------------------------------------------------------------------
+# 提示词构建（阶段六：系统提示词 + 用户提示词，JSON 格式输出）
+# ---------------------------------------------------------------------------
+
+def _whitepaper_full(bundle: Dict[str, Any], max_chars: int = 3000) -> str:
+    """提取白皮书全文（用于系统提示词，比 brief 更完整）。"""
     wp = bundle.get("whitepaper") or {}
-    parts: List[str] = []
     sections = wp.get("sections") or {}
-    for title in ("语法", "句法", "构词", "音位", "前言", "序言"):
+    if not sections:
+        # 尝试 raw_content（parse_whitepaper 可能存储）
+        raw = wp.get("raw_content") or ""
+        if raw:
+            return raw[:max_chars]
+        return "（尚未导入白皮书，请先导入并重新解析。）"
+
+    parts: List[str] = []
+    # 按优先级提取核心章节
+    priority_keys = ["音位", "音系", "语音", "语法", "句法", "构词", "词法", "前言", "序言"]
+    added: set[str] = set()
+    for keyword in priority_keys:
         for k, v in sections.items():
-            if title in k and isinstance(v, str) and v.strip():
-                parts.append(f"## {k}\n{v.strip()[:800]}")
-                break
-    if not parts:
-        raw = "\n".join(
-            f"{k}\n{v[:400]}"
-            for k, v in list(sections.items())[:6]
-            if isinstance(v, str)
-        )
-        parts.append(raw)
+            if keyword in k and k not in added and isinstance(v, str) and v.strip():
+                parts.append(f"## {k}\n{v.strip()}")
+                added.add(k)
+
+    # 补充剩余章节
+    for k, v in sections.items():
+        if k not in added and isinstance(v, str) and v.strip():
+            parts.append(f"## {k}\n{v.strip()[:600]}")
+
     text = "\n\n".join(parts)
     if not text:
-        return "（尚未导入白皮书，请先导入并重新解析。）"
+        return "（白皮书内容为空，请先导入并重新解析。）"
     return text[:max_chars]
 
 
-def _anchors_preview(bundle: Dict[str, Any], max_items: int = 12) -> str:
+def _vocabulary_list(bundle: Dict[str, Any], max_items: int = 80) -> str:
+    """将词库格式化为 AI 可读的列表。"""
+    lexicon = bundle.get("lexicon") or {}
+    if not isinstance(lexicon, dict):
+        return "（词库尚未加载。）"
+    lexicon = {str(k): str(v) for k, v in lexicon.items() if str(k).strip()}
+
+    if not lexicon:
+        return "（词库为空。）"
+
+    lines: List[str] = []
+    for i, (zh, con) in enumerate(lexicon.items()):
+        if i >= max_items:
+            lines.append(f"…（共 {len(lexicon)} 个词汇，已截断显示前 {max_items} 个）")
+            break
+        lines.append(f"{zh} → {con}")
+    return "\n".join(lines)
+
+
+def _translation_history_samples(bundle: Dict[str, Any], max_items: int = 12) -> str:
+    """提取翻译历史锚定样本。"""
     anchors = bundle.get("anchors") or {}
     if not isinstance(anchors, dict):
         return ""
@@ -57,80 +123,306 @@ def _anchors_preview(bundle: Dict[str, Any], max_items: int = 12) -> str:
             lines.append("…")
             break
         lines.append(f"{k} ⇒ {v}")
-    return "\n".join(lines)
+    return "\n".join(lines) if lines else ""
 
 
-def _build_prompt(
-    *,
-    source: str,
-    segments_preview: str,
-    gaps: List[str],
-    whitepaper: str,
-    anchors: str,
-) -> str:
-    gaps_txt = "、".join(gaps) if gaps else "（无）"
-    anchor_block = f"翻译历史锚定（节选）：\n{anchors}\n\n" if anchors.strip() else ""
+def _build_system_prompt(bundle: Dict[str, Any]) -> str:
+    """构建系统提示词（阶段六完整模板）。"""
+    whitepaper = _whitepaper_full(bundle)
+    vocab = _vocabulary_list(bundle)
+    history = _translation_history_samples(bundle)
+
+    history_block = ""
+    if history.strip():
+        history_block = f"\n【翻译历史】（用于保持一致性）\n{history}\n"
+
     return (
-        "你是专业的人工自创语（conlang）翻译助手。\n"
-        "请严格根据白皮书中的音系、语法与构词约束输出；"
-        "对「词表已给的片段」请尽量保持与词表一致。\n\n"
-        f"{anchor_block}"
-        f"白皮书与规则（节选）：\n{whitepaper}\n\n"
-        f"中文原句：\n{source}\n\n"
-        f"词表可直接覆盖的片段（节选）：\n{segments_preview}\n\n"
-        f"词表未能覆盖、需要你处理的片段：{gaps_txt}\n\n"
-        "请输出两行纯文本，不要加序号或解释：\n"
-        "第1行：整句自创语（将词表外部分补全为与词表风格一致的整句）。\n"
-        "第2行：对应整句的 TTS 友好音译（便于语音合成朗读）。"
+        "你是一个虚构语言翻译专家。请根据以下语言白皮书和词库，将中文翻译为该自创语。\n"
+        "【重要规则】\n"
+        "- 优先使用词库中已有的词汇，确保一致性\n"
+        "- 词库中没有的词汇，请根据白皮书中的音位表和构词法创造新词\n"
+        "- 遵循白皮书中的语法规则调整词序\n"
+        "- 新创造的词汇请在输出中标注[NEW]\n"
+        "- 输出格式必须严格遵循指定格式\n"
+        f"\n【语言白皮书】\n{whitepaper}\n"
+        f"\n【词库】\n{vocab}\n"
+        f"{history_block}"
     )
 
 
-def _parse_two_lines(response: str) -> Tuple[str, str]:
-    raw = (response or "").strip()
-    lines = [ln.strip() for ln in raw.splitlines() if ln.strip()]
+def _build_user_prompt_full(chinese_text: str) -> str:
+    """构建用户提示词（always 策略：完整翻译）。"""
+    return (
+        f"请将以下中文翻译为自创语：\n"
+        f"【中文原文】\n{chinese_text}\n\n"
+        "请按以下JSON格式输出（不要输出任何其他内容，不要加markdown标记）：\n"
+        "{\n"
+        "  \"conlang_text\": \"自创语文本\",\n"
+        "  \"new_words\": [\n"
+        "    {\n"
+        "      \"chinese\": \"中文原词\",\n"
+        "      \"conlang\": \"自创语\",\n"
+        "      \"ipa\": \"IPA音标\",\n"
+        "      \"tts\": \"TTS友好拼写\",\n"
+        "      \"logic\": \"构词逻辑说明\"\n"
+        "    }\n"
+        "  ],\n"
+        "  \"tts_phonetic\": \"完整TTS友好拼写\"\n"
+        "}"
+    )
+
+
+def _build_user_prompt_unmatched(
+    chinese_text: str,
+    unmatched_words: List[str],
+    rule_conlang: str,
+) -> str:
+    """构建用户提示词（unmatched_only 策略：仅补全未匹配词汇）。"""
+    unmatched_txt = "、".join(unmatched_words) if unmatched_words else "（无）"
+    return (
+        f"请将以下中文中词库未覆盖的部分翻译为自创语，并与已有的规则翻译结果合并。\n"
+        f"【中文原文】\n{chinese_text}\n\n"
+        f"【词库未覆盖的词汇】\n{unmatched_txt}\n\n"
+        f"【词库已覆盖部分的翻译】\n{rule_conlang}\n\n"
+        "请按以下JSON格式输出（不要输出任何其他内容，不要加markdown标记）：\n"
+        "{\n"
+        "  \"conlang_text\": \"完整的自创语文本（合并词库翻译与新创词汇）\",\n"
+        "  \"new_words\": [\n"
+        "    {\n"
+        "      \"chinese\": \"中文原词\",\n"
+        "      \"conlang\": \"自创语\",\n"
+        "      \"ipa\": \"IPA音标\",\n"
+        "      \"tts\": \"TTS友好拼写\",\n"
+        "      \"logic\": \"构词逻辑说明\"\n"
+        "    }\n"
+        "  ],\n"
+        "  \"tts_phonetic\": \"完整TTS友好拼写\"\n"
+        "}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# JSON 响应解析
+# ---------------------------------------------------------------------------
+
+def _extract_json_from_response(raw: str) -> Optional[Dict[str, Any]]:
+    """
+    从 AI 响应中提取 JSON 对象。
+    尝试多种方式：直接解析、提取 ```json``` 代码块、查找 { } 边界。
+    """
+    text = raw.strip()
+
+    # 1. 直接解析
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # 2. 提取 ```json``` 代码块
+    json_block_match = re.search(r"```(?:json)?\s*\n?(.*?)\n?```", text, re.DOTALL)
+    if json_block_match:
+        try:
+            return json.loads(json_block_match.group(1).strip())
+        except json.JSONDecodeError:
+            pass
+
+    # 3. 查找最外层 { } 边界
+    brace_match = re.search(r"\{.*\}", text, re.DOTALL)
+    if brace_match:
+        candidate = brace_match.group(0)
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+
+    # 4. 尝试修复常见问题：多余逗号、缺少引号
+    # 查找任何看起来像 JSON 的内容
+    for start_idx in range(len(text)):
+        if text[start_idx] == "{":
+            # 向后查找匹配的 }
+            depth = 0
+            for end_idx in range(start_idx, len(text)):
+                if text[end_idx] == "{":
+                    depth += 1
+                elif text[end_idx] == "}":
+                    depth -= 1
+                if depth == 0:
+                    candidate = text[start_idx:end_idx + 1]
+                    try:
+                        return json.loads(candidate)
+                    except json.JSONDecodeError:
+                        continue
+                    break
+
+    return None
+
+
+def _parse_new_words(new_words_raw: Any) -> List[NewWord]:
+    """解析 new_words 数组为 NewWord 对象列表。"""
+    result: List[NewWord] = []
+    if not isinstance(new_words_raw, list):
+        return result
+    for item in new_words_raw:
+        if not isinstance(item, dict):
+            continue
+        nw = NewWord(
+            chinese=str(item.get("chinese") or item.get("中文") or "").strip(),
+            conlang=str(item.get("conlang") or item.get("自创语") or "").strip(),
+            ipa=str(item.get("ipa") or item.get("IPA") or "").strip(),
+            tts=str(item.get("tts") or item.get("TTS") or "").strip(),
+            logic=str(item.get("logic") or item.get("构词逻辑") or item.get("构词逻辑说明") or "").strip(),
+        )
+        if nw.chinese and nw.conlang:
+            result.append(nw)
+    return result
+
+
+def _parse_paperhub_response(raw: str) -> PaperHubResult:
+    """
+    解析 PaperHub AI 响应为结构化结果。
+    如果 JSON 解析失败，尝试退化到两行纯文本模式。
+    """
+    data = _extract_json_from_response(raw)
+
+    if data is not None:
+        conlang_text = str(data.get("conlang_text") or data.get("自创语文本") or "").strip()
+        tts_phonetic = str(data.get("tts_phonetic") or data.get("完整TTS友好拼写") or "").strip()
+        new_words = _parse_new_words(data.get("new_words") or data.get("新词") or [])
+
+        # 清理 [NEW] 标记
+        clean_conlang = re.sub(r"\[NEW\]", "", conlang_text)
+
+        return PaperHubResult(
+            conlang=clean_conlang,
+            tts=tts_phonetic,
+            new_words=new_words,
+            raw_response=raw,
+        )
+
+    # 退化：尝试解析两行纯文本（兼容旧格式）
+    lines = [ln.strip() for ln in raw.strip().splitlines() if ln.strip()]
     if len(lines) >= 2:
-        return lines[0], lines[1]
+        return PaperHubResult(
+            conlang=lines[0],
+            tts=lines[1],
+            raw_response=raw,
+        )
     if len(lines) == 1:
-        return lines[0], lines[0]
-    return "", ""
+        return PaperHubResult(
+            conlang=lines[0],
+            tts=lines[0],
+            raw_response=raw,
+        )
+
+    return PaperHubResult(
+        error="AI 响应无法解析为 JSON 或纯文本格式。请检查模型输出，或手动修正。",
+        raw_response=raw,
+    )
 
 
 # ---------------------------------------------------------------------------
-# PaperHub API 调用
+# PaperHub API 调用（带超时与错误处理）
 # ---------------------------------------------------------------------------
 
-def _call_paperhub(
+_TIMEOUT_SECONDS = 30
+
+
+class PaperHubError(Exception):
+    """PaperHub 调用异常，携带用户友好的错误消息。"""
+    def __init__(self, message: str, *, user_hint: str = "") -> None:
+        super().__init__(message)
+        self.user_hint = user_hint or message
+
+
+def _call_paperhub_chat(
     api_key: str,
     base_url: str,
     model: str,
-    prompt: str,
+    system_prompt: str,
+    user_prompt: str,
     *,
     temperature: float = 0.7,
-    max_tokens: int = 2048,
+    max_tokens: int = 4096,
     reasoning_enabled: bool = True,
+    timeout: int = _TIMEOUT_SECONDS,
 ) -> str:
-    """调用 PaperHub Chat Completions 接口，返回模型文本响应。"""
+    """
+    调用 PaperHub Chat Completions 接口（系统+用户双消息），返回模型文本响应。
+
+    错误处理：
+      - ImportError → 提示安装 openai
+      - 认证错误 (401) → 提示检查 API Key
+      - 网络错误 → 提示检查网络连接
+      - 超时 → 报告超时
+      - 模型不存在 (404) → 提示更换模型
+      - 其他 API 错误 → 显示原始错误
+    """
     try:
         from openai import OpenAI
     except ImportError as exc:
-        raise ImportError(
-            "缺少 openai 包，请执行：pip install openai"
+        raise PaperHubError(
+            "缺少 openai 包，请执行：pip install openai",
+            user_hint="缺少依赖：请执行 pip install openai 安装 OpenAI SDK。",
         ) from exc
 
-    client = OpenAI(api_key=api_key, base_url=base_url)
+    if not api_key.strip():
+        raise PaperHubError(
+            "API Key 未填写",
+            user_hint="未填写 PaperHub API Key，请在「设置 → PaperHub 设置」中配置。",
+        )
+
+    client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout)
+
+    messages: List[Dict[str, str]] = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
 
     create_kwargs: Dict[str, Any] = {
         "model": model,
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": messages,
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
 
-    # 思考模式（reasoning）—— 通过 extra_body 传递平台扩展参数
     if reasoning_enabled:
         create_kwargs["extra_body"] = {"reasoning": {"enabled": True}}
 
-    resp = client.chat.completions.create(**create_kwargs)
+    try:
+        resp = client.chat.completions.create(**create_kwargs)
+    except Exception as exc:
+        exc_str = str(exc)
+        # 分类错误
+        if "401" in exc_str or "authentication" in exc_str.lower() or "Unauthorized" in exc_str:
+            raise PaperHubError(
+                exc_str,
+                user_hint="API Key 无效或已过期，请检查设置中的 PaperHub API Key。",
+            ) from exc
+        if "404" in exc_str or "model_not_found" in exc_str.lower() or "does not exist" in exc_str.lower():
+            raise PaperHubError(
+                exc_str,
+                user_hint=f"模型「{model}」不存在或不可用，建议更换模型。",
+            ) from exc
+        if "timeout" in exc_str.lower() or "timed out" in exc_str.lower():
+            raise PaperHubError(
+                exc_str,
+                user_hint="API 请求超时（30秒），请检查网络连接，或尝试减少输入长度。",
+            ) from exc
+        if "connection" in exc_str.lower() or "network" in exc_str.lower() or "refused" in exc_str.lower():
+            raise PaperHubError(
+                exc_str,
+                user_hint="网络连接失败，请检查网络是否能访问 PaperHub 服务。",
+            ) from exc
+        if "rate_limit" in exc_str.lower() or "429" in exc_str:
+            raise PaperHubError(
+                exc_str,
+                user_hint="API 请求频率超限，请稍后重试。",
+            ) from exc
+        # 通用错误
+        raise PaperHubError(
+            exc_str,
+            user_hint=f"PaperHub API 调用失败：{exc_str[:200]}",
+        ) from exc
 
     content: Optional[str] = None
     if resp.choices:
@@ -140,7 +432,7 @@ def _call_paperhub(
 
 
 # ---------------------------------------------------------------------------
-# 测试连接
+# 测试连接 & 模型列表
 # ---------------------------------------------------------------------------
 
 def test_paperhub_connection(
@@ -148,28 +440,26 @@ def test_paperhub_connection(
     base_url: str,
     model: str,
 ) -> Tuple[bool, str]:
-    """
-    向 PaperHub 发送最小请求验证 API Key 与连接是否有效。
-    返回 (success, message)。
-    """
+    """向 PaperHub 发送最小请求验证 API Key 与连接是否有效。"""
     if not api_key.strip():
         return False, "API Key 不能为空，请先填写。"
-
     try:
-        result = _call_paperhub(
+        result = _call_paperhub_chat(
             api_key=api_key,
             base_url=base_url,
             model=model,
-            prompt="请回复「OK」（仅用于连接测试）",
+            system_prompt="你是一个测试助手。",
+            user_prompt="请回复「OK」（仅用于连接测试）",
             temperature=0.1,
             max_tokens=16,
             reasoning_enabled=False,
+            timeout=15,
         )
         if result:
             return True, f"连接成功！模型响应：{result[:80]}"
         return False, "模型返回为空，请检查模型名称是否正确。"
-    except ImportError as exc:
-        return False, str(exc)
+    except PaperHubError as exc:
+        return False, exc.user_hint
     except Exception as exc:
         return False, f"连接失败：{exc}"
 
@@ -178,20 +468,13 @@ def fetch_paperhub_models(
     api_key: str,
     base_url: str,
 ) -> Tuple[bool, List[str], str]:
-    """
-    从 PaperHub 拉取可用模型列表。
-    返回 (success, model_id_list, error_message)。
-
-    使用 OpenAI SDK 的 client.models.list() 接口；
-    列表按模型 ID 字母序排列，方便用户查找。
-    """
+    """从 PaperHub 拉取可用模型列表。"""
     if not api_key.strip():
         return False, [], "请先填写 API Key。"
     try:
         from openai import OpenAI
     except ImportError:
         return False, [], "缺少 openai 包，请执行：pip install openai"
-
     try:
         client = OpenAI(api_key=api_key, base_url=base_url)
         response = client.models.list()
@@ -207,68 +490,220 @@ def fetch_paperhub_models(
 
 
 # ---------------------------------------------------------------------------
-# 翻译接口
+# 翻译接口：三种策略
 # ---------------------------------------------------------------------------
 
-def translate_line_paperhub(
-    settings: Dict[str, Any],
-    bundle: Dict[str, Any],
-    source_line: str,
-) -> Tuple[str, str, str]:
-    """
-    单行翻译。返回 (conlang, tts, tail)。
-    tail 为错误信息或空字符串。
-    """
-    line = source_line.strip()
-    if not line:
-        return "", "", ""
+def _get_settings_params(settings: Dict[str, Any]) -> Dict[str, Any]:
+    """从 settings 中提取 PaperHub 调用参数。"""
+    return {
+        "api_key": str(settings.get("paperhub_api_key") or "").strip(),
+        "base_url": str(settings.get("paperhub_base_url") or "https://tc-paperhub.diezhi.net/v1"),
+        "model": str(settings.get("paperhub_model") or "qwen3-max"),
+        "reasoning": bool(settings.get("paperhub_reasoning_enabled", True)),
+        "temperature": float(settings.get("paperhub_temperature", 0.7)),
+        "max_tokens": int(settings.get("paperhub_max_tokens", 4096)),
+        "strategy": str(settings.get("paperhub_strategy") or "unmatched_only"),
+    }
 
-    api_key = str(settings.get("paperhub_api_key") or "").strip()
-    base_url = str(settings.get("paperhub_base_url") or "https://tc-paperhub.diezhi.net/v1")
-    model = str(settings.get("paperhub_model") or "qwen3-max")
-    reasoning = bool(settings.get("paperhub_reasoning_enabled", True))
-    temperature = float(settings.get("paperhub_temperature", 0.7))
-    max_tokens = int(settings.get("paperhub_max_tokens", 2048))
 
-    if not api_key:
-        return "", "", "未填写 PaperHub API Key，请在「设置 → PaperHub 设置」中配置。"
-
+def _normalize_lexicon(bundle: Dict[str, Any]) -> Dict[str, str]:
+    """规范化词库索引。"""
     lexicon = bundle.get("lexicon") or {}
     if not isinstance(lexicon, dict):
         lexicon = {}
-    lexicon = {str(k): str(v) for k, v in lexicon.items() if k}
+    return {str(k): str(v) for k, v in lexicon.items() if str(k).strip()}
 
-    segments = segment_with_lexicon(line, lexicon)
-    gaps = gaps_from_segments(segments)
 
-    prompt = _build_prompt(
-        source=line,
-        segments_preview=lexicon_hits_preview(segments, lexicon),
-        gaps=gaps,
-        whitepaper=_whitepaper_brief(bundle),
-        anchors=_anchors_preview(bundle),
+def _normalize_tts_map(bundle: Dict[str, Any]) -> Dict[str, str]:
+    """规范化 TTS 映射。"""
+    tts_map = bundle.get("tts_map") or {}
+    if not isinstance(tts_map, dict):
+        tts_map = {}
+    return {str(k): str(v) for k, v in tts_map.items() if str(k).strip()}
+
+
+def _apply_tts_map_to_conlang(conlang: str, tts_map: Dict[str, str]) -> str:
+    """对自创语文本应用 TTS 映射，生成 TTS 音译。"""
+    if not conlang or not tts_map:
+        return conlang
+    result = conlang
+    for word, spell in sorted(tts_map.items(), key=lambda kv: len(kv[0]), reverse=True):
+        if word and word in result:
+            result = result.replace(word, spell)
+    return result
+
+
+def _fallback_tts(conlang: str, tts_map: Dict[str, str], ai_tts: str) -> str:
+    """如果 AI 没提供 TTS，则用映射表推导。"""
+    if ai_tts.strip():
+        return ai_tts
+    return _apply_tts_map_to_conlang(conlang, tts_map)
+
+
+def translate_with_paperhub(
+    settings: Dict[str, Any],
+    bundle: Dict[str, Any],
+    text: str,
+) -> PaperHubResult:
+    """
+    PaperHub AI 翻译核心接口。
+
+    根据策略（unmatched_only / always / confirm）执行翻译：
+      - unmatched_only：先规则翻译 → 有未匹配词则 AI 补全 → 合并结果
+      - always：直接 AI 翻译整句（AI 参考词库保持一致性）
+      - confirm：AI 生成候选 → 返回结果供 UI 弹对话框确认
+
+    返回 PaperHubResult，包含：
+      conlang, tts, new_words, strategy_used, error, raw_response
+    """
+    text = text.strip()
+    if not text:
+        return PaperHubResult(error="输入文本为空。")
+
+    params = _get_settings_params(settings)
+    api_key = params["api_key"]
+
+    if not api_key:
+        return PaperHubResult(
+            error="未填写 PaperHub API Key，请在「设置 → PaperHub 设置」中配置。",
+            strategy_used=params["strategy"],
+        )
+
+    lexicon = _normalize_lexicon(bundle)
+    tts_map = _normalize_tts_map(bundle)
+    strategy = params["strategy"]
+    system_prompt = _build_system_prompt(bundle)
+
+    # ── always 策略：直接 AI 翻译 ───────────────────────────────────
+    if strategy == "always":
+        user_prompt = _build_user_prompt_full(text)
+        try:
+            raw = _call_paperhub_chat(
+                api_key=api_key,
+                base_url=params["base_url"],
+                model=params["model"],
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=params["temperature"],
+                max_tokens=params["max_tokens"],
+                reasoning_enabled=params["reasoning"],
+            )
+        except PaperHubError as exc:
+            # 回退到规则翻译
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
+            return PaperHubResult(
+                conlang=rule_result.conlang,
+                tts=rule_result.phonetic,
+                strategy_used="always→rule_fallback",
+                error=exc.user_hint,
+            )
+
+        parsed = _parse_paperhub_response(raw)
+        parsed.strategy_used = "always"
+        parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
+        if parsed.error and not parsed.conlang:
+            # AI 返回无法解析，回退规则翻译
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
+            parsed.conlang = rule_result.conlang
+            parsed.tts = rule_result.phonetic
+            parsed.strategy_used = "always→rule_fallback"
+        return parsed
+
+    # ── unmatched_only 策略：规则 + AI 补全 ──────────────────────────
+    if strategy == "unmatched_only":
+        rule_result = translate_multiline_rule(text, lexicon, tts_map)
+        unmatched = rule_result.unmatched_words
+
+        if not unmatched:
+            # 词库全覆盖，不需要 AI
+            return PaperHubResult(
+                conlang=rule_result.conlang,
+                tts=rule_result.phonetic,
+                strategy_used="unmatched_only→rule_only",
+            )
+
+        # 有未匹配词汇，调用 AI 补全
+        # 清理 rule_result 中的 【】标记，作为参考
+        rule_conlang_clean = re.sub(r"【.*?】", "[未匹配]", rule_result.conlang)
+
+        user_prompt = _build_user_prompt_unmatched(text, unmatched, rule_conlang_clean)
+        try:
+            raw = _call_paperhub_chat(
+                api_key=api_key,
+                base_url=params["base_url"],
+                model=params["model"],
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=params["temperature"],
+                max_tokens=params["max_tokens"],
+                reasoning_enabled=params["reasoning"],
+            )
+        except PaperHubError as exc:
+            # AI 失败，回退到规则翻译结果
+            return PaperHubResult(
+                conlang=rule_result.conlang,
+                tts=rule_result.phonetic,
+                strategy_used="unmatched_only→rule_fallback",
+                error=exc.user_hint,
+            )
+
+        parsed = _parse_paperhub_response(raw)
+        parsed.strategy_used = "unmatched_only"
+        parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
+
+        if parsed.error and not parsed.conlang:
+            # AI 返回无法解析，保留规则翻译结果
+            parsed.conlang = rule_result.conlang
+            parsed.tts = rule_result.phonetic
+            parsed.strategy_used = "unmatched_only→rule_fallback"
+
+        return parsed
+
+    # ── confirm 策略：AI 生成候选，交由 UI 确认 ──────────────────────
+    if strategy == "confirm":
+        user_prompt = _build_user_prompt_full(text)
+        try:
+            raw = _call_paperhub_chat(
+                api_key=api_key,
+                base_url=params["base_url"],
+                model=params["model"],
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                temperature=params["temperature"],
+                max_tokens=params["max_tokens"],
+                reasoning_enabled=params["reasoning"],
+            )
+        except PaperHubError as exc:
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
+            return PaperHubResult(
+                conlang=rule_result.conlang,
+                tts=rule_result.phonetic,
+                strategy_used="confirm→rule_fallback",
+                error=exc.user_hint,
+            )
+
+        parsed = _parse_paperhub_response(raw)
+        parsed.strategy_used = "confirm"
+        parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
+
+        if parsed.error and not parsed.conlang:
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
+            parsed.conlang = rule_result.conlang
+            parsed.tts = rule_result.phonetic
+            parsed.strategy_used = "confirm→rule_fallback"
+
+        return parsed
+
+    # 未知策略
+    return PaperHubResult(
+        error=f"未知的翻译策略：{strategy}",
+        strategy_used=strategy,
     )
 
-    try:
-        raw = _call_paperhub(
-            api_key=api_key,
-            base_url=base_url,
-            model=model,
-            prompt=prompt,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            reasoning_enabled=reasoning,
-        )
-    except ImportError as exc:
-        return "", "", str(exc)
-    except Exception as exc:
-        return "", "", f"PaperHub 请求失败：{exc}"
 
-    conlang, tts = _parse_two_lines(raw)
-    if not conlang:
-        return "", "", "PaperHub 返回为空，请检查模型与网络。"
-    return conlang, tts, ""
-
+# ---------------------------------------------------------------------------
+# 兼容旧接口（translate_multiline_paperhub）
+# ---------------------------------------------------------------------------
 
 def translate_multiline_paperhub(
     settings: Dict[str, Any],
@@ -276,31 +711,9 @@ def translate_multiline_paperhub(
     text: str,
 ) -> Tuple[str, str, str]:
     """
-    多行翻译：逐非空行调用 translate_line_paperhub，聚合结果。
-    返回 (整段自创语, 整段TTS, 错误/附注)。
+    兼容旧调用方式的接口：返回 (conlang, tts, tail) 三元组。
+    tail 为错误信息或空字符串。
     """
-    lines = text.splitlines()
-    outs_c: List[str] = []
-    outs_t: List[str] = []
-    errors: List[str] = []
-
-    for raw_line in lines:
-        if not raw_line.strip():
-            outs_c.append("")
-            outs_t.append("")
-            continue
-        conlang, tts, tail = translate_line_paperhub(settings, bundle, raw_line)
-        outs_c.append(conlang if conlang else raw_line)
-        outs_t.append(tts if tts else raw_line)
-        if tail:
-            errors.append(tail)
-
-    joined_c = "\n".join(outs_c)
-    joined_t = "\n".join(outs_t)
-    err_summary = ""
-    if errors:
-        unique = list(dict.fromkeys(errors))
-        err_summary = "\n".join(unique[:3])
-        if len(unique) > 3:
-            err_summary += "\n…"
-    return joined_c, joined_t, err_summary
+    result = translate_with_paperhub(settings, bundle, text)
+    tail = result.error
+    return result.conlang, result.tts, tail

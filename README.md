@@ -1,15 +1,16 @@
 # Nikki Conlang Forge
 
-`Nikki Conlang Forge` 是一个使用 Python + PyQt5 构建的桌面自创语翻译器。
+`Nikki Conlang Forge`（无限暖暖自创语翻译器）是一个使用 Python + PyQt5 构建的桌面自创语翻译器，支持规则翻译与 PaperHub AI 辅助翻译。
 
-当前阶段（阶段零）已完成：
+## 功能概览
 
-- 项目基础目录结构
-- 可运行的 PyQt5 主窗口
-- 多语言页签的添加与重命名
-- 基于 JSON 的应用状态存储
-- 单句翻译区与批量翻译区的界面预留
-- 四种语言资料文件的导入入口
+- 多语言页签管理（添加、重命名、删除、备注）
+- 四种语言资料文件导入（白皮书 / 词库 / 映射规则 / 翻译历史）
+- 规则翻译引擎（词库最长匹配 → TTS 音译 → 翻译历史记录）
+- PaperHub AI 辅助翻译（三种策略：仅未匹配 / 全部 / 候选确认）
+- AI 新词建议与词库入库
+- 语言包 ZIP 导出/导入
+- 未匹配词添加对话框
 
 ## 项目结构
 
@@ -17,29 +18,43 @@
 X6_Conlang_Translator/
 ├─ app/
 │  ├─ __init__.py
-│  ├─ asset_validation.py
-│  ├─ import_classify.py
-│  ├─ material_service.py
-│  ├─ parse_history_json.py
-│  ├─ parse_lexicon.py
-│  ├─ parse_mapping_csv.py
-│  ├─ parse_whitepaper.py
-│  ├─ main_window.py
-│  ├─ storage.py
-│  └─ ui_theme.py
+│  ├─ add_word_dialog.py           ← 未匹配词添加对话框
+│  ├─ asset_validation.py          ← 资料文件校验
+│  ├─ history_writer.py            ← 翻译历史写入
+│  ├─ import_classify.py           ← 文件类型自动识别
+│  ├─ lexicon_segment.py           ← 词库最长匹配分词
+│  ├─ main_window.py               ← 主窗口（异步翻译线程+confirm对话框）
+│  ├─ material_service.py          ← 资料导入/解析流水线
+│  ├─ paperhub_client.py           ← PaperHub AI 翻译核心
+│  ├─ paperhub_confirm_dialog.py   ← AI 建议确认对话框
+│  ├─ paperhub_settings.py         ← PaperHub 配置存取
+│  ├─ paperhub_settings_dialog.py  ← PaperHub 设置对话框
+│  ├─ parse_history_json.py        ← 翻译历史解析
+│  ├─ parse_lexicon.py             ← JSON 词库解析
+│  ├─ parse_mapping_csv.py         ← TTS 映射规则解析
+│  ├─ parse_whitepaper.py          ← 白皮书 Markdown 解析
+│  ├─ rule_translator.py           ← 规则翻译引擎
+│  ├─ storage.py                   ← JSON 存储管理
+│  └─ ui_theme.py                  ← UI 主题/颜色常量
 ├─ data/
-│  ├─ config.json
-│  └─ <语言资料夹>/
-│     ├─ derived/material_snapshot.json
-│     └─ …标准资料文件…
-├─ main.py
+│  ├─ app_config.json              ← PaperHub AI 配置
+│  ├─ config.json                  ← 应用状态
+│  └─ <语言资料夹>/ ...
+├─ main.py                         ← 入口
+├─ PROJECT_STATUS.md               ← 项目状态文档
 ├─ README.md
-└─ requirements.txt
+├─ requirements.txt
+└─ X6_Conlang_Translator_PROJECT_STATUS.md ← 续聊入口文档
 ```
 
 ## 安装依赖
 
 ```bash
+# 创建虚拟环境（推荐）
+python -m venv venv
+venv\Scripts\activate    # Windows
+# source venv/bin/activate  # macOS/Linux
+
 pip install -r requirements.txt
 ```
 
@@ -49,12 +64,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## 后续建议
+## PaperHub AI 翻译配置
 
-下一阶段建议优先做下面三件事：
+在主窗口菜单 → 设置 → PaperHub 设置 中配置：
+- API Key：从 [PaperHub 工作台](https://tc-paperhub.diezhi.net/dashboard) 获取
+- 模型选择：qwen3-max / glm-5 / doubao-seed-2-0-pro / qwen3.5-plus 等
+- 翻译策略：
+  - **仅未匹配**：先规则翻译，词库外片段由 AI 补全（推荐）
+  - **全部 AI**：整句由 AI 翻译，参考词库保持一致性
+  - **候选确认**：AI 生成候选翻译，弹出对话框让用户确认或修改
 
-1. 定义四种资料文件的严格数据校验规则
-2. 先实现“导入资料并保存到语言页签”
-3. 再实现“中文 -> 自创语”的可替换翻译流水线
+## 后续开发计划
 
-这样后面做批量 Excel 翻译时，结构会更稳，不容易推倒重来。
+- 阶段七：Excel 批量翻译（openpyxl 读取/写入，进度条，中断续翻）

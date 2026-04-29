@@ -29,7 +29,7 @@ DEFAULT_PAPERHUB_SETTINGS: Dict[str, Any] = {
     "paperhub_strategy": "unmatched_only",   # unmatched_only | always | confirm
     "paperhub_reasoning_enabled": True,
     "paperhub_temperature": 0.7,
-    "paperhub_max_tokens": 2048,
+    "paperhub_max_tokens": 4096,
 }
 
 # PaperHub 可用模型清单（显示名, 模型 ID, 描述）

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import csv
+import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -39,7 +41,12 @@ from app.material_service import (
     load_snapshot_if_any,
     refresh_materials_from_disk,
 )
-from app.paperhub_client import translate_multiline_paperhub
+from app.paperhub_client import (
+    NewWord,
+    PaperHubResult,
+    translate_with_paperhub,
+)
+from app.paperhub_confirm_dialog import PaperHubConfirmDialog
 from app.paperhub_settings import load_paperhub_settings
 from app.paperhub_settings_dialog import PaperHubSettingsDialog
 from app.rule_translator import RuleTranslationResult, translate_multiline_rule
@@ -49,8 +56,41 @@ from app.ui_theme import UITheme
 FILE_KEYS = ("whitepaper", "master_library", "mapping_rules", "translation_history")
 
 
+# ---------------------------------------------------------------------------
+# PaperHub 异步翻译线程
+# ---------------------------------------------------------------------------
+
+class _PaperHubTranslateThread(QThread):
+    """后台线程执行 PaperHub AI 翻译，避免阻塞 UI。"""
+
+    finished = pyqtSignal(object)  # PaperHubResult
+
+    def __init__(
+        self,
+        settings: Dict[str, Any],
+        bundle: Dict[str, Any],
+        text: str,
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self._settings = settings
+        self._bundle = bundle
+        self._text = text
+
+    def run(self) -> None:
+        try:
+            result = translate_with_paperhub(self._settings, self._bundle, self._text)
+        except Exception as exc:
+            result = PaperHubResult(error=str(exc))
+        self.finished.emit(result)
+
+
+# ---------------------------------------------------------------------------
+# 主窗口
+# ---------------------------------------------------------------------------
+
 class MainWindow(QMainWindow):
-    """Nikki Conlang Forge 主窗口（资料管理 + 可选 AI 辅助词表外翻译）。"""
+    """Nikki Conlang Forge 主窗口（资料管理 + PaperHub AI 翻译核心）。"""
 
     def __init__(self) -> None:
         super().__init__()
@@ -72,19 +112,34 @@ class MainWindow(QMainWindow):
         self.batch_path_display: Optional[QLabel] = None
         self._excel_path: str = ""
 
+        # AI 翻译进度条（在单句翻译区下方）
+        self._ai_progress: Optional[QProgressBar] = None
+        self._ai_progress_label: Optional[QLabel] = None
+
         self._material_by_lang: Dict[str, Dict] = {}
         self._paperhub_settings: Dict = load_paperhub_settings(self.storage.base_dir)
 
-        # 阶段四新增 —— 单句翻译统计与未匹配词管理
+        # 翻译统计与未匹配词管理
         self._stats_label: Optional[QLabel] = None
         self._add_word_btn: Optional[QPushButton] = None
         self._last_unmatched: List[str] = []
         self._last_rule_result: Optional[RuleTranslationResult] = None
 
+        # PaperHub AI 翻译线程与状态
+        self._ph_thread: Optional[_PaperHubTranslateThread] = None
+        self._ph_rule_result: Optional[RuleTranslationResult] = None
+        self._ph_text: str = ""
+        self._ph_lang: Optional[Dict] = None
+        self._ph_bundle: Dict = {}
+        self._ph_lexicon: Dict[str, str] = {}
+        self._ph_tts_map: Dict[str, str] = {}
+
         self._build_menu()
         self._build_central()
         self._load_languages()
         self.statusBar().showMessage("就绪")
+
+    # ── 菜单 ──────────────────────────────────────────────────────────
 
     def _build_menu(self) -> None:
         menubar = QMenuBar(self)
@@ -121,6 +176,8 @@ class MainWindow(QMainWindow):
         act_about = QAction("关于", self)
         act_about.triggered.connect(self._show_about)
         help_menu.addAction(act_about)
+
+    # ── 中央区域 ──────────────────────────────────────────────────────
 
     def _build_central(self) -> None:
         self.setWindowTitle("Nikki Conlang Forge")
@@ -249,12 +306,26 @@ class MainWindow(QMainWindow):
         # 翻译按钮行
         btn_row = QHBoxLayout()
         btn_row.addStretch(1)
-        btn_translate = QPushButton("翻译")
-        btn_translate.setMinimumWidth(88)
-        btn_translate.setToolTip("规则翻译（AI 辅助可在「工具→AI 辅助翻译设置」中开启）")
-        btn_translate.clicked.connect(self._on_translate_clicked)
-        btn_row.addWidget(btn_translate)
+        self._translate_btn = QPushButton("翻译")
+        self._translate_btn.setMinimumWidth(88)
+        self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
+        self._translate_btn.clicked.connect(self._on_translate_clicked)
+        btn_row.addWidget(self._translate_btn)
         single_layout.addLayout(btn_row)
+
+        # AI 翻译进度行（阶段六新增）
+        ai_progress_row = QHBoxLayout()
+        self._ai_progress = QProgressBar()
+        self._ai_progress.setRange(0, 0)  # 无限循环模式（翻译进行中）
+        self._ai_progress.setValue(0)
+        self._ai_progress.setFormat("AI 翻译中…")
+        self._ai_progress.setVisible(False)
+        self._ai_progress.setMaximumHeight(18)
+        ai_progress_row.addWidget(self._ai_progress, 1)
+        self._ai_progress_label = QLabel("")
+        self._ai_progress_label.setStyleSheet("color: #555; font-size: 11px;")
+        ai_progress_row.addWidget(self._ai_progress_label)
+        single_layout.addLayout(ai_progress_row)
 
         # TTS 音译区
         tts_hdr = QHBoxLayout()
@@ -361,6 +432,8 @@ class MainWindow(QMainWindow):
         outer.addWidget(batch_wrap, 0)
 
         return panel
+
+    # ── 辅助方法 ──────────────────────────────────────────────────────
 
     def _toggle_batch_section(self) -> None:
         self._batch_expanded = not self._batch_expanded
@@ -530,15 +603,14 @@ class MainWindow(QMainWindow):
     def _save_state(self) -> None:
         self.storage.save_state(self.state)
 
+    # ── 语言管理 ──────────────────────────────────────────────────────
+
     def add_language(self) -> None:
         languages = self.state.setdefault("languages", [])
         default_name = self.storage.ensure_unique_language_name("新语言", languages)
 
         name, confirmed = QInputDialog.getText(
-            self,
-            "新增语言",
-            "请输入语言名称：",
-            text=default_name,
+            self, "新增语言", "请输入语言名称：", text=default_name,
         )
         if not confirmed:
             return
@@ -564,10 +636,7 @@ class MainWindow(QMainWindow):
             return
 
         name, confirmed = QInputDialog.getText(
-            self,
-            "重命名语言",
-            "请输入新的语言名称：",
-            text=current["name"],
+            self, "重命名语言", "请输入新的语言名称：", text=current["name"],
         )
         if not confirmed:
             return
@@ -627,9 +696,7 @@ class MainWindow(QMainWindow):
             return
 
         paths, _ = QFileDialog.getOpenFileNames(
-            self,
-            "导入资料（可多选）",
-            str(Path.home()),
+            self, "导入资料（可多选）", str(Path.home()),
             "资料 (*.md *.txt *.json *.csv);;Markdown (*.md);;JSON (*.json);;CSV (*.csv);;所有文件 (*.*)",
         )
         if not paths:
@@ -692,11 +759,9 @@ class MainWindow(QMainWindow):
 
         folder = self.storage.language_dir(lang)
         reply = QMessageBox.question(
-            self,
-            "确认删除",
+            self, "确认删除",
             f"确定删除语言「{lang['name']}」？\n\n以下资料文件夹将永久删除：\n{folder}",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
         )
         if reply != QMessageBox.Yes:
             return
@@ -732,10 +797,7 @@ class MainWindow(QMainWindow):
     def _export_language_pack(self, lang: Dict) -> None:
         default = f"{lang['name']}_语言包.zip"
         zip_path_str, _ = QFileDialog.getSaveFileName(
-            self,
-            "导出语言包",
-            str(Path.home() / default),
-            "Zip 压缩包 (*.zip)",
+            self, "导出语言包", str(Path.home() / default), "Zip 压缩包 (*.zip)",
         )
         if not zip_path_str:
             return
@@ -747,8 +809,7 @@ class MainWindow(QMainWindow):
             return
         if count < len(FILE_KEYS):
             QMessageBox.warning(
-                self,
-                "导出完成（不完整）",
+                self, "导出完成（不完整）",
                 f"已打包 {count} / {len(FILE_KEYS)} 个文件。缺失项将以 ○ 显示在列表中。",
             )
         else:
@@ -756,10 +817,7 @@ class MainWindow(QMainWindow):
 
     def _import_language_pack(self, lang: Dict) -> None:
         zip_path_str, _ = QFileDialog.getOpenFileName(
-            self,
-            "导入语言包",
-            str(Path.home()),
-            "Zip 压缩包 (*.zip)",
+            self, "导入语言包", str(Path.home()), "Zip 压缩包 (*.zip)",
         )
         if not zip_path_str:
             return
@@ -773,13 +831,13 @@ class MainWindow(QMainWindow):
         self._refresh_list_item_for_language(lang["id"])
         self._refresh_asset_status()
         QMessageBox.information(
-            self,
-            "导入完成",
+            self, "导入完成",
             "\n".join(
-                [f"已从压缩包写入 {count} 个识别到的资料文件。", ""]
-                + report.lines
+                [f"已从压缩包写入 {count} 个识别到的资料文件。", ""] + report.lines
             ),
         )
+
+    # ── 翻译核心（阶段六：完整 PaperHub AI 翻译流程）──────────────────
 
     def _on_translate_clicked(self) -> None:
         lang = self.get_current_language()
@@ -792,61 +850,187 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage("请先输入中文", 4000)
             return
 
+        # 防止重复点击（AI 线程运行中）
+        if self._ph_thread is not None and self._ph_thread.isRunning():
+            self.statusBar().showMessage("AI 翻译进行中，请等待完成", 4000)
+            return
+
         self._ensure_material_bundle(lang)
         bundle = self._material_by_lang.get(lang["id"], {})
 
         # 规范化词库和 TTS 映射（过滤空键）
         raw_lexicon = bundle.get("lexicon") or {}
         lexicon: Dict[str, str] = {
-            str(k): str(v)
-            for k, v in raw_lexicon.items()
+            str(k): str(v) for k, v in raw_lexicon.items()
             if isinstance(k, str) and k.strip()
         }
         raw_tts = bundle.get("tts_map") or {}
         tts_map: Dict[str, str] = {
-            str(k): str(v)
-            for k, v in raw_tts.items()
+            str(k): str(v) for k, v in raw_tts.items()
             if isinstance(k, str) and k.strip()
         }
 
-        # ── 第一级 / 第二级：规则翻译（始终执行，提供匹配统计）────
+        # ── 始终执行规则翻译（提供匹配统计）────────────────────────
         rule_result = translate_multiline_rule(text, lexicon, tts_map)
         self._last_rule_result = rule_result
 
-        conlang_out = rule_result.conlang
-        tts_out = rule_result.phonetic
-        translation_mode = "rule"
-        ai_tail = ""
-
-        # ── 可选 AI 辅助（PaperHub）：根据策略决定是否调用 ──────────
+        # ── 判断是否需要 PaperHub AI ────────────────────────────────
         self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
         ph_enabled = bool(self._paperhub_settings.get("paperhub_enabled"))
         strategy = str(self._paperhub_settings.get("paperhub_strategy") or "unmatched_only")
 
         need_ai = ph_enabled and (
             strategy == "always"
+            or strategy == "confirm"
             or (strategy == "unmatched_only" and bool(rule_result.unmatched_words))
         )
 
-        if need_ai:
-            QApplication.setOverrideCursor(Qt.WaitCursor)
-            try:
-                ai_conlang, ai_tts, ai_tail = translate_multiline_paperhub(
-                    self._paperhub_settings, bundle, text
-                )
-            finally:
-                QApplication.restoreOverrideCursor()
+        if not need_ai:
+            # 纯规则翻译 —— 直接显示结果
+            self._display_translation_result(
+                conlang=rule_result.conlang,
+                tts=rule_result.phonetic,
+                rule_result=rule_result,
+                translation_mode="rule",
+                ai_error="",
+            )
+            return
 
-            if ai_conlang:
-                conlang_out = ai_conlang
-                tts_out = ai_tts
+        # ── 需要 AI 翻译 —— 启动后台线程 ────────────────────────────
+        # 先保存翻译上下文供线程回调使用
+        self._ph_rule_result = rule_result
+        self._ph_text = text
+        self._ph_lang = lang
+        self._ph_bundle = bundle
+        self._ph_lexicon = lexicon
+        self._ph_tts_map = tts_map
+
+        # 显示进度动画
+        if self._ai_progress is not None:
+            self._ai_progress.setVisible(True)
+            self._ai_progress.setFormat("AI 翻译中…")
+        if self._ai_progress_label is not None:
+            self._ai_progress_label.setText(f"正在调用 PaperHub AI（策略：{strategy}）…")
+        self._translate_btn.setEnabled(False)
+        self._translate_btn.setText("翻译中…")
+        self.statusBar().showMessage("AI 翻译进行中，请稍候…")
+
+        # 启动后台线程
+        self._ph_thread = _PaperHubTranslateThread(
+            self._paperhub_settings, bundle, text, self,
+        )
+        self._ph_thread.finished.connect(self._on_paperhub_thread_finished)
+        self._ph_thread.start()
+
+    def _on_paperhub_thread_finished(self, result_obj: Any) -> None:
+        """PaperHub AI 翻译线程完成回调。"""
+        # 恢复 UI 状态
+        if self._ai_progress is not None:
+            self._ai_progress.setVisible(False)
+        if self._ai_progress_label is not None:
+            self._ai_progress_label.setText("")
+        self._translate_btn.setEnabled(True)
+        self._translate_btn.setText("翻译")
+
+        # 类型转换
+        ph_result: PaperHubResult = result_obj if isinstance(result_obj, PaperHubResult) else PaperHubResult(error=str(result_obj))
+
+        rule_result = self._ph_rule_result
+        if rule_result is None:
+            self.statusBar().showMessage("翻译异常：丢失规则翻译结果", 5000)
+            return
+
+        strategy = ph_result.strategy_used or str(self._paperhub_settings.get("paperhub_strategy") or "unmatched_only")
+        lang = self._ph_lang
+        if lang is None:
+            self.statusBar().showMessage("翻译异常：丢失语言上下文", 5000)
+            return
+
+        # ── confirm 策略：弹出确认对话框 ────────────────────────────
+        if strategy == "confirm" and not ph_result.error:
+            confirm_dlg = PaperHubConfirmDialog(
+                ai_result=ph_result,
+                rule_conlang=rule_result.conlang,
+                rule_tts=rule_result.phonetic,
+                parent=self,
+            )
+            confirm_dlg.exec_()
+            confirm_result = confirm_dlg.get_result()
+
+            if confirm_result is not None and confirm_result.accepted:
+                # 用户采用了 AI 建议（或修改后采用）
+                conlang_out = confirm_result.conlang
+                tts_out = confirm_result.tts
+                translation_mode = "ai_confirm"
+
+                # 询问是否将新词添加到词库
+                if confirm_result.new_words:
+                    self._ask_add_new_words_to_lexicon(confirm_result.new_words, lang)
+            else:
+                # 用户放弃了 AI 建议，使用规则翻译结果
+                conlang_out = rule_result.conlang
+                tts_out = rule_result.phonetic
+                translation_mode = "rule_confirm_discarded"
+
+            self._display_translation_result(
+                conlang=conlang_out,
+                tts=tts_out,
+                rule_result=rule_result,
+                translation_mode=translation_mode,
+                ai_error="",
+            )
+            return
+
+        # ── unmatched_only / always 策略 ─────────────────────────────
+        conlang_out = rule_result.conlang
+        tts_out = rule_result.phonetic
+        translation_mode = "rule"
+        ai_error = ""
+
+        if ph_result.error:
+            ai_error = ph_result.error
+            # AI 失败时使用规则翻译回退结果
+            # ph_result 可能已经包含回退的规则结果
+            if ph_result.conlang:
+                conlang_out = ph_result.conlang
+                tts_out = ph_result.tts
+                translation_mode = "ai_fallback"
+        else:
+            if ph_result.conlang:
+                conlang_out = ph_result.conlang
+                tts_out = ph_result.tts
                 translation_mode = "ai_assisted"
+
+            # 询问是否将新词添加到词库
+            if ph_result.new_words:
+                self._ask_add_new_words_to_lexicon(ph_result.new_words, lang)
+
+        self._display_translation_result(
+            conlang=conlang_out,
+            tts=tts_out,
+            rule_result=rule_result,
+            translation_mode=translation_mode,
+            ai_error=ai_error,
+        )
+
+    def _display_translation_result(
+        self,
+        conlang: str,
+        tts: str,
+        rule_result: RuleTranslationResult,
+        translation_mode: str,
+        ai_error: str,
+    ) -> None:
+        """统一更新输出框、统计栏、翻译历史与状态栏。"""
+        lang = self.get_current_language()
+        if lang is None:
+            return
 
         # ── 更新输出框 ────────────────────────────────────────────
         if self.target_output is not None:
-            self.target_output.setPlainText(conlang_out)
+            self.target_output.setPlainText(conlang)
         if self.tts_output is not None:
-            self.tts_output.setPlainText(tts_out)
+            self.tts_output.setPlainText(tts)
 
         # ── 更新统计栏 ────────────────────────────────────────────
         rate_pct = int(rule_result.match_rate * 100)
@@ -860,7 +1044,7 @@ class MainWindow(QMainWindow):
         ]
         if unmatched:
             stat_parts.append(f"{len(unmatched)} 个词汇未找到")
-        if translation_mode == "ai_assisted":
+        if translation_mode.startswith("ai"):
             stat_parts.append("AI 辅助")
         if emotion.label != "neutral":
             stat_parts.append(f"情绪: {emotion.display_name}")
@@ -874,14 +1058,15 @@ class MainWindow(QMainWindow):
         if self._add_word_btn is not None:
             self._add_word_btn.setVisible(bool(unmatched))
 
-        # ── 第三级：写入翻译历史 ──────────────────────────────────
+        # ── 写入翻译历史 ──────────────────────────────────────────
+        text = self._ph_text or self.source_input.toPlainText() if self.source_input else ""
         try:
             hist_path = self.storage.asset_path(lang, "translation_history")
             append_translation_record(
                 hist_path,
                 source=text,
-                conlang=conlang_out,
-                phonetic=tts_out,
+                conlang=conlang,
+                phonetic=tts,
                 unmatched_words=unmatched,
                 target_language=lang["name"],
                 translation_mode=translation_mode,
@@ -893,16 +1078,121 @@ class MainWindow(QMainWindow):
         except Exception:
             pass  # 历史写入失败不阻断翻译主流程
 
-        # ── 状态栏 & PaperHub 错误提示 ───────────────────────────────
-        if ai_tail:
-            err_keywords = ("失败", "未填写", "缺少依赖", "API Key")
-            if any(k in ai_tail for k in err_keywords):
-                QMessageBox.warning(self, "PaperHub 翻译提示", ai_tail)
-            self.statusBar().showMessage(
-                f"翻译完成 · {stats_text}", 10000
-            )
+        # ── 状态栏 & AI 错误提示 ───────────────────────────────────
+        if ai_error:
+            err_keywords = ("失败", "未填写", "缺少依赖", "API Key", "无效", "超时", "网络", "不存在")
+            if any(k in ai_error for k in err_keywords):
+                QMessageBox.warning(self, "PaperHub 翻译提示", ai_error)
+            self.statusBar().showMessage(f"翻译完成 · {stats_text}", 10000)
         else:
             self.statusBar().showMessage(f"翻译完成 · {stats_text}", 8000)
+
+    # ── 新词入库询问（阶段六新增）───────────────────────────────────
+
+    def _ask_add_new_words_to_lexicon(self, new_words: List[NewWord], lang: Dict) -> None:
+        """翻译完成后，如果有新创词汇，询问用户是否添加到词库。"""
+        if not new_words:
+            return
+
+        # 构造展示文本
+        word_lines: List[str] = []
+        for nw in new_words:
+            line = f"  {nw.chinese} → {nw.conlang}"
+            if nw.tts:
+                line += f"  (TTS: {nw.tts})"
+            if nw.logic:
+                line += f"  [构词: {nw.logic}]"
+            word_lines.append(line)
+
+        detail = "\n".join(word_lines)
+        reply = QMessageBox.question(
+            self,
+            "添加新词到词库？",
+            f"AI 翻译中创造了 {len(new_words)} 个新词汇：\n\n{detail}\n\n"
+            "是否将这些新词添加到主词库和映射表？\n"
+            "（添加后下次翻译时词库将包含这些词汇）",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes,
+        )
+        if reply != QMessageBox.Yes:
+            return
+
+        # 执行写入
+        self._write_new_words_to_lexicon(new_words, lang)
+
+    def _write_new_words_to_lexicon(self, new_words: List[NewWord], lang: Dict) -> None:
+        """将 AI 创造的新词写入主词库和映射表。"""
+        errors: List[str] = []
+
+        # ── 写入主词库 JSON ────────────────────────────────────────
+        master_path = self.storage.asset_path(lang, "master_library")
+        try:
+            data: Any = {}
+            if master_path.is_file():
+                raw = master_path.read_text(encoding="utf-8").strip()
+                if raw and raw not in ("{}", ""):
+                    try:
+                        data = json.loads(raw)
+                    except json.JSONDecodeError:
+                        data = {}
+
+            if isinstance(data, dict):
+                for nw in new_words:
+                    data[nw.chinese] = nw.conlang
+            elif isinstance(data, list):
+                for nw in new_words:
+                    data.append({"zh": nw.chinese, "conlang": nw.conlang})
+
+            master_path.parent.mkdir(parents=True, exist_ok=True)
+            master_path.write_text(
+                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        except Exception as exc:
+            errors.append(f"主词库写入失败：{exc}")
+
+        # ── 写入映射表 CSV ────────────────────────────────────────
+        mapping_path = self.storage.asset_path(lang, "mapping_rules")
+        try:
+            rows: List[List[str]] = []
+            existing_words: set[str] = set()
+
+            if mapping_path.is_file():
+                with mapping_path.open(newline="", encoding="utf-8-sig") as fh:
+                    reader = csv.reader(fh)
+                    rows = list(reader)
+                for row in rows[1:]:
+                    if row:
+                        existing_words.add(row[0].strip())
+
+            if not rows:
+                rows = [["自创语词汇", "IPA音标", "TTS友好拼写"]]
+
+            for nw in new_words:
+                if nw.conlang and nw.conlang not in existing_words:
+                    ipa = nw.ipa or ""
+                    tts = nw.tts or nw.conlang
+                    rows.append([nw.conlang, ipa, tts])
+                    existing_words.add(nw.conlang)
+
+            with mapping_path.open("w", newline="", encoding="utf-8-sig") as fh:
+                writer = csv.writer(fh)
+                writer.writerows(rows)
+        except Exception as exc:
+            errors.append(f"映射表写入失败：{exc}")
+
+        if errors:
+            QMessageBox.critical(self, "写入失败", "\n".join(errors))
+        else:
+            # 刷新内存词库
+            report = refresh_materials_from_disk(self.storage, lang)
+            self._material_by_lang[lang["id"]] = report.bundle
+            self._refresh_list_item_for_language(lang["id"])
+            self._refresh_asset_status()
+            self.statusBar().showMessage(
+                f"已添加 {len(new_words)} 个新词到词库，重新翻译可生效", 5000
+            )
+
+    # ── 未匹配词手动添加 ──────────────────────────────────────────────
 
     def _on_add_unmatched_words(self) -> None:
         """打开「将未匹配词添加到词库」对话框，成功后刷新内存词库。"""
@@ -926,15 +1216,13 @@ class MainWindow(QMainWindow):
             self._last_unmatched = []
             if self._add_word_btn is not None:
                 self._add_word_btn.setVisible(False)
-            self.statusBar().showMessage(
-                "词库已更新，重新翻译即可看到效果", 5000
-            )
+            self.statusBar().showMessage("词库已更新，重新翻译即可看到效果", 5000)
+
+    # ── 批量翻译（预留）───────────────────────────────────────────────
 
     def _pick_excel(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
-            self,
-            "选择 Excel",
-            str(Path.home()),
+            self, "选择 Excel", str(Path.home()),
             "Excel Files (*.xlsx *.xls);;All Files (*.*)",
         )
         if path:
@@ -958,6 +1246,7 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段五：PaperHub AI 接入已完成。<br>"
-            "支持规则翻译 + PaperHub AI 辅助补全（qwen3-max 等模型）。",
+            "阶段六：PaperHub AI 翻译核心已完成。<br>"
+            "支持规则翻译 + PaperHub AI 辅助（三种策略：<br>"
+            "仅补全未匹配、始终 AI、AI 建议确认）。",
         )

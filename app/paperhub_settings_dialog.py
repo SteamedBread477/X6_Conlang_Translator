@@ -206,14 +206,13 @@ class PaperHubSettingsDialog(QDialog):
         strategies = [
             ("unmatched_only", "仅在词汇未匹配时使用 AI（推荐，节约 API 用量）"),
             ("always",         "所有翻译都使用 AI"),
-            ("confirm",        "AI 生成候选，用户确认后采用（预留，即将支持）"),
+            ("confirm",        "AI 生成候选，用户确认后采用"),
         ]
         for i, (value, label) in enumerate(strategies):
             rb = QRadioButton(label)
             rb.setProperty("strategy_value", value)
             if value == "confirm":
-                rb.setEnabled(False)
-                rb.setToolTip("该功能将在后续版本中支持")
+                rb.setToolTip("AI 生成翻译候选后弹出确认对话框，用户可采用、修改后采用或放弃")
             strategy_layout.addWidget(rb)
             self._strategy_group.addButton(rb, i)
         layout.addWidget(strategy_grp)
