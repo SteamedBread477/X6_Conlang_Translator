@@ -644,10 +644,10 @@ class UnmatchedWordsDialog(QDialog):
             if conlang_item is not None:
                 user_conlang = conlang_item.text().strip()
                 if user_conlang:
-                    entry.conlang = user_conlang
-                    # 如果用户修改了 AI 生成的内容，标记为 manual
+                    # 如果用户修改了 AI 生成的内容，标记为 manual（比较必须在赋值之前）
                     if entry.created_by == "paperhub_ai" and user_conlang != entry.conlang:
                         entry.created_by = "manual_ai_modified"
+                    entry.conlang = user_conlang
 
             tts_item = self._table.item(row_idx, 2)
             if tts_item is not None:

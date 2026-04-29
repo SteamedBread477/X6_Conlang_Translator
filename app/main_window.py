@@ -28,6 +28,8 @@ from PyQt5.QtWidgets import (
     QProgressBar,
     QPushButton,
     QSplitter,
+    QTableWidget,
+    QTableWidgetItem,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -35,6 +37,20 @@ from PyQt5.QtWidgets import (
 
 from app.add_word_dialog import AddWordDialog
 from app.asset_validation import check_asset
+from app.batch_translate_dialog import BatchTranslateDialog, BatchTranslateSettings
+from app.batch_translator import (
+    BatchTranslateResult,
+    BatchTranslateWorker,
+    export_results_to_excel,
+    export_unmatched_report,
+)
+from app.excel_import import (
+    ExcelImportResult,
+    ExcelRow,
+    ExcelStatistics,
+    read_excel,
+    get_texts_from_rows,
+)
 from app.unmatched_words_dialog import UnmatchedWordEntry, UnmatchedWordsDialog
 from app.history_writer import append_translation_record
 from app.material_service import (
@@ -112,6 +128,10 @@ class MainWindow(QMainWindow):
         self.batch_progress: Optional[QProgressBar] = None
         self.batch_path_display: Optional[QLabel] = None
         self._excel_path: str = ""
+        self._excel_import_result: Optional[ExcelImportResult] = None
+        self._batch_translate_settings: Optional[BatchTranslateSettings] = None
+        self._batch_worker: Optional[BatchTranslateWorker] = None
+        self._batch_results: List[BatchTranslateResult] = []
 
         # AI 翻译进度条（在单句翻译区下方）
         self._ai_progress: Optional[QProgressBar] = None
@@ -1416,27 +1436,332 @@ class MainWindow(QMainWindow):
             else:
                 self.statusBar().showMessage("没有需要保存的词汇", 3000)
 
-    # ── 批量翻译（预留）───────────────────────────────────────────────
+    # ── 批量翻译（阶段八）─────────────────────────────────────────────
 
     def _pick_excel(self) -> None:
+        """选择 Excel 台本文件：读取 → 验证 → 显示预览和统计。"""
         path, _ = QFileDialog.getOpenFileName(
-            self, "选择 Excel", str(Path.home()),
+            self, "选择 Excel 台本", str(Path.home()),
             "Excel Files (*.xlsx *.xls);;All Files (*.*)",
         )
-        if path:
-            self._excel_path = path
+        if not path:
+            return
+
+        self._excel_path = path
+
+        # 执行导入
+        result = read_excel(path)
+        self._excel_import_result = result
+
+        if not result.ok:
+            QMessageBox.critical(
+                self, "导入失败",
+                f"读取 Excel 文件失败：\n{result.error}",
+            )
             if self.batch_path_display is not None:
-                self.batch_path_display.setText(path)
+                self.batch_path_display.setText(f"导入失败：{Path(path).name}")
+            return
+
+        # 显示文件路径
+        if self.batch_path_display is not None:
+            self.batch_path_display.setText(path)
+
+        if self.batch_log is not None:
+            self.batch_log.clear()
+            self.batch_log.appendPlainText(f"已选择：{path}")
+
+        # 检查必需列
+        if result.missing_columns:
+            missing_text = ", ".join(result.missing_columns)
+            QMessageBox.warning(
+                self, "缺少必需列",
+                f"以下必需列在 Excel 中未找到：\n{missing_text}\n\n"
+                "请确保 Excel 首行包含以下列名：\n"
+                "台本ID, Character, Age, Gender, Body_Type, Emotion, Scene_Context, Text",
+            )
             if self.batch_log is not None:
-                self.batch_log.appendPlainText(f"已选择：{path}")
+                self.batch_log.appendPlainText(f"⚠ 缺少列：{missing_text}")
+            # 缺列仍可继续（缺失列数据为空）
+
+        # ── 显示预览 ──────────────────────────────────────────────
+        stats = result.statistics
+        preview_lines: List[str] = []
+        preview_lines.append(f"统计信息：")
+        preview_lines.append(f"  总行数：{stats.total_rows}")
+        preview_lines.append(f"  角色数量：{stats.character_count}")
+        if stats.characters:
+            preview_lines.append(f"  角色：{', '.join(stats.characters[:10])}"
+                                + ("…" if len(stats.characters) > 10 else ""))
+        preview_lines.append(f"  情绪类型：{stats.emotion_count}")
+        if stats.emotion_types:
+            preview_lines.append(f"  情绪：{', '.join(stats.emotion_types[:10])}"
+                                + ("…" if len(stats.emotion_types) > 10 else ""))
+        preview_lines.append("")
+        preview_lines.append("预览（前5行）：")
+
+        # 构建预览表格
+
+        preview_rows = result.preview_rows
+        columns = result.columns
+
+        preview_dlg = QDialog(self)
+        preview_dlg.setWindowTitle("Excel 台本预览")
+        preview_dlg.setMinimumWidth(720)
+        preview_dlg.setMinimumHeight(400)
+        preview_layout = QVBoxLayout(preview_dlg)
+
+        # 统计标签
+        stats_text = (
+            f"总行数：{stats.total_rows}　"
+            f"角色数量：{stats.character_count}　"
+            f"情绪类型：{stats.emotion_count}"
+        )
+        stats_label = QLabel(stats_text)
+        stats_label.setStyleSheet("font-weight: bold; font-size: 13px; padding: 4px;")
+        preview_layout.addWidget(stats_label)
+
+        # 预览表格（最多5行）
+        if preview_rows:
+            table = QTableWidget(min(len(preview_rows), 5), len(columns))
+            table.setHorizontalHeaderLabels(columns)
+            table.setAlternatingRowColors(True)
+            table.horizontalHeader().setStretchLastSection(True)
+            table.setEditTriggers(QTableWidget.NoEditTriggers)
+
+            for row_idx, prow in enumerate(preview_rows[:5]):
+                for col_idx, col_name in enumerate(columns):
+                    val = prow.data.get(col_name, "")
+                    # 截断过长内容
+                    display = str(val)[:60] + ("…" if len(str(val)) > 60 else "")
+                    item = QTableWidgetItem(display)
+                    table.setItem(row_idx, col_idx, item)
+
+            table.resizeColumnsToContents()
+            preview_layout.addWidget(table)
+        else:
+            preview_layout.addWidget(QLabel("（无数据行）"))
+
+        preview_layout.addStretch(1)
+
+        btn_close_preview = QPushButton("关闭")
+        btn_close_preview.clicked.connect(preview_dlg.accept)
+        preview_layout.addWidget(btn_close_preview)
+
+        preview_dlg.exec_()
+
+        if self.batch_log is not None:
+            self.batch_log.appendPlainText(stats_text)
+            self.batch_log.appendPlainText(f"共 {len(result.rows)} 行数据待翻译。")
+
+        # 刷新资料状态（可能已更新词库）
+        self._refresh_asset_status()
 
     def _on_batch_start(self) -> None:
+        """开始批量翻译：弹出设置对话框 → 启动翻译线程。"""
+        if not self._excel_import_result or not self._excel_import_result.ok:
+            QMessageBox.warning(
+                self, "未导入 Excel",
+                "请先点击「选择 Excel」导入台本文件。",
+            )
+            return
+
+        if self._batch_worker is not None and self._batch_worker.isRunning():
+            QMessageBox.warning(
+                self, "翻译进行中",
+                "批量翻译正在进行，请等待完成或取消后再试。",
+            )
+            return
+
+        lang = self.get_current_language()
+        if lang is None:
+            QMessageBox.warning(self, "未选择语言", "请先选择一个语言。")
+            return
+
+        # 弹出批量翻译设置对话框
+        dlg = BatchTranslateDialog(
+            current_settings=self._batch_translate_settings,
+            paperhub_settings=self._paperhub_settings,
+            parent=self,
+        )
+        if dlg.exec_() != QDialog.Accepted:
+            return
+
+        settings = dlg.get_settings()
+        self._batch_translate_settings = settings
+
+        # 构建翻译 bundle
+        self._ensure_material_bundle(lang)
+        bundle = dict(self.get_language_material_bundle(lang.get("id", "")))
+
+        # 添加文件路径到 bundle（供自动写入词库使用）
+        bundle["master_library_path"] = str(self.storage.asset_path(lang, "master_library"))
+        bundle["mapping_rules_path"] = str(self.storage.asset_path(lang, "mapping_rules"))
+
+        # 创建翻译线程
+        rows = self._excel_import_result.rows
+        self._batch_worker = BatchTranslateWorker(
+            rows=rows,
+            settings=settings,
+            bundle=bundle,
+            paperhub_settings=self._paperhub_settings,
+            parent=self,
+        )
+        self._batch_worker.progress.connect(self._on_batch_progress)
+        self._batch_worker.finished.connect(self._on_batch_finished)
+
+        # UI 进入翻译状态
+        if self.batch_progress is not None:
+            self.batch_progress.setRange(0, len(rows))
+            self.batch_progress.setValue(0)
+            self.batch_progress.setFormat("翻译中… %p%")
+
         if self.batch_log is not None:
-            self.batch_log.appendPlainText("批量翻译将于后续阶段接入。")
+            mode_names = {"rule": "规则翻译", "hybrid": "混合翻译", "ai": "AI翻译"}
+            self.batch_log.appendPlainText(
+                f"开始批量翻译（{mode_names.get(settings.mode, settings.mode)}）"
+            )
+            self.batch_log.appendPlainText(f"模型：{settings.model}  并发：{settings.concurrency}  间隔：{settings.request_interval}s")
+
+        self._batch_results = []
+        self.statusBar().showMessage("批量翻译进行中…")
+        self._batch_worker.start()
+
+    def _on_batch_progress(self, row_index: int, total: int, result: BatchTranslateResult) -> None:
+        """每行翻译完成的回调。"""
+        if self.batch_progress is not None:
+            self.batch_progress.setValue(row_index + 1)
+
+        if self.batch_log is not None:
+            row_id = result.row_id or str(result.row_index)
+            if result.error:
+                self.batch_log.appendPlainText(
+                    f"  [{row_id}] ❌ {result.chinese_text[:30]}… → 错误：{result.error[:60]}"
+                )
+            elif result.mode_used == "skip":
+                self.batch_log.appendPlainText(f"  [{row_id}] ⊘ 空行跳过")
+            else:
+                unmatched_tag = ""
+                if result.unmatched_words:
+                    unmatched_tag = f" （未匹配{len(result.unmatched_words)}词）"
+                self.batch_log.appendPlainText(
+                    f"  [{row_id}] ✓ {result.chinese_text[:30]}… → {result.conlang[:30]}…{unmatched_tag}"
+                )
+
+    def _on_batch_finished(
+        self,
+        results: List[BatchTranslateResult],
+        unmatched_entries: List[UnmatchedWordEntry],
+        error_msg: str,
+    ) -> None:
+        """批量翻译全部完成的回调。"""
+        self._batch_results = results
+
+        if self.batch_log is not None:
+            if error_msg:
+                self.batch_log.appendPlainText(f"⚠ 批量翻译中断：{error_msg}")
+            else:
+                # 统计结果
+                success_count = sum(1 for r in results if r.conlang and not r.error)
+                error_count = sum(1 for r in results if r.error)
+                skip_count = sum(1 for r in results if r.mode_used == "skip")
+                total_count = len(results)
+                self.batch_log.appendPlainText(
+                    f"批量翻译完成！总计 {total_count} 行 "
+                    f"（成功 {success_count}，跳过 {skip_count}，错误 {error_count}）"
+                )
+
+            if unmatched_entries:
+                self.batch_log.appendPlainText(f"未匹配词汇：{len(unmatched_entries)} 个")
+
+        if self.batch_progress is not None:
+            self.batch_progress.setFormat("完成 ✓ %p%")
+
+        self.statusBar().showMessage("批量翻译完成", 5000)
+
+        # ── 如果有未匹配词汇且有 AI 自动添加未成功，弹出处理对话框 ────
+        filled_unmatched = [e for e in unmatched_entries if e.conlang]
+        unfilled_unmatched = [e for e in unmatched_entries if not e.conlang]
+
+        if unfilled_unmatched and self._batch_translate_settings:
+            # 弹出未匹配词汇对话框
+            bundle = dict(self.get_language_material_bundle())
+            dlg = UnmatchedWordsDialog(
+                unmatched_words=[e.chinese for e in unfilled_unmatched],
+                bundle=bundle,
+                paperhub_settings=self._paperhub_settings,
+                parent=self,
+            )
+            if dlg.exec_() == QDialog.Accepted:
+                entries = dlg.get_entries()
+                filled = [e for e in entries if e.conlang]
+                if filled:
+                    lang = self.get_current_language()
+                    if lang:
+                        self._write_unmatched_entries_to_lexicon(filled, lang)
+
+        # ── 导出未匹配词汇报告（如果设置要求）─────────────────────────
+        if self._batch_translate_settings and self._batch_translate_settings.export_unmatched_report:
+            if unmatched_entries:
+                report_path = Path(self._excel_path).parent / (
+                    Path(self._excel_path).stem + "_unmatched_report.csv"
+                )
+                success = export_unmatched_report(unmatched_entries, str(report_path))
+                if success and self.batch_log is not None:
+                    self.batch_log.appendPlainText(f"未匹配词汇报告已导出：{report_path}")
+
+        # 刷新资料状态（可能已更新词库）
+        self._refresh_asset_status()
+        self._refresh_materials()
+
+    def _refresh_materials(self) -> None:
+        """重新从磁盘加载资料 bundle（批量翻译可能已更新词库）。"""
+        lang = self.get_current_language()
+        if lang is None:
+            return
+        bid = lang.get("id", "")
+        if bid in self._material_by_lang:
+            rep = refresh_materials_from_disk(self.storage, lang)
+            self._material_by_lang[bid] = rep.bundle
 
     def _on_batch_export(self) -> None:
-        if self.batch_log is not None:
-            self.batch_log.appendPlainText("导出功能将于后续阶段接入。")
+        """导出翻译结果为 Excel 文件。"""
+        if not self._batch_results:
+            QMessageBox.warning(
+                self, "无翻译结果",
+                "尚未完成批量翻译，请先执行翻译后再导出。",
+            )
+            return
+
+        output_path, _ = QFileDialog.getSaveFileName(
+            self, "导出翻译结果",
+            str(Path(self._excel_path).parent / (Path(self._excel_path).stem + "_translated.xlsx")),
+            "Excel Files (*.xlsx);;All Files (*.*)",
+        )
+        if not output_path:
+            return
+
+        if self._excel_import_result is None or not self._excel_import_result.ok:
+            QMessageBox.warning(self, "导出失败", "原始 Excel 数据不可用。")
+            return
+
+        success = export_results_to_excel(
+            results=self._batch_results,
+            original_rows=self._excel_import_result.rows,
+            output_path=output_path,
+        )
+
+        if success:
+            QMessageBox.information(
+                self, "导出成功",
+                f"翻译结果已导出到：\n{output_path}",
+            )
+            if self.batch_log is not None:
+                self.batch_log.appendPlainText(f"导出成功：{output_path}")
+        else:
+            QMessageBox.critical(
+                self, "导出失败",
+                "导出 Excel 文件失败，请检查文件路径和 pandas / openpyxl 是否已安装。",
+            )
 
     def _show_about(self) -> None:
         QMessageBox.about(
@@ -1444,8 +1769,9 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段七：未匹配词汇处理（AI辅助）已完成。<br>"
-            "支持规则翻译 + PaperHub AI 辅助（三种策略）<br>"
-            " + 未匹配词汇对话框（手动填写 / AI 单词生成 /<br>"
-            "批量AI生成 / 保存到词库含富元数据）。",
+            "阶段八：Excel 台本导入与批量翻译已完成。<br>"
+            "支持规则翻译 / 混合翻译 / AI翻译三种模式<br>"
+            " + Excel 台本导入（预览+统计+验证）<br>"
+            " + 批量翻译设置对话框（并发+限流）<br>"
+            " + 翻译结果导出为 Excel + 未匹配词报告。",
         )
