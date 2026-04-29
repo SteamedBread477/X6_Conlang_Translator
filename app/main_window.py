@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import (
 
 from app.add_word_dialog import AddWordDialog
 from app.asset_validation import check_asset
+from app.unmatched_words_dialog import UnmatchedWordEntry, UnmatchedWordsDialog
 from app.history_writer import append_translation_record
 from app.material_service import (
     import_material_files,
@@ -1058,6 +1059,12 @@ class MainWindow(QMainWindow):
         if self._add_word_btn is not None:
             self._add_word_btn.setVisible(bool(unmatched))
 
+        # ── 阶段七：自动弹出未匹配词汇处理对话框 ──────────────────
+        # 仅在纯规则翻译有未匹配词时弹出（AI 辅助翻译的新词已通过
+        # _ask_add_new_words_to_lexicon 处理，不需要重复弹出）
+        if unmatched and translation_mode in ("rule", "rule_confirm_discarded", "ai_fallback"):
+            self._auto_show_unmatched_words_dialog(lang, unmatched)
+
         # ── 写入翻译历史 ──────────────────────────────────────────
         text = self._ph_text or self.source_input.toPlainText() if self.source_input else ""
         try:
@@ -1086,6 +1093,38 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(f"翻译完成 · {stats_text}", 10000)
         else:
             self.statusBar().showMessage(f"翻译完成 · {stats_text}", 8000)
+
+    # ── 自动弹出未匹配词汇对话框（阶段七新增）─────────────────────
+
+    def _auto_show_unmatched_words_dialog(
+        self,
+        lang: Dict,
+        unmatched: List[str],
+    ) -> None:
+        """翻译完成后如果有未匹配词汇，自动弹出 UnmatchedWordsDialog。"""
+        if not unmatched:
+            return
+
+        self._ensure_material_bundle(lang)
+        bundle = self._material_by_lang.get(lang["id"], {})
+        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+
+        dlg = UnmatchedWordsDialog(
+            unmatched_words=unmatched,
+            bundle=bundle,
+            paperhub_settings=self._paperhub_settings,
+            parent=self,
+        )
+        if dlg.exec_() == QDialog.Accepted:
+            entries = dlg.get_entries()
+            filled = [e for e in entries if e.conlang]
+            if filled:
+                self._write_unmatched_entries_to_lexicon(filled, lang)
+                self._last_unmatched = []
+                if self._add_word_btn is not None:
+                    self._add_word_btn.setVisible(False)
+            else:
+                self.statusBar().showMessage("没有需要保存的词汇", 3000)
 
     # ── 新词入库询问（阶段六新增）───────────────────────────────────
 
@@ -1192,31 +1231,190 @@ class MainWindow(QMainWindow):
                 f"已添加 {len(new_words)} 个新词到词库，重新翻译可生效", 5000
             )
 
-    # ── 未匹配词手动添加 ──────────────────────────────────────────────
+    # ── 富元数据写入（阶段七新增）─────────────────────────────────────
+
+    def _write_unmatched_entries_to_lexicon(
+        self,
+        entries: List[UnmatchedWordEntry],
+        lang: Dict,
+    ) -> None:
+        """将 UnmatchedWordEntry（含富元数据）写入主词库和映射表。
+
+        主词库写入格式（阶段七升级）：
+          {
+            "vocabulary": {
+              "星之海": {
+                "conlang": "aether'maris",
+                "ipa": "ae-ther-ma-ris",
+                "tts": "aethermaris",
+                "logic": "星+aether组合",
+                "created_by": "paperhub_ai",
+                "created_time": "2025-04-29T10:30:00",
+                "model": "qwen3-max"
+              }
+            }
+          }
+        """
+        errors: List[str] = []
+
+        # ── 写入主词库 JSON ────────────────────────────────────────
+        master_path = self.storage.asset_path(lang, "master_library")
+        try:
+            data: Any = {}
+            if master_path.is_file():
+                raw = master_path.read_text(encoding="utf-8").strip()
+                if raw and raw not in ("{}", ""):
+                    try:
+                        data = json.loads(raw)
+                    except json.JSONDecodeError:
+                        data = {}
+
+            # 确保顶层有 vocabulary 键
+            if isinstance(data, dict):
+                vocab = data.setdefault("vocabulary", {})
+                if not isinstance(vocab, dict):
+                    vocab = {}
+                    data["vocabulary"] = vocab
+
+                for entry in entries:
+                    if not entry.conlang:
+                        continue
+                    # 检查是否已有该词条 — 如果有则更新，否则新增
+                    existing = vocab.get(entry.chinese)
+                    if isinstance(existing, dict):
+                        # 已有富元数据条目 → 更新字段
+                        existing["conlang"] = entry.conlang
+                        existing["ipa"] = entry.ipa or existing.get("ipa", "")
+                        existing["tts"] = entry.tts or existing.get("tts", "")
+                        existing["logic"] = entry.logic or existing.get("logic", "")
+                        if entry.created_by:
+                            existing["created_by"] = entry.created_by
+                        if entry.created_time:
+                            existing["created_time"] = entry.created_time
+                        if entry.model:
+                            existing["model"] = entry.model
+                    elif isinstance(existing, str):
+                        # 旧格式（简单映射 "中文": "自创语"）→ 升级为富元数据
+                        vocab[entry.chinese] = {
+                            "conlang": entry.conlang,
+                            "ipa": entry.ipa or "",
+                            "tts": entry.tts or entry.conlang,
+                            "logic": entry.logic or "",
+                            "created_by": entry.created_by or "manual",
+                            "created_time": entry.created_time or "",
+                            "model": entry.model or "",
+                        }
+                    else:
+                        # 新增条目
+                        vocab[entry.chinese] = {
+                            "conlang": entry.conlang,
+                            "ipa": entry.ipa or "",
+                            "tts": entry.tts or entry.conlang,
+                            "logic": entry.logic or "",
+                            "created_by": entry.created_by or "manual",
+                            "created_time": entry.created_time or "",
+                            "model": entry.model or "",
+                        }
+
+                # 同时保持顶层简单映射兼容性（规则翻译使用顶层键值对）
+                for entry in entries:
+                    if entry.conlang:
+                        data[entry.chinese] = entry.conlang
+
+            elif isinstance(data, list):
+                # 列表格式 → 逐条追加
+                for entry in entries:
+                    if entry.conlang:
+                        data.append({
+                            "zh": entry.chinese,
+                            "conlang": entry.conlang,
+                            "ipa": entry.ipa,
+                            "tts": entry.tts or entry.conlang,
+                            "logic": entry.logic,
+                            "created_by": entry.created_by or "manual",
+                            "created_time": entry.created_time or "",
+                            "model": entry.model or "",
+                        })
+
+            master_path.parent.mkdir(parents=True, exist_ok=True)
+            master_path.write_text(
+                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        except Exception as exc:
+            errors.append(f"主词库写入失败：{exc}")
+
+        # ── 写入映射表 CSV ────────────────────────────────────────
+        mapping_path = self.storage.asset_path(lang, "mapping_rules")
+        try:
+            rows: List[List[str]] = []
+            existing_words: set[str] = set()
+
+            if mapping_path.is_file():
+                with mapping_path.open(newline="", encoding="utf-8-sig") as fh:
+                    reader = csv.reader(fh)
+                    rows = list(reader)
+                for row in rows[1:]:
+                    if row:
+                        existing_words.add(row[0].strip())
+
+            if not rows:
+                rows = [["自创语词汇", "IPA音标", "TTS友好拼写"]]
+
+            for entry in entries:
+                if entry.conlang and entry.conlang not in existing_words:
+                    ipa = entry.ipa or ""
+                    tts = entry.tts or entry.conlang
+                    rows.append([entry.conlang, ipa, tts])
+                    existing_words.add(entry.conlang)
+
+            with mapping_path.open("w", newline="", encoding="utf-8-sig") as fh:
+                writer = csv.writer(fh)
+                writer.writerows(rows)
+        except Exception as exc:
+            errors.append(f"映射表写入失败：{exc}")
+
+        if errors:
+            QMessageBox.critical(self, "写入失败", "\n".join(errors))
+        else:
+            # 刷新内存词库
+            report = refresh_materials_from_disk(self.storage, lang)
+            self._material_by_lang[lang["id"]] = report.bundle
+            self._refresh_list_item_for_language(lang["id"])
+            self._refresh_asset_status()
+            self.statusBar().showMessage(
+                f"已添加 {len(entries)} 个新词到词库，重新翻译可生效", 5000
+            )
+
+    # ── 未匹配词处理（阶段七：UnmatchedWordsDialog）─────────────────────
 
     def _on_add_unmatched_words(self) -> None:
-        """打开「将未匹配词添加到词库」对话框，成功后刷新内存词库。"""
+        """打开「未匹配词汇处理」对话框（阶段七升级版），支持手动填写与 AI 生成。"""
         if not self._last_unmatched:
             return
         lang = self.get_current_language()
         if lang is None:
             return
 
-        dlg = AddWordDialog(
+        self._ensure_material_bundle(lang)
+        bundle = self._material_by_lang.get(lang["id"], {})
+        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+
+        dlg = UnmatchedWordsDialog(
             unmatched_words=self._last_unmatched,
-            master_library_path=self.storage.asset_path(lang, "master_library"),
-            mapping_rules_path=self.storage.asset_path(lang, "mapping_rules"),
+            bundle=bundle,
+            paperhub_settings=self._paperhub_settings,
             parent=self,
         )
         if dlg.exec_() == QDialog.Accepted:
-            report = refresh_materials_from_disk(self.storage, lang)
-            self._material_by_lang[lang["id"]] = report.bundle
-            self._refresh_list_item_for_language(lang["id"])
-            self._refresh_asset_status()
-            self._last_unmatched = []
-            if self._add_word_btn is not None:
-                self._add_word_btn.setVisible(False)
-            self.statusBar().showMessage("词库已更新，重新翻译即可看到效果", 5000)
+            entries = dlg.get_entries()
+            filled = [e for e in entries if e.conlang]
+            if filled:
+                self._write_unmatched_entries_to_lexicon(filled, lang)
+                self._last_unmatched = []
+                if self._add_word_btn is not None:
+                    self._add_word_btn.setVisible(False)
+            else:
+                self.statusBar().showMessage("没有需要保存的词汇", 3000)
 
     # ── 批量翻译（预留）───────────────────────────────────────────────
 
@@ -1246,7 +1444,8 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段六：PaperHub AI 翻译核心已完成。<br>"
-            "支持规则翻译 + PaperHub AI 辅助（三种策略：<br>"
-            "仅补全未匹配、始终 AI、AI 建议确认）。",
+            "阶段七：未匹配词汇处理（AI辅助）已完成。<br>"
+            "支持规则翻译 + PaperHub AI 辅助（三种策略）<br>"
+            " + 未匹配词汇对话框（手动填写 / AI 单词生成 /<br>"
+            "批量AI生成 / 保存到词库含富元数据）。",
         )
