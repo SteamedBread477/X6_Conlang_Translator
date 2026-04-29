@@ -415,12 +415,20 @@ class MainWindow(QMainWindow):
         btn_row2 = QHBoxLayout()
         btn_pick = QPushButton("选择 Excel")
         btn_pick.clicked.connect(self._pick_excel)
-        btn_start = QPushButton("开始翻译")
-        btn_start.clicked.connect(self._on_batch_start)
+        self._btn_batch_start = QPushButton("开始翻译")
+        self._btn_batch_start.clicked.connect(self._on_batch_start)
+        self._btn_batch_pause = QPushButton("暂停")
+        self._btn_batch_pause.clicked.connect(self._on_batch_pause_resume)
+        self._btn_batch_pause.setVisible(False)
+        self._btn_batch_cancel = QPushButton("取消")
+        self._btn_batch_cancel.clicked.connect(self._on_batch_cancel)
+        self._btn_batch_cancel.setVisible(False)
         btn_export = QPushButton("导出文件")
         btn_export.clicked.connect(self._on_batch_export)
         btn_row2.addWidget(btn_pick)
-        btn_row2.addWidget(btn_start)
+        btn_row2.addWidget(self._btn_batch_start)
+        btn_row2.addWidget(self._btn_batch_pause)
+        btn_row2.addWidget(self._btn_batch_cancel)
         btn_row2.addWidget(btn_export)
         btn_row2.addStretch(1)
 
@@ -1608,12 +1616,22 @@ class MainWindow(QMainWindow):
         )
         self._batch_worker.progress.connect(self._on_batch_progress)
         self._batch_worker.finished.connect(self._on_batch_finished)
+        self._batch_worker.log_message.connect(self._on_batch_log)
 
         # UI 进入翻译状态
         if self.batch_progress is not None:
             self.batch_progress.setRange(0, len(rows))
             self.batch_progress.setValue(0)
             self.batch_progress.setFormat("翻译中… %p%")
+
+        # 按钮状态：禁用开始，显示暂停/取消
+        if self._btn_batch_start is not None:
+            self._btn_batch_start.setEnabled(False)
+        if self._btn_batch_pause is not None:
+            self._btn_batch_pause.setVisible(True)
+            self._btn_batch_pause.setText("暂停")
+        if self._btn_batch_cancel is not None:
+            self._btn_batch_cancel.setVisible(True)
 
         if self.batch_log is not None:
             mode_names = {"rule": "规则翻译", "hybrid": "混合翻译", "ai": "AI翻译"}
@@ -1655,6 +1673,14 @@ class MainWindow(QMainWindow):
     ) -> None:
         """批量翻译全部完成的回调。"""
         self._batch_results = results
+
+        # ── 恢复按钮状态 ────────────────────────────────────────
+        if self._btn_batch_start is not None:
+            self._btn_batch_start.setEnabled(True)
+        if self._btn_batch_pause is not None:
+            self._btn_batch_pause.setVisible(False)
+        if self._btn_batch_cancel is not None:
+            self._btn_batch_cancel.setVisible(False)
 
         if self.batch_log is not None:
             if error_msg:
@@ -1702,9 +1728,12 @@ class MainWindow(QMainWindow):
         # ── 导出未匹配词汇报告（如果设置要求）─────────────────────────
         if self._batch_translate_settings and self._batch_translate_settings.export_unmatched_report:
             if unmatched_entries:
-                report_path = Path(self._excel_path).parent / (
-                    Path(self._excel_path).stem + "_unmatched_report.csv"
-                )
+                if self._excel_path:
+                    report_path = Path(self._excel_path).parent / (
+                        Path(self._excel_path).stem + "_unmatched_report.csv"
+                    )
+                else:
+                    report_path = Path.home() / "unmatched_report.csv"
                 success = export_unmatched_report(unmatched_entries, str(report_path))
                 if success and self.batch_log is not None:
                     self.batch_log.appendPlainText(f"未匹配词汇报告已导出：{report_path}")
@@ -1712,6 +1741,49 @@ class MainWindow(QMainWindow):
         # 刷新资料状态（可能已更新词库）
         self._refresh_asset_status()
         self._refresh_materials()
+
+    def _on_batch_log(self, msg: str) -> None:
+        """接收 Worker 的实时日志消息。"""
+        if self.batch_log is not None:
+            self.batch_log.appendPlainText(msg)
+
+    def _on_batch_pause_resume(self) -> None:
+        """暂停/继续批量翻译。"""
+        if self._batch_worker is None or not self._batch_worker.isRunning():
+            return
+
+        if self._batch_worker.is_paused:
+            self._batch_worker.resume()
+            if self._btn_batch_pause is not None:
+                self._btn_batch_pause.setText("暂停")
+            if self.batch_log is not None:
+                self.batch_log.appendPlainText("▶ 继续翻译…")
+            self.statusBar().showMessage("批量翻译进行中…")
+        else:
+            self._batch_worker.pause()
+            if self._btn_batch_pause is not None:
+                self._btn_batch_pause.setText("继续")
+            if self.batch_log is not None:
+                self.batch_log.appendPlainText("⏸ 翻译已暂停")
+            self.statusBar().showMessage("批量翻译已暂停")
+
+    def _on_batch_cancel(self) -> None:
+        """取消批量翻译。"""
+        if self._batch_worker is None or not self._batch_worker.isRunning():
+            return
+
+        confirm = QMessageBox.question(
+            self, "确认取消",
+            "确定要取消当前批量翻译吗？已翻译的行将保留。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if confirm != QMessageBox.Yes:
+            return
+
+        self._batch_worker.cancel()
+        if self.batch_log is not None:
+            self.batch_log.appendPlainText("⚠ 正在取消…")
 
     def _refresh_materials(self) -> None:
         """重新从磁盘加载资料 bundle（批量翻译可能已更新词库）。"""
@@ -1732,10 +1804,19 @@ class MainWindow(QMainWindow):
             )
             return
 
+        # 默认导出路径：基于原 Excel 文件位置，若无则回退到用户文档目录
+        if self._excel_path:
+            default_save = str(
+                Path(self._excel_path).parent /
+                (Path(self._excel_path).stem + "_translated.xlsx")
+            )
+        else:
+            default_save = str(Path.home() / "Documents" / "translated.xlsx")
+
         output_path, _ = QFileDialog.getSaveFileName(
             self, "导出翻译结果",
-            str(Path(self._excel_path).parent / (Path(self._excel_path).stem + "_translated.xlsx")),
-            "Excel Files (*.xlsx);;All Files (*.*)",
+            default_save,
+            "Excel Files (*.xlsx);;All Files (*)",
         )
         if not output_path:
             return
@@ -1769,9 +1850,11 @@ class MainWindow(QMainWindow):
             "关于 Nikki Conlang Forge",
             "<b>Nikki Conlang Forge</b><br>"
             "无限暖暖自创语翻译器<br><br>"
-            "阶段八：Excel 台本导入与批量翻译已完成。<br>"
+            "阶段九：SSML 语音标签生成与批量翻译增强已完成。<br>"
             "支持规则翻译 / 混合翻译 / AI翻译三种模式<br>"
+            " + SSML 语音标签（基于 Emotion / Body_Type / Age）<br>"
+            " + 暂停 / 继续 / 取消批量翻译<br>"
+            " + AI 请求限流重试（指数退避）<br>"
             " + Excel 台本导入（预览+统计+验证）<br>"
-            " + 批量翻译设置对话框（并发+限流）<br>"
             " + 翻译结果导出为 Excel + 未匹配词报告。",
         )

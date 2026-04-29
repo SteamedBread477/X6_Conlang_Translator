@@ -329,9 +329,10 @@ _TIMEOUT_SECONDS = 30
 
 class PaperHubError(Exception):
     """PaperHub 调用异常，携带用户友好的错误消息。"""
-    def __init__(self, message: str, *, user_hint: str = "") -> None:
+    def __init__(self, message: str, *, user_hint: str = "", status_code: int = 0) -> None:
         super().__init__(message)
         self.user_hint = user_hint or message
+        self.status_code = status_code
 
 
 def _call_paperhub_chat(
@@ -417,6 +418,7 @@ def _call_paperhub_chat(
             raise PaperHubError(
                 exc_str,
                 user_hint="API 请求频率超限，请稍后重试。",
+                status_code=429,
             ) from exc
         # 通用错误
         raise PaperHubError(

@@ -1,6 +1,6 @@
 # Nikki Conlang Forge — 项目状态
 
-## 当前阶段：阶段八（已完成）
+## 当前阶段：阶段九（已完成）
 
 ---
 
@@ -123,6 +123,66 @@
   - `_on_batch_export()`：导出翻译结果 Excel
   - `_show_about()`：更新为阶段八文本
 
+### 阶段九（完成）— Excel 批量翻译核心逻辑（SSML + 重试 + 暂停/取消）
+
+- **SSML 语音标签生成模块**（`app/ssml_generator.py`）：
+  - `EMOTION_MAP`：7种情绪 → SSML 配置（rate/pitch/volume）映射表
+    - Sad: rate="slow" pitch="-10%"
+    - Happy: rate="fast" pitch="+10%"
+    - Urgent: rate="fast" volume="loud"
+    - Calm: rate="medium"
+    - Angry: rate="fast" pitch="+5%" volume="loud"
+    - Fear: rate="slow" pitch="+5%"
+    - Neutral: rate="medium"
+  - `BODY_TYPE_PITCH`：体型 pitch 调整叠加表（Normal/Strong/Heavy → 0/-5%/−10%）
+  - `AGE_RATE_ADJUST`：年龄 rate 微调映射表（9种组合：slow×3 + fast×3 + medium×3）
+  - `_parse_pct()` / `_format_pct()` / `_add_pcts()`：百分比代数运算工具（如 "-10%" + "-10%" → "-20%"）
+  - `ProsodyAttrs` 数据类：rate / pitch / volume 属性
+  - `compute_prosody_attrs(emotion, body_type, age)` → `ProsodyAttrs`：
+    1. 情绪取基础 rate/pitch/volume
+    2. 体型 pitch 叠加到基础 pitch
+    3. 字面 rate（slow/fast/medium）按 age 查映射表微调
+    4. 百分比 rate 与 age 百分比代数叠加
+  - `generate_ssml_tag(emotion, body_type, age, tts_phonetic)` → SSML `<speak>` 标签：
+    - 示例：Sad+Heavy+Old+"kuthara lomae" → `<speak>\n<prosody rate="x-slow" pitch="-20%">\nkuthara lomae\n</prosody>\n</speak>`
+- **BatchTranslateResult 增强**（`app/batch_translator.py`）：
+  - 新增 `ssml_tag: str` 字段：SSML 语音标签
+  - 新增 `body_type: str` / `age: str` 字段：从 ExcelRow 提取
+- **BatchTranslateWorker 核心逻辑升级**：
+  - `log_message` 信号：实时日志消息（`pyqtSignal(str)`），格式："正在翻译 [15/128] NPC_015…"
+  - `pause()` / `resume()` / `is_paused` 属性：暂停/继续翻译
+  - `cancel()` 更新：取消时解除暂停，让线程能退出
+  - `_wait_if_paused()`：暂停时阻塞等待，循环 0.2s 检查恢复/取消
+  - `_call_ai_translate(text)` 重试机制：
+    - `_MAX_RETRIES = 3`，`_RETRY_BASE_DELAY = 2.0` 秒
+    - 限流（429/503）或网络错误时指数退避（2s → 4s → 8s）
+    - 暂停感知等待：重试间隔分段 sleep，支持暂停/取消中断
+    - `PaperHubError.status_code` 属性：标记 HTTP 状态码，供重试逻辑判断
+  - `run()` 方法增强：
+    - 每行翻译前日志：`"正在翻译 [idx+1/total] label…"`
+    - 提取 `Body_Type` 和 `Age` 字段（默认 Normal/Middle）
+    - 每行翻译完成后生成 `generate_ssml_tag()` → `result.ssml_tag`
+    - 空行/错误行也生成空 SSML 标签
+    - 请求间隔改为暂停感知分段 sleep（0.5s 一段）
+    - 翻译完成汇总：统计失败行数 + 成功/总数
+    - 自动添加新词前增加日志提示
+- **PaperHubError 增强**（`app/paperhub_client.py`）：
+  - `status_code: int = 0` 属性：标记 HTTP 状态码
+  - 限流错误（429）传入 `status_code=429`
+- **主窗口批量翻译 UI 增强**（`app/main_window.py`）：
+  - 暂停/继续按钮（`_btn_batch_pause`）：翻译进行中显示，点击切换暂停/继续
+  - 取消按钮（`_btn_batch_cancel`）：翻译进行中显示，点击弹出确认对话框后取消
+  - 开始翻译按钮（`_btn_batch_start`）：翻译进行中禁用，完成后恢复
+  - `_on_batch_log(msg)`：接收 Worker 实时日志消息，追加到 batch_log
+  - `_on_batch_pause_resume()`：暂停/继续切换 + 状态栏/日志反馈
+  - `_on_batch_cancel()`：确认对话框 → 取消 Worker → 日志反馈
+  - `_on_batch_start()` 增加信号连接 `log_message` + 暂停/取消按钮显示
+  - `_on_batch_finished()` 增加按钮状态恢复
+- **导出 Excel 列名更新**：
+  - 新增三列翻译数据：`Conlang_Text`（自创语文本）/ `TTS_Phonetic`（TTS音译）/ `SSML_Tag`（SSML标签）
+  - 保留辅助列：`Translation_Mode` / `Unmatched_Words` / `Error`
+  - 列顺序：原始列 → Conlang_Text → TTS_Phonetic → SSML_Tag → 辅助列
+
 ---
 
 ## 文件结构（当前）
@@ -150,6 +210,7 @@ X6_Conlang_Translator/
 │  ├─ parse_mapping_csv.py         ← Phase 2
 │  ├─ parse_whitepaper.py          ← Phase 2
 │  ├─ rule_translator.py           ← Phase 4
+│  ├─ ssml_generator.py            ← Phase 9（SSML语音标签生成）
 │  ├─ storage.py                   ← Phase 0
 │  ├─ unmatched_words_dialog.py    ← Phase 7（未匹配词汇处理对话框）
 │  └─ ui_theme.py
@@ -195,9 +256,9 @@ X6_Conlang_Translator/
 
 ---
 
-## 下一阶段建议（阶段九：TTS 批量生成 / 调优 / UI 美化）
+## 下一阶段建议（阶段十：TTS 批量音频生成 / 调优 / UI 美化）
 
-1. **TTS 批量生成**：读取翻译结果 Excel，根据 Character/Age/Gender/Body_Type/Emotion/Scene_Context + TTS拼写，批量调用 TTS API 生成音频文件
+1. **TTS 批量音频生成**：读取翻译结果 Excel 中的 SSML_Tag 列，批量调用 TTS API 生成音频文件
 2. **批量翻译增强**：
    - 中断续翻（记录翻译进度，下次从断点继续）
    - 翻译结果缓存（避免重复翻译相同文本）
@@ -227,7 +288,7 @@ GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
 - app/paperhub_client.py
 - app/material_service.py
 
-当前已完成阶段0到阶段8。
-规则翻译 + PaperHub AI 翻译核心 + 未匹配词汇处理 + Excel 台本导入与批量翻译已完整。
+当前已完成阶段0到阶段9。
+规则翻译 + PaperHub AI 翻译核心 + 未匹配词汇处理 + Excel 台本导入 + 批量翻译核心逻辑（SSML生成+重试+暂停/取消）已完整。
 现在继续做：……（写你当前的需求）
 ```
