@@ -1,0 +1,5 @@
+PyQt5
+pandas
+openpyxl
+anthropic
+google-generativeai

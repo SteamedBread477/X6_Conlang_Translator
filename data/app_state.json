@@ -1,0 +1,16 @@
+{
+  "project_name": "Nikki Conlang Forge",
+  "languages": [
+    {
+      "id": "lang_1",
+      "name": "默认语言",
+      "files": {
+        "whitepaper": "",
+        "master_library": "",
+        "mapping_rules": "",
+        "translation_history": ""
+      },
+      "notes": ""
+    }
+  ]
+}
