@@ -102,6 +102,10 @@ class JsonStorage:
             n += 1
         return f"{base}_{n}"
 
+    def new_language_id(self) -> str:
+        """生成唯一语言 ID（UUID4）。"""
+        return str(uuid.uuid4())
+
     def language_dir(self, language: Dict[str, Any]) -> Path:
         return self.base_dir / language["folder"]
 

@@ -16,8 +16,7 @@ a = Analysis(
     pathex=[str(PROJECT_ROOT)],
     binaries=[],
     datas=[
-        # 包含 data/languages 空目录骨架（确保目录结构存在）
-        # 注意：运行时 data 目录在 exe 旁边自动创建，这里不需要打包
+        # 运行时 data 目录在 exe 旁边自动创建，不需要打包
     ],
     hiddenimports=[
         # PyQt5 及相关 sip 模块
@@ -110,14 +109,14 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='X6_Conlang_Translator',
+    name='X6_Conlang_Translator_debug',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,        # 不显示控制台窗口
+    console=True,         # 调试模式：显示控制台窗口捕获错误
     disable_windowed_traceback=False,
     argv_emulation=False,
     targetarch=None,
