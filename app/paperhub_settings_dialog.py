@@ -16,7 +16,6 @@ PaperHub AI 设置对话框。
 """
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
@@ -103,10 +102,9 @@ class _FetchModelsThread(QThread):
 class PaperHubSettingsDialog(QDialog):
     """PaperHub AI 配置对话框。"""
 
-    def __init__(self, data_dir: Path, parent: Optional[QWidget] = None) -> None:
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-        self._data_dir = data_dir
-        self._settings: Dict[str, Any] = load_paperhub_settings(data_dir)
+        self._settings: Dict[str, Any] = load_paperhub_settings()
         self._test_thread: Optional[_TestConnectionThread] = None
         self._fetch_thread: Optional[_FetchModelsThread] = None
 
@@ -456,7 +454,7 @@ class PaperHubSettingsDialog(QDialog):
     def _on_save(self) -> None:
         values = self._collect_values()
         try:
-            save_paperhub_settings(self._data_dir, values)
+            save_paperhub_settings(values)
         except OSError as exc:
             QMessageBox.critical(self, "保存失败", str(exc))
             return

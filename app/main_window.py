@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from app.app_paths import get_data_dir
+
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
     QAction,
@@ -113,7 +115,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self) -> None:
         super().__init__()
-        self.storage = JsonStorage(Path(__file__).resolve().parent.parent / "data")
+        self.storage = JsonStorage(get_data_dir())
         self.state = self.storage.load_state()
 
         self._splitter: Optional[QSplitter] = None
@@ -140,7 +142,7 @@ class MainWindow(QMainWindow):
         self._ai_progress_label: Optional[QLabel] = None
 
         self._material_by_lang: Dict[str, Dict] = {}
-        self._paperhub_settings: Dict = load_paperhub_settings(self.storage.base_dir)
+        self._paperhub_settings: Dict = load_paperhub_settings()
 
         # 翻译统计与未匹配词管理
         self._stats_label: Optional[QLabel] = None
@@ -531,9 +533,9 @@ class MainWindow(QMainWindow):
             self._material_by_lang[bid] = rep.bundle
 
     def _open_paperhub_settings(self) -> None:
-        dlg = PaperHubSettingsDialog(self.storage.base_dir, self)
+        dlg = PaperHubSettingsDialog(self)
         if dlg.exec_() == QDialog.Accepted:
-            self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+            self._paperhub_settings = load_paperhub_settings()
             self.statusBar().showMessage("PaperHub 设置已保存", 4000)
 
     def _language_by_id(self, lang_id: str) -> Optional[Dict]:
@@ -906,7 +908,7 @@ class MainWindow(QMainWindow):
         self._last_rule_result = rule_result
 
         # ── 判断是否需要 PaperHub AI ────────────────────────────────
-        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+        self._paperhub_settings = load_paperhub_settings()
         ph_enabled = bool(self._paperhub_settings.get("paperhub_enabled"))
         strategy = str(self._paperhub_settings.get("paperhub_strategy") or "unmatched_only")
 
@@ -1137,7 +1139,7 @@ class MainWindow(QMainWindow):
 
         self._ensure_material_bundle(lang)
         bundle = self._material_by_lang.get(lang["id"], {})
-        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+        self._paperhub_settings = load_paperhub_settings()
 
         dlg = UnmatchedWordsDialog(
             unmatched_words=unmatched,
@@ -1427,7 +1429,7 @@ class MainWindow(QMainWindow):
 
         self._ensure_material_bundle(lang)
         bundle = self._material_by_lang.get(lang["id"], {})
-        self._paperhub_settings = load_paperhub_settings(self.storage.base_dir)
+        self._paperhub_settings = load_paperhub_settings()
 
         dlg = UnmatchedWordsDialog(
             unmatched_words=self._last_unmatched,

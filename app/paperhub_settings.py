@@ -21,6 +21,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 
+from app.app_paths import get_app_dir
+
 DEFAULT_PAPERHUB_SETTINGS: Dict[str, Any] = {
     "paperhub_enabled": False,
     "paperhub_api_key": "",
@@ -44,13 +46,14 @@ PAPERHUB_DASHBOARD_URL = "https://tc-paperhub.diezhi.net/dashboard"
 PAPERHUB_DEFAULT_BASE_URL = "https://tc-paperhub.diezhi.net/v1"
 
 
-def _config_path(base_dir: Path) -> Path:
-    return (base_dir / "app_config.json").resolve()
+def _config_path() -> Path:
+    """app_config.json 位于 exe 旁边（而非 data 目录内）。"""
+    return (get_app_dir() / "app_config.json").resolve()
 
 
-def load_paperhub_settings(base_dir: Path) -> Dict[str, Any]:
+def load_paperhub_settings() -> Dict[str, Any]:
     """加载 PaperHub 配置，缺失字段以默认值补全。"""
-    path = _config_path(base_dir)
+    path = _config_path()
     merged = deepcopy(DEFAULT_PAPERHUB_SETTINGS)
     if path.is_file():
         try:
@@ -65,9 +68,9 @@ def load_paperhub_settings(base_dir: Path) -> Dict[str, Any]:
     return merged
 
 
-def save_paperhub_settings(base_dir: Path, settings: Dict[str, Any]) -> None:
-    """将 PaperHub 配置写入 data/app_config.json。"""
-    path = _config_path(base_dir)
+def save_paperhub_settings(settings: Dict[str, Any]) -> None:
+    """将 PaperHub 配置写入 app_config.json（exe 旁边）。"""
+    path = _config_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     out = deepcopy(DEFAULT_PAPERHUB_SETTINGS)
     out.update({k: v for k, v in settings.items() if k in DEFAULT_PAPERHUB_SETTINGS})
