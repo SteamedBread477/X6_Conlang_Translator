@@ -16,8 +16,8 @@ a = Analysis(
     pathex=[str(PROJECT_ROOT)],
     binaries=[],
     datas=[
-        # 包含 data/languages 空目录骨架（确保目录结构存在）
-        # 注意：运行时 data 目录在 exe 旁边自动创建，这里不需要打包
+        # 应用图标（运行时也会从 exe 旁 assets/ 目录加载，打包内作为备选）
+        ('assets', 'assets'),
     ],
     hiddenimports=[
         # PyQt5 及相关 sip 模块
@@ -123,7 +123,7 @@ exe = EXE(
     argv_emulation=False,
     targetarch=None,
     codenaming=None,
-    # icon=str(PROJECT_ROOT / 'icon.ico'),  # 取消注释当 icon.ico 提供后
+    icon=str(PROJECT_ROOT / 'assets' / 'app_icon.ico'),  # 从 assets/ 取图标
     version_file=None,
     manifest=None,
     embed_manifest=True,

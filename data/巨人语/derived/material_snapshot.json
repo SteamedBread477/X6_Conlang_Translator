@@ -1284,7 +1284,11 @@
     "灵魂之伤，精神创伤": "vund-sul",
     "石之伤，无法愈合的旧伤": "vund-sten",
     "血，血液": "blod",
-    "像……一样，……般的": "-lik"
+    "像……一样，……般的": "-lik",
+    "族": "stam",
+    "最厉害": "mest-stark",
+    "的": "-s",
+    "制造师": "bygg-mästar"
   },
   "tts_map": {
     "sul": "sool",
@@ -3242,7 +3246,11 @@
     "vund": "voond",
     "vund-sul": "VOOND-sool",
     "vund-sten": "VOOND-sten",
-    "-lik": "lik"
+    "-lik": "lik",
+    "stam": "stahm",
+    "mest-stark": "mest-stahrk",
+    "-s": "s",
+    "bygg-mästar": "bewg-mes-tahr"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5200,7 +5208,11 @@
     "vund": "/vund/",
     "vund-sul": "/ˈvund.sul/",
     "vund-sten": "/ˈvund.stɛn/",
-    "-lik": "/lik/"
+    "-lik": "/lik/",
+    "stam": "/stam/",
+    "mest-stark": "/mɛst stark/",
+    "-s": "/s/",
+    "bygg-mästar": "/bʏg mɛstar/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5217,9 +5229,9 @@
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 826,
-    "mapping_count": 2004,
-    "ipa_count": 2004,
+    "lexicon_count": 830,
+    "mapping_count": 2008,
+    "ipa_count": 2008,
     "anchor_count": 10
   }
 }

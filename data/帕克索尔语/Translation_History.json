@@ -432,5 +432,29 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0025",
+    "timestamp": "2026-05-02T01:41:47",
+    "source": "我 是 巨人族 最厉害 的 机器制造师",
+    "conlang": "mi es gigantul max poten de mekinforjor",
+    "phonetic": "mee ess gee-GAHN-tool mahks POH-ten deh meh-keen-FOR-yor",
+    "unmatched_words": [
+      "我",
+      "是",
+      "巨人族",
+      "最厉害",
+      "的",
+      "机器制造师"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

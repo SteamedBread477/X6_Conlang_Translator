@@ -5,10 +5,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from app.app_paths import get_data_dir
+from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path
 from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -344,6 +345,9 @@ class MainWindow(QMainWindow):
         self._ph_lexicon: Dict[str, str] = {}
         self._ph_tts_map: Dict[str, str] = {}
 
+        # ── 设置窗口图标 ─────────────────────────────────────────────
+        self._apply_window_icon()
+
         self._build_menu()
         self._build_central()
         self._load_languages()
@@ -389,6 +393,27 @@ class MainWindow(QMainWindow):
         act_about = QAction("关于", self)
         act_about.triggered.connect(self._show_about)
         help_menu.addAction(act_about)
+
+    # ── 窗口图标 ──────────────────────────────────────────────────────
+
+    def _apply_window_icon(self) -> None:
+        """加载 assets/ 目录下的应用图标并设置为窗口图标。
+
+        图标源文件可替换：将新图标放入 assets/app_icon.jpg（或 .png / .ico），
+        重启应用即可生效。运行时自动将 jpg/png 转换为 .ico 供 Windows 使用。
+        """
+        icon_path = get_icon_ico_path()
+        if icon_path and str(icon_path):
+            icon = QIcon(str(icon_path))
+            if not icon.isNull():
+                self.setWindowIcon(icon)
+        else:
+            # ico 不可用时尝试直接加载源文件（jpg/png）
+            source_path = get_icon_source_path()
+            if source_path and str(source_path):
+                icon = QIcon(str(source_path))
+                if not icon.isNull():
+                    self.setWindowIcon(icon)
 
     # ── 中央区域 ──────────────────────────────────────────────────────
 

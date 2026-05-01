@@ -356,5 +356,27 @@
       "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0021",
+    "timestamp": "2026-05-02T01:42:23",
+    "source": "我 是 巨人族 最厉害 的 机器制造师",
+    "conlang": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar",
+    "phonetic": "mee es grahv Men-ish-kah-stahm mest-stahrk-s mahs-keen-bewg-mes-tahr",
+    "unmatched_words": [
+      "族",
+      "最厉害",
+      "的",
+      "制造师"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

@@ -144,6 +144,7 @@ def _build_system_prompt(bundle: Dict[str, Any]) -> str:
         "- 遵循白皮书中的语法规则调整词序\n"
         "- 新创造的词汇请在输出中标注[NEW]\n"
         "- 输出格式必须严格遵循指定格式\n"
+        "- 【断词规则】如果用户输入的中文中包含空格，空格表示用户手动断词/断句的边界。空格分隔的每个片段应作为一个整体词组翻译，不要将同一片段内的词拆开；不同片段之间在输出中也用空格分隔。如果用户输入没有空格，则由你自行理解断句断词。\n"
         f"\n【语言白皮书】\n{whitepaper}\n"
         f"\n【词库】\n{vocab}\n"
         f"{history_block}"
@@ -152,8 +153,15 @@ def _build_system_prompt(bundle: Dict[str, Any]) -> str:
 
 def _build_user_prompt_full(chinese_text: str) -> str:
     """构建用户提示词（always 策略：完整翻译）。"""
+    space_hint = ""
+    if " " in chinese_text.strip():
+        space_hint = (
+            "\n【断词提示】原文中的空格是用户手动断词边界，请将空格分隔的每个片段作为一个整体词组翻译，"
+            "不要拆开片段内的词；不同片段在自创语输出中也用空格分隔。\n"
+        )
     return (
         f"请将以下中文翻译为自创语：\n"
+        f"{space_hint}"
         f"【中文原文】\n{chinese_text}\n\n"
         "请按以下JSON格式输出（不要输出任何其他内容，不要加markdown标记）：\n"
         "{\n"
@@ -179,8 +187,15 @@ def _build_user_prompt_unmatched(
 ) -> str:
     """构建用户提示词（unmatched_only 策略：仅补全未匹配词汇）。"""
     unmatched_txt = "、".join(unmatched_words) if unmatched_words else "（无）"
+    space_hint = ""
+    if " " in chinese_text.strip():
+        space_hint = (
+            "\n【断词提示】原文中的空格是用户手动断词边界，请将空格分隔的每个片段作为一个整体词组翻译，"
+            "不要拆开片段内的词；不同片段在自创语输出中也用空格分隔。补全时也请保持原有的空格断词结构。\n"
+        )
     return (
         f"请将以下中文中词库未覆盖的部分翻译为自创语，并与已有的规则翻译结果合并。\n"
+        f"{space_hint}"
         f"【中文原文】\n{chinese_text}\n\n"
         f"【词库未覆盖的词汇】\n{unmatched_txt}\n\n"
         f"【词库已覆盖部分的翻译】\n{rule_conlang}\n\n"

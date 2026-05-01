@@ -43,3 +43,84 @@ def get_config_path() -> Path:
     位置: get_app_dir() / "app_config.json"
     """
     return get_app_dir() / "app_config.json"
+
+
+# ------------------------------------------------------------------
+# 应用图标路径（可替换）
+# ------------------------------------------------------------------
+
+# 图标源文件名 —— 用户可直接替换 assets/ 下的同名文件，
+# 支持 jpg / png / ico 格式，首次运行会自动转换为 .ico。
+ICON_SOURCE_NAME: str = "app_icon.jpg"
+
+
+def get_assets_dir() -> Path:
+    """返回 assets 目录路径，并确保目录存在。
+
+    位置: get_app_dir() / "assets"
+    """
+    assets_dir = get_app_dir() / "assets"
+    assets_dir.mkdir(parents=True, exist_ok=True)
+    return assets_dir
+
+
+def get_icon_source_path() -> Path:
+    """返回图标源文件路径（assets/<ICON_SOURCE_NAME>）。
+
+    如果 ICON_SOURCE_NAME 指向的文件不存在，会在 assets/ 中
+    查找 jpg/png/ico 等替代文件并返回第一个匹配项。
+    若仍无匹配则返回空 Path。
+    """
+    assets = get_assets_dir()
+    primary = assets / ICON_SOURCE_NAME
+    if primary.is_file():
+        return primary
+
+    # 源文件不存在时，按扩展名优先级查找替代图标
+    for ext in ("ico", "png", "jpg", "jpeg"):
+        for candidate in assets.glob(f"app_icon.{ext}"):
+            if candidate.is_file():
+                return candidate
+    return Path()
+
+
+def get_icon_ico_path() -> Path:
+    """返回 .ico 图标文件路径（供 Windows 任务栏 / 窗口图标使用）。
+
+    若源文件本身已是 .ico 则直接返回源路径；
+    否则自动将 jpg/png 源文件转换为 assets/app_icon.ico
+    （仅在 .ico 不存在或源文件更新时才重新转换）。
+    """
+    source = get_icon_source_path()
+    if not source:
+        return Path()
+
+    # 源文件本身就是 .ico → 直接使用
+    if source.suffix.lower() == ".ico":
+        return source
+
+    ico_path = get_assets_dir() / "app_icon.ico"
+
+    # .ico 已存在且比源文件新 → 无需重新转换
+    if ico_path.is_file() and ico_path.stat().st_mtime >= source.stat().st_mtime:
+        return ico_path
+
+    # 尝试使用 Pillow 在运行时转换
+    try:
+        from PIL import Image  # type: ignore
+        img = Image.open(str(source))
+        # ICO 格式需要尺寸为 16/32/48/64/128/256 的正方形
+        sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
+        resized = []
+        for w, h in sizes:
+            resized.append(img.resize((w, h), Image.LANCZOS))
+        resized[0].save(
+            str(ico_path),
+            format="ICO",
+            sizes=[(s.width, s.height) for s in resized],
+            append_images=resized[1:],
+        )
+        return ico_path
+    except Exception:
+        # Pillow 不可用或转换失败 → 返回源路径（PyQt5 可直接加载 jpg/png）
+        return source

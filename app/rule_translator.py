@@ -118,6 +118,7 @@ class TokenResult:
     conlang: str
     is_matched: bool
     is_punct: bool = False
+    is_space: bool = False  # 用户手动输入的空格（词组断词边界）
 
 
 @dataclass
@@ -184,9 +185,31 @@ def _split_into_clauses(text: str) -> List[Tuple[str, str]]:
 def _segment_longest_match(
     text: str,
     lexicon: Dict[str, str],
+    *,
+    respect_spaces: bool = False,
 ) -> List[TokenResult]:
-    """词库最长匹配分词。未命中字符用【】标记，连续未命中合并为一个 token。"""
+    """
+    词库最长匹配分词。未命中字符用【】标记，连续未命中合并为一个 token。
+
+    respect_spaces=True 时，源文本中的空格被视为用户手动断词边界：
+      - 空格本身产生 is_space=True 的 token，用于在输出中保留词组间距；
+      - 最长匹配不会跨越空格边界（空格两侧各自独立匹配）。
+    """
     keys = sorted((k for k in lexicon if k), key=len, reverse=True)
+    # 按空格切分文本，分别独立匹配每个片段
+    if respect_spaces:
+        fragments = text.split(" ")
+        tokens: List[TokenResult] = []
+        for idx, frag in enumerate(fragments):
+            if frag:
+                frag_tokens = _segment_longest_match(frag, lexicon, respect_spaces=False)
+                tokens.extend(frag_tokens)
+            # 在片段之间插入空格边界 token（末尾片段后不加）
+            if idx < len(fragments) - 1:
+                tokens.append(TokenResult(" ", " ", False, False, True))
+        return tokens
+
+    # 常规模式：整个文本做最长匹配
     tokens: List[TokenResult] = []
     i = 0
     n = len(text)
@@ -214,16 +237,23 @@ def _segment_longest_match(
 
 
 def _build_conlang_from_tokens(tokens: List[TokenResult]) -> str:
-    """词间加空格；标点直接附着在前一词后（无前置空格），标点后加空格。"""
+    """
+    词间加空格；标点直接附着在前一词后（无前置空格），标点后加空格；
+    用户空格边界 token（is_space）在输出中产生空格分隔词组。
+    """
     if not tokens:
         return ""
     parts: List[str] = []
     for i, tok in enumerate(tokens):
+        if tok.is_space:
+            # 用户空格边界：直接输出空格
+            parts.append(" ")
+            continue
         parts.append(tok.conlang)
         if i < len(tokens) - 1:
             next_tok = tokens[i + 1]
-            # 下一个 token 不是标点 → 加空格（标点直接附着到词上不加前置空格）
-            if not next_tok.is_punct:
+            # 下一个 token 不是标点也不是用户空格 → 加空格
+            if not next_tok.is_punct and not next_tok.is_space:
                 parts.append(" ")
     return "".join(parts)
 
@@ -242,16 +272,20 @@ def _build_tts_from_tokens(
     - 已匹配的自创语词 → 查 tts_map，找到则用 TTS 拼写，找不到保留自创语词原样。
     - 未匹配的中文字词 → 保留【中文】标记（Level 1 未命中传递）。
     - 标点 → 直接透传。
+    - 用户空格边界 → 输出空格（词组断词）。
     """
     parts: List[str] = []
     for i, tok in enumerate(tokens):
+        if tok.is_space:
+            parts.append(" ")
+            continue
         if tok.is_punct:
             parts.append(tok.conlang)
         elif tok.is_matched:
             parts.append(tts_map.get(tok.conlang, tok.conlang))
         else:
             parts.append(f"【{tok.source}】")
-        if i < len(tokens) - 1 and not tokens[i + 1].is_punct:
+        if i < len(tokens) - 1 and not tokens[i + 1].is_punct and not tokens[i + 1].is_space:
             parts.append(" ")
     return "".join(parts)
 
@@ -259,6 +293,16 @@ def _build_tts_from_tokens(
 # ---------------------------------------------------------------------------
 # 公开 API
 # ---------------------------------------------------------------------------
+
+
+def _has_user_spaces(text: str) -> bool:
+    """检测文本中是否含有用户手动输入的空格（中文之间或词间的空格）。
+    如果原始文本在去掉首尾空白后内部仍有空格，视为用户有意断词。
+    """
+    stripped = text.strip()
+    # 检查内部是否有空格（排除仅由空格组成的文本）
+    inner = stripped.replace("\n", "")
+    return " " in inner
 
 
 def translate_rule(
@@ -273,10 +317,20 @@ def translate_rule(
       1. 中文 → 自创语（词库最长匹配，未命中标 【】）
       2. 自创语 → TTS 友好音译（Mapping_Rules.csv 查表）
       3. 构造含情绪信息的 RuleTranslationResult
+
+    用户空格处理：
+      - 输入中的空格被视为用户手动断词/断句边界
+      - 空格两侧的词组各自独立匹配词库
+      - 输出中保留用户空格作为词组间距
     """
     t0 = time.monotonic()
+    # 保留用户空格（不再 strip 后丢失内部空格信息）
+    original = source
     source = re.sub(r"[ \t]+", " ", source).strip()
     emotion = detect_emotion(source)
+
+    # 检测用户是否手动输入了空格（断词边界）
+    respect_spaces = _has_user_spaces(original)
 
     clause_pairs = _split_into_clauses(source)
     if not clause_pairs:
@@ -292,7 +346,7 @@ def translate_rule(
     for clause_text, punct in clause_pairs:
         if not clause_text:
             continue
-        tokens = _segment_longest_match(clause_text, lexicon)
+        tokens = _segment_longest_match(clause_text, lexicon, respect_spaces=respect_spaces)
 
         conlang_clause = _build_conlang_from_tokens(tokens) + punct
         phonetic_clause = _build_tts_from_tokens(tokens, tts_map) + _PUNCT_PASSTHROUGH.get(
@@ -303,7 +357,7 @@ def translate_rule(
         matched_count = 0
         real_token_count = 0
         for tok in tokens:
-            if tok.is_punct:
+            if tok.is_punct or tok.is_space:
                 continue
             real_token_count += 1
             if tok.is_matched:

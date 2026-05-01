@@ -27,3 +27,6 @@ data/app_config.json
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# 运行时自动生成的 ICO（源文件 jpg/png 应保留在 assets/）
+assets/app_icon.ico

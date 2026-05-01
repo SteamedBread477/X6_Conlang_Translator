@@ -42,6 +42,32 @@ def main() -> int:
     app.setApplicationName("Nikki Conlang Forge")
     app.setOrganizationName("X6")
 
+    # 设置 Windows 任务栏 AppUserModelID（确保任务栏图标正确显示）
+    try:
+        from PyQt5.QtWinExtras import QWinTaskbarButton  # noqa
+    except ImportError:
+        pass  # PyQt5.QtWinExtras 不可用时忽略
+    if hasattr(app, "setWindowIcon") or True:
+        # Windows 任务栏需要 AppUserModelID 来关联图标
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                "X6.NikkiConlangForge"
+            )
+        except Exception:
+            pass
+
+    # 设置应用级默认图标（影响任务栏、系统通知等）
+    from app.app_paths import get_icon_ico_path, get_icon_source_path
+    from PyQt5.QtGui import QIcon
+    icon_path = get_icon_ico_path()
+    if not icon_path or not str(icon_path):
+        icon_path = get_icon_source_path()
+    if icon_path and str(icon_path):
+        app_icon = QIcon(str(icon_path))
+        if not app_icon.isNull():
+            app.setWindowIcon(app_icon)
+
     # 应用主题（全局 QSS + 旧兼容层同步）
     from app.ui_theme import theme_manager, UITheme
     theme_manager.apply(app)

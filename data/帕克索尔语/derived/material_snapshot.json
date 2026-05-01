@@ -39,7 +39,11 @@
     "sol": "sohl",
     "nol": "nohl",
     "mova?": "MOH-vah",
-    "mi": "mee"
+    "mi": "mee",
+    "es": "ess",
+    "gigantul": "gee-GAHN-tool",
+    "max poten": "mahks POH-ten",
+    "mekinforjor": "meh-keen-FOR-yor"
   },
   "ipa_map": {
     "kh-": "/x/",
@@ -65,7 +69,11 @@
     "sol": "/sol/",
     "nol": "/nol/",
     "mova?": "/ˈmo.vaʔ/",
-    "mi": "/mi/"
+    "mi": "/mi/",
+    "es": "/es/",
+    "gigantul": "/gi'gan.tul/",
+    "max poten": "/maks 'po.ten/",
+    "mekinforjor": "/me.kin'for.jor/"
   },
   "anchors": {
     "灵魂": "sul",
@@ -81,8 +89,8 @@
     "phoneme_row_count": 0,
     "grammar_rule_count": 0,
     "lexicon_count": 0,
-    "mapping_count": 24,
-    "ipa_count": 24,
+    "mapping_count": 28,
+    "ipa_count": 28,
     "anchor_count": 8
   }
 }
