@@ -55,6 +55,14 @@ PAPERHUB_MODELS = [
 PAPERHUB_DASHBOARD_URL = "https://tc-paperhub.diezhi.net/dashboard"
 PAPERHUB_DEFAULT_BASE_URL = "https://tc-paperhub.diezhi.net/v1"
 
+# ASK 模式快捷提问模板默认值
+# 每个模板包含 name（显示名）和 prompt（实际提问文本）
+DEFAULT_ASK_TEMPLATES: list = [
+    {"name": "翻译方案", "prompt": "帮我将以下中文内容翻译成自创语，并给出详细的翻译逻辑："},
+    {"name": "风格变体", "prompt": "帮我给以下词汇生成几种不同风格的翻译方案（如正式、口语、祭祀、暗黑等）："},
+    {"name": "词源解释", "prompt": "请解释以下自创语词汇的构词逻辑和音系来源："},
+]
+
 
 def _config_path() -> Path:
     """app_config.json 位于 exe 旁边（而非 data 目录内）。"""
@@ -96,3 +104,60 @@ def save_paperhub_settings(settings: Dict[str, Any]) -> None:
         out["paperhub_model"] = str(settings["paperhub_model"])
     with path.open("w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=2)
+
+
+# ── ASK 快捷提问模板 ──────────────────────────────────────────────
+
+
+def load_ask_templates() -> list:
+    """加载 ASK 快捷提问模板。
+
+    用户自定义模板排在前面，然后追加默认模板中未被用户覆盖的部分。
+    """
+    path = _config_path()
+    user_templates: list = []
+    if path.is_file():
+        try:
+            with path.open("r", encoding="utf-8") as fh:
+                stored = json.load(fh)
+            if isinstance(stored, dict):
+                user_templates = stored.get("ask_templates", [])
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # 合并：用户模板在前，默认模板中名字未被覆盖的追加到后面
+    user_names = {t.get("name") for t in user_templates if isinstance(t, dict)}
+    merged = list(user_templates)
+    for d in DEFAULT_ASK_TEMPLATES:
+        if d["name"] not in user_names:
+            merged.append(d)
+    return merged
+
+
+def save_ask_templates(templates: list) -> None:
+    """将用户自定义的 ASK 快捷提问模板写入 app_config.json。
+
+    只保存用户手动添加/修改的模板，不保存默认模板。
+    """
+    path = _config_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # 读取现有配置，仅更新 ask_templates 字段
+    existing: dict = {}
+    if path.is_file():
+        try:
+            with path.open("r", encoding="utf-8") as fh:
+                existing = json.load(fh)
+            if not isinstance(existing, dict):
+                existing = {}
+        except (json.JSONDecodeError, OSError):
+            existing = {}
+
+    # 过滤掉与默认模板完全一致的条目，只保留用户自定义部分
+    default_set = {(d["name"], d["prompt"]) for d in DEFAULT_ASK_TEMPLATES}
+    user_only = [t for t in templates if isinstance(t, dict)
+                 and (t.get("name"), t.get("prompt")) not in default_set]
+
+    existing["ask_templates"] = user_only
+    with path.open("w", encoding="utf-8") as fh:
+        json.dump(existing, fh, ensure_ascii=False, indent=2)

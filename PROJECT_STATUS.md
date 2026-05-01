@@ -1,6 +1,6 @@
 # Nikki Conlang Forge — 项目状态
 
-## 当前阶段：阶段十一（UI 主题系统）
+## 当前阶段：阶段十二（语言大师问答）
 
 ---
 
@@ -91,7 +91,7 @@
 - **翻译结果自动同步到 Translation_History.json**
 - **AI 生成追踪**：`BatchTranslateResult.ai_generated` + `ai_model` 字段
 
-### 阶段十一（进行中）— UI 主题系统
+### 阶段十一（完成）— UI 主题系统
 
 - **Theme Token 抽象层**（`app/ui_theme.py`）：
   - `ThemeTokens` 数据类：颜色、字体、圆角、阴影、间距、背景等所有设计变量
@@ -114,6 +114,18 @@
   - `new_words_report_dialog.py`：硬编码样式改用 `theme_manager`
   - `unmatched_words_dialog.py`：硬编码样式改用 `theme_manager`
 
+### 阶段十二（完成）— 语言大师问答（ASK 页签）
+
+- **双页签架构**：翻译页签 + 语言大师问答页签（QTabWidget），右侧区域分 Tab
+- **ASK 页签 UI**：上中下三区 QSplitter — 模板栏 + 对话区 + 待审核面板 + 输入区
+- **快捷提问模板**：默认预设 6 条 + 自定义管理 + 持久化到 `app_config.json`
+- **多轮对话引擎**：`_AskChatThread`（QThread）+ 流式 chunk 接收 + Ctrl+Enter 快捷键
+- **Token 圆圈可视化**：`_TokenCircleWidget`（环形进度 + 用量/上限标签）
+- **AI 回复解析**：【新词】格式提取 → 5 列待审核表格（自创语 / IPA / TTS / 含义 / 标签）
+- **待审核机制**：批量确认导入词库 / 批量丢弃 / 清空表格
+- **语言选择器共享**：两个页签共用左侧 language_list，切换语言自动更新系统提示词
+- **窗口尺寸优化**：初始宽度 1480px，Splitter 比例 [200, 1200]
+
 ---
 
 ## 文件结构（当前）
@@ -132,12 +144,12 @@ X6_Conlang_Translator/
 │  ├─ history_writer.py            ← Phase 4
 │  ├─ import_classify.py           ← Phase 1
 │  ├─ lexicon_segment.py           ← Phase 2
-│  ├─ main_window.py               ← Phase 11（主题注解重构）
+│  ├─ main_window.py               ← Phase 12（语言大师问答页签）
 │  ├─ material_service.py          ← Phase 3
 │  ├─ new_words_report_dialog.py   ← Phase 10→11
 │  ├─ paperhub_client.py           ← Phase 6→9
 │  ├─ paperhub_confirm_dialog.py   ← Phase 6→11
-│  ├─ paperhub_settings.py         ← Phase 5
+│  ├─ paperhub_settings.py         ← Phase 5→12
 │  ├─ paperhub_settings_dialog.py  ← Phase 6→11
 │  ├─ parse_history_json.py        ← Phase 2
 │  ├─ parse_lexicon.py             ← Phase 2
@@ -176,6 +188,7 @@ X6_Conlang_Translator/
 | `X6_Conlang_Translator_PROJECT_STATUS.md` | 阶段十一 | 与 `PROJECT_STATUS.md` 重复，保留后者       |
 | `test_stage9.py`                          | 阶段十一 | 旧阶段测试文件，非 pytest 标准，已被后续测试覆盖        |
 | `build_debug.spec`                        | 阶段十一 | debug 构建配置冗余，`build.spec` 已足够       |
+| `app/ask_mode.py`                         | 阶段十二 | 独立模块未被导入，ASK功能已内嵌于 `main_window.py` |
 
 
 ---
@@ -209,12 +222,13 @@ X6_Conlang_Translator/
 
 ---
 
-## 下一阶段建议（阶段十二）
+## 下一阶段建议（阶段十三）
 
 1. **新增皮肤**：深色主题 / 磨砂玻璃主题 / 更多配色方案
 2. **TTS 批量音频生成**：读取 SSML_Tag 列批量调用 TTS API
 3. **批量翻译增强**：中断续翻 / 翻译缓存 / 精细并发控制
 4. **代码清理**：统一 LF 行尾 / Translation_ID 对齐
+5. **语言大师问答增强**：对话气泡样式 / 单词逐条确认按钮 / Markdown 渲染
 
 ---
 
@@ -231,8 +245,8 @@ GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
 - app/main_window.py
 - app/appearance_dialog.py
 
-当前已完成阶段0到10，阶段11（UI主题系统）进行中。
-规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译 + 导出增强 + 主题 Token 系统 + AppearanceDialog 已完成。
+当前已完成阶段0到12，阶段11（UI主题系统）+ 阶段12（语言大师问答）已完成。
+规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译 + 导出增强 + 主题 Token 系统 + AppearanceDialog + 语言大师问答页签 已完成。
 现在继续做：……（写你当前的需求）
 ```
 

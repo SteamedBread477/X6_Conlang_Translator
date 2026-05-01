@@ -726,6 +726,51 @@ QWidget[class="assets-panel"] {{
     border-radius: {radius_md};
     padding: {spacing_md};
 }}
+
+/* ── ASK 页签 ────────────────────────────────────────────── */
+QTextEdit[class="chat-display"] {{
+    background: {color_bg_card};
+    border: 1px solid {color_border};
+    border-radius: {radius_md};
+    padding: {spacing_md};
+    font-size: {font_size_base};
+}}
+
+QTextEdit[class="chat-display"]:focus {{
+    border-color: {color_border_focus};
+}}
+
+#cls_ask_input {{
+    background: {color_bg_input};
+    border: 1px solid {color_border};
+    border-radius: {radius_md};
+    font-size: {font_size_base};
+    padding: {spacing_sm};
+}}
+
+#cls_ask_input:focus {{
+    border-color: {color_border_focus};
+}}
+
+#cls_ask_pending_table {{
+    background: {color_bg_card};
+    border: 1px solid {color_border};
+    border-radius: {radius_md};
+    gridline-color: {color_border_light};
+    font-size: {font_size_sm};
+}}
+
+#cls_ask_pending_table::item {{
+    padding: {spacing_xs} {spacing_sm};
+}}
+
+#cls_ask_pending_table::item:selected {{
+    background: {color_bg_selected};
+}}
+
+#cls_ask_token_circle {{
+    background: transparent;
+}}
 """
     return qss.strip().format(**tokens.__dict__)
 

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from app.app_paths import get_data_dir
+from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
 from PyQt5.QtWidgets import (
@@ -29,7 +30,9 @@ from PyQt5.QtWidgets import (
     QPlainTextEdit,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QSplitter,
+    QTabWidget,
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
@@ -114,6 +117,155 @@ class _PaperHubTranslateThread(QThread):
         self.finished.emit(result)
 
 
+class _AskChatThread(QThread):
+    """后台线程执行 ASK 多轮对话 AI 调用。"""
+
+    finished = pyqtSignal(str, str)     # (full_text, error_message)
+    stream_chunk = pyqtSignal(str)      # 流式输出块
+
+    def __init__(
+        self,
+        settings: Dict[str, Any],
+        system_prompt: str,
+        messages: List[Dict[str, str]],
+        parent: Optional[QWidget] = None,
+    ) -> None:
+        super().__init__(parent)
+        self._settings = settings
+        self._system_prompt = system_prompt
+        self._messages = messages
+
+    def run(self) -> None:
+        from app.paperhub_client import PaperHubError, _make_error_hint
+
+        api_key = str(self._settings.get("paperhub_api_key") or "").strip()
+        base_url = str(self._settings.get("paperhub_base_url") or "https://tc-paperhub.diezhi.net/v1")
+        model = str(self._settings.get("paperhub_model") or "qwen3-max")
+        temperature = float(self._settings.get("paperhub_temperature", 0.7))
+        max_tokens = int(self._settings.get("paperhub_max_tokens", 2048))
+        reasoning_enabled = bool(self._settings.get("paperhub_reasoning_enabled", False))
+        timeout = max(10, int(self._settings.get("paperhub_timeout", 90)))
+        stream = bool(self._settings.get("paperhub_stream", True))
+
+        if not api_key:
+            self.finished.emit("", "未填写 PaperHub API Key，请在设置中配置。")
+            return
+
+        api_messages = [{"role": "system", "content": self._system_prompt}]
+        for msg in self._messages:
+            api_messages.append({"role": msg["role"], "content": msg["content"]})
+
+        try:
+            from openai import OpenAI
+        except ImportError:
+            self.finished.emit("", "缺少 openai 包，请执行 pip install openai。")
+            return
+
+        client = OpenAI(api_key=api_key, base_url=base_url, timeout=timeout)
+        create_kwargs = {
+            "model": model,
+            "messages": api_messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if reasoning_enabled:
+            create_kwargs["extra_body"] = {"reasoning": {"enabled": True}}
+
+        try:
+            if stream:
+                create_kwargs["stream"] = True
+                accumulated = ""
+                for chunk in client.chat.completions.create(**create_kwargs):
+                    if not chunk.choices:
+                        continue
+                    piece = getattr(chunk.choices[0].delta, "content", None) or ""
+                    if piece:
+                        accumulated += piece
+                        self.stream_chunk.emit(piece)
+                text = accumulated.strip()
+            else:
+                resp = client.chat.completions.create(**create_kwargs)
+                text = (getattr(resp.choices[0].message, "content", None) or "").strip()
+
+            self.finished.emit(text, "")
+        except Exception as exc:
+            exc_str = str(exc)
+            hint = _make_error_hint(exc_str, model, timeout)
+            self.finished.emit("", hint)
+
+
+class _TokenCircleWidget(QWidget):
+    """Token 使用率圆环可视化控件。"""
+
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self._ratio: float = 0.0   # 0.0 ~ 1.0
+
+    def set_ratio(self, ratio: float) -> None:
+        """设置使用率（0.0 ~ 1.0），超过 0.8 变红色预警。"""
+        self._ratio = max(0.0, min(1.0, ratio))
+        self.update()
+
+    def paintEvent(self, event) -> None:
+        from PyQt5.QtGui import QColor, QPainter, QPen, QBrush, QRadialGradient
+        from app.ui_theme import theme_manager
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        w = self.width()
+        h = self.height()
+        cx = w / 2
+        cy = h / 2
+        radius = min(w, h) / 2 - 4
+        pen_width = 5
+
+        # 背景环（灰色）
+        bg_color = QColor(theme_manager.token("color_border") or "#555555")
+        bg_color.setAlpha(160)
+        painter.setPen(QPen(bg_color, pen_width))
+        painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
+        painter.drawArc(
+            int(cx - radius), int(cy - radius),
+            int(2 * radius), int(2 * radius),
+            0, 360 * 16,
+        )
+
+        # 进度环
+        if self._ratio > 0:
+            ratio = self._ratio
+            # 颜色：低用量绿色 → 中用量主题色 → 高用量红色
+            if ratio < 0.5:
+                arc_color = QColor("#4CAF50")     # 绿
+            elif ratio < 0.8:
+                arc_color = QColor(theme_manager.token("color_primary") or "#2196F3")
+            else:
+                arc_color = QColor("#F44336")      # 红
+
+            painter.setPen(QPen(arc_color, pen_width, Qt.SolidLine, Qt.RoundCap))
+            painter.setBrush(QBrush(QColor(0, 0, 0, 0)))
+            start_angle = 90 * 16  # 从顶部开始
+            span_angle = -int(ratio * 360 * 16)
+            painter.drawArc(
+                int(cx - radius), int(cy - radius),
+                int(2 * radius), int(2 * radius),
+                start_angle, span_angle,
+            )
+
+        # 中心文字（百分比）
+        pct_text = f"{int(self._ratio * 100)}%"
+        from PyQt5.QtGui import QFont
+        font = QFont()
+        font.setPixelSize(max(10, int(radius * 0.6)))
+        font.setBold(True)
+        painter.setFont(font)
+        text_color = QColor(theme_manager.token("color_text_primary") or "#EEEEEE")
+        painter.setPen(QPen(text_color))
+        painter.drawText(self.rect(), Qt.AlignCenter, pct_text)
+
+        painter.end()
+
+
 # ---------------------------------------------------------------------------
 # 主窗口
 # ---------------------------------------------------------------------------
@@ -127,6 +279,7 @@ class MainWindow(QMainWindow):
         self.state = self.storage.load_state()
 
         self._splitter: Optional[QSplitter] = None
+        self._right_tabs: Optional[QTabWidget] = None
         self.language_list: Optional[QListWidget] = None
         self._status_labels: Dict[str, QLabel] = {}
         self._batch_body: Optional[QWidget] = None
@@ -163,6 +316,26 @@ class MainWindow(QMainWindow):
         # PaperHub AI 翻译线程与状态
         self._ph_thread: Optional[_PaperHubTranslateThread] = None
         self._ph_rule_result: Optional[RuleTranslationResult] = None
+
+        # ASK 页签 — AI 对话模式
+        self._ask_chat_display: Optional[QTextEdit] = None
+        self._ask_input: Optional[QPlainTextEdit] = None
+        self._ask_send_btn: Optional[QPushButton] = None
+        self._ask_clear_btn: Optional[QPushButton] = None
+        self._ask_token_circle: Optional[QWidget] = None
+        self._ask_token_label: Optional[QLabel] = None
+        self._ask_pending_panel: Optional[QWidget] = None
+        self._ask_pending_table: Optional[QTableWidget] = None
+        self._ask_pending_toggle: Optional[QPushButton] = None
+        self._ask_batch_confirm_btn: Optional[QPushButton] = None
+        self._ask_batch_discard_btn: Optional[QPushButton] = None
+        self._ask_templates: List[Dict[str, str]] = load_ask_templates()
+        self._ask_template_btns: List[QPushButton] = []
+        self._ask_template_row: Optional[QHBoxLayout] = None
+        self._ask_messages: List[Dict[str, str]] = []
+        self._ask_chat_thread: Optional[_AskChatThread] = None
+        self._ask_ai_pending: str = ""
+        self._ask_ai_just_started: bool = False
         self._ph_text: str = ""
         self._ph_lang: Optional[Dict] = None
         self._ph_bundle: Dict = {}
@@ -219,7 +392,7 @@ class MainWindow(QMainWindow):
 
     def _build_central(self) -> None:
         self.setWindowTitle("Nikki Conlang Forge")
-        self.resize(1280, 820)
+        self.resize(1480, 820)
 
         self._splitter = QSplitter(Qt.Horizontal)
 
@@ -227,13 +400,21 @@ class MainWindow(QMainWindow):
         left.setMinimumWidth(160)
         left.resize(200, left.height())
 
-        right = self._build_right_panel()
+        # 右侧区域使用 QTabWidget 分为「翻译」和「ASK」两个页签
+        self._right_tabs = QTabWidget()
+        self._right_tabs.setObjectName("cls_right_tabs")
+
+        translate_page = self._build_right_panel()
+        ask_page = self._build_ask_page()
+
+        self._right_tabs.addTab(translate_page, "翻译")
+        self._right_tabs.addTab(ask_page, "语言大师问答")
 
         self._splitter.addWidget(left)
-        self._splitter.addWidget(right)
+        self._splitter.addWidget(self._right_tabs)
         self._splitter.setStretchFactor(0, 0)
         self._splitter.setStretchFactor(1, 1)
-        self._splitter.setSizes([220, 1060])
+        self._splitter.setSizes([200, 1200])
 
         self.setCentralWidget(self._splitter)
 
@@ -589,6 +770,152 @@ class MainWindow(QMainWindow):
 
         return panel
 
+    # ── ASK 页签 ─────────────────────────────────────────────────────
+
+    def _build_ask_page(self) -> QWidget:
+        """构建 ASK 页签（AI 对话模式）— 上中下三区可拉伸布局。"""
+        page = QWidget()
+        page.setObjectName("cls_ask_page")
+        page_layout = QVBoxLayout(page)
+        page_layout.setContentsMargins(8, 8, 8, 8)
+        page_layout.setSpacing(0)
+
+        # ── 垂直分割器：上(对话) → 中(待审核) → 下(提问) ────────
+        v_splitter = QSplitter(Qt.Vertical)
+        v_splitter.setObjectName("cls_ask_v_splitter")
+
+        # ── 上区：对话历史 ────────────────────────────────────────
+        chat_wrap = QWidget()
+        chat_layout = QVBoxLayout(chat_wrap)
+        chat_layout.setContentsMargins(0, 0, 0, 0)
+        chat_layout.setSpacing(4)
+
+        chat_hdr = QHBoxLayout()
+        chat_hdr.addWidget(QLabel("对话历史"))
+        chat_hdr.addStretch(1)
+        self._ask_clear_btn = QPushButton("清空对话")
+        self._ask_clear_btn.setProperty("class", "small")
+        self._ask_clear_btn.setObjectName("cls_small")
+        self._ask_clear_btn.clicked.connect(self._ask_clear_conversation)
+        chat_hdr.addWidget(self._ask_clear_btn)
+        chat_layout.addLayout(chat_hdr)
+
+        self._ask_chat_display = QTextEdit()
+        self._ask_chat_display.setReadOnly(True)
+        self._ask_chat_display.setObjectName("cls_ask_chat_display")
+        self._ask_chat_display.setProperty("class", "chat-display")
+        self._ask_chat_display.setPlaceholderText(
+            "在这里与 AI 进行对话，探讨翻译方案、词库创作…"
+        )
+        chat_layout.addWidget(self._ask_chat_display, 1)
+
+        # Token 圆圈 + 数量标签
+        token_row = QHBoxLayout()
+        token_row.setSpacing(6)
+        self._ask_token_circle = _TokenCircleWidget()
+        self._ask_token_circle.setFixedSize(48, 48)
+        self._ask_token_circle.setObjectName("cls_ask_token_circle")
+        self._ask_token_label = QLabel("— / —")
+        self._ask_token_label.setProperty("class", "muted")
+        self._ask_token_label.setObjectName("cls_muted")
+        self._ask_token_label.setToolTip("当前 Token 用量 / 模型上下文上限")
+        token_row.addWidget(self._ask_token_circle)
+        token_row.addWidget(self._ask_token_label)
+        token_row.addStretch(1)
+        chat_layout.addLayout(token_row)
+
+        v_splitter.addWidget(chat_wrap)
+
+        # ── 中区：待审核候选词 ────────────────────────────────────
+        pending_wrap = QWidget()
+        pending_layout = QVBoxLayout(pending_wrap)
+        pending_layout.setContentsMargins(0, 0, 0, 0)
+        pending_layout.setSpacing(4)
+
+        pending_hdr = QHBoxLayout()
+        pending_hdr.addWidget(QLabel("待审核候选词"))
+        pending_hdr.addStretch(1)
+
+        self._ask_pending_toggle = QPushButton("收起  ▼")
+        self._ask_pending_toggle.setProperty("class", "small")
+        self._ask_pending_toggle.setObjectName("cls_small")
+        self._ask_pending_toggle.clicked.connect(self._toggle_ask_pending)
+        pending_hdr.addWidget(self._ask_pending_toggle)
+
+        self._ask_batch_confirm_btn = QPushButton("全部确认")
+        self._ask_batch_confirm_btn.setProperty("class", "primary")
+        self._ask_batch_confirm_btn.setObjectName("cls_primary")
+        self._ask_batch_confirm_btn.clicked.connect(self._ask_batch_confirm_pending)
+        self._ask_batch_confirm_btn.setVisible(False)
+        pending_hdr.addWidget(self._ask_batch_confirm_btn)
+
+        self._ask_batch_discard_btn = QPushButton("全部丢弃")
+        self._ask_batch_discard_btn.setProperty("class", "small")
+        self._ask_batch_discard_btn.setObjectName("cls_small")
+        self._ask_batch_discard_btn.clicked.connect(self._ask_batch_discard_pending)
+        self._ask_batch_discard_btn.setVisible(False)
+        pending_hdr.addWidget(self._ask_batch_discard_btn)
+
+        pending_layout.addLayout(pending_hdr)
+
+        self._ask_pending_table = QTableWidget(0, 5)
+        self._ask_pending_table.setObjectName("cls_ask_pending_table")
+        self._ask_pending_table.setHorizontalHeaderLabels(
+            ["自创语", "IPA", "TTS", "含义", "风格标签"]
+        )
+        self._ask_pending_table.horizontalHeader().setStretchLastSection(True)
+        self._ask_pending_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self._ask_pending_table.setEditTriggers(QTableWidget.NoEditTriggers)
+        pending_layout.addWidget(self._ask_pending_table, 1)
+
+        self._ask_pending_panel = pending_wrap
+        v_splitter.addWidget(pending_wrap)
+
+        # ── 下区：提问输入区 ──────────────────────────────────────
+        input_wrap = QWidget()
+        input_layout = QVBoxLayout(input_wrap)
+        input_layout.setContentsMargins(0, 0, 0, 0)
+        input_layout.setSpacing(4)
+
+        # 快捷提问模板按钮行（动态构建）
+        template_row = QHBoxLayout()
+        template_row.setSpacing(4)
+        self._ask_template_row = template_row
+        input_layout.addLayout(template_row)
+        self._rebuild_template_buttons()
+
+        # 输入框 + 发送按钮
+        input_row = QHBoxLayout()
+        input_row.setSpacing(6)
+
+        self._ask_input = QPlainTextEdit()
+        self._ask_input.setPlaceholderText("输入你的问题，按发送或 Ctrl+Enter 提交…")
+        self._ask_input.setMaximumHeight(80)
+        self._ask_input.setObjectName("cls_ask_input")
+        self._ask_input.keyPressEvent = self._ask_input_key_event
+        input_row.addWidget(self._ask_input, 1)
+
+        self._ask_send_btn = QPushButton("发送")
+        self._ask_send_btn.setProperty("class", "primary")
+        self._ask_send_btn.setObjectName("cls_primary")
+        self._ask_send_btn.setMinimumWidth(72)
+        self._ask_send_btn.clicked.connect(self._ask_send_message)
+        input_row.addWidget(self._ask_send_btn)
+
+        input_layout.addLayout(input_row)
+
+        v_splitter.addWidget(input_wrap)
+
+        # 默认比例：对话区 60% / 待审核 20% / 输入区 20%
+        v_splitter.setStretchFactor(0, 3)
+        v_splitter.setStretchFactor(1, 1)
+        v_splitter.setStretchFactor(2, 1)
+        v_splitter.setSizes([400, 130, 130])
+
+        page_layout.addWidget(v_splitter, 1)
+
+        return page
+
     # ── 辅助方法 ──────────────────────────────────────────────────────
 
     def _clear_all_outputs(self) -> None:
@@ -625,6 +952,444 @@ class MainWindow(QMainWindow):
                 self._add_word_btn.setVisible(False)
             self._last_unmatched = []
 
+    # ── ASK 页签交互方法（后续步骤完善） ───────────────────────────
+
+    def _ask_clear_conversation(self) -> None:
+        """清空 ASK 对话历史和 Token 计数。"""
+        self._ask_messages.clear()
+        if self._ask_chat_display is not None:
+            self._ask_chat_display.clear()
+        self._ask_update_token_display()
+
+    def _ask_send_message(self) -> None:
+        """发送用户提问，触发 AI 多轮对话。"""
+        if self._ask_input is None or self._ask_send_btn is None:
+            return
+        # 如果 AI 正在回复，不允许再次发送
+        if self._ask_chat_thread is not None and self._ask_chat_thread.isRunning():
+            return
+
+        user_text = self._ask_input.toPlainText().strip()
+        if not user_text:
+            return
+
+        # 追加用户消息
+        self._ask_append_chat_message("user", user_text)
+        self._ask_messages.append({"role": "user", "content": user_text})
+        self._ask_input.clear()
+        self._ask_update_token_display()
+
+        # 重新加载 PaperHub 设置（用户可能刚改过配置）
+        self._paperhub_settings = load_paperhub_settings()
+        settings = self._paperhub_settings
+
+        if not settings.get("paperhub_enabled", False):
+            self._ask_append_chat_message("system",
+                "⚠ PaperHub AI 未启用，请在「设置 → PaperHub 设置」中开启。")
+            return
+
+        api_key = str(settings.get("paperhub_api_key") or "").strip()
+        if not api_key:
+            self._ask_append_chat_message("system",
+                "⚠ 未填写 PaperHub API Key，请在「设置 → PaperHub 设置」中配置。")
+            return
+
+        # 构建 ASK 系统提示词 — 使用当前选中语言的资料（而非翻译页签缓存的 _ph_bundle）
+        lang = self.get_current_language()
+        if lang is None:
+            self._ask_append_chat_message("system",
+                "⚠ 请先在左侧面板选择一种语言。")
+            return
+        self._ensure_material_bundle(lang)
+        bundle = self._material_by_lang.get(lang.get("id", ""), {})
+        self._ph_lang = lang
+        self._ph_bundle = bundle
+        system_prompt = self._build_ask_system_prompt(bundle)
+
+        # 禁用发送按钮
+        self._ask_send_btn.setEnabled(False)
+        self._ask_send_btn.setText("思考中…")
+        self._ask_ai_pending = ""
+        self._ask_ai_just_started = True
+
+        # 启动后台线程
+        self._ask_chat_thread = _AskChatThread(
+            settings=settings,
+            system_prompt=system_prompt,
+            messages=self._ask_messages,
+        )
+        self._ask_chat_thread.stream_chunk.connect(self._ask_on_stream_chunk)
+        self._ask_chat_thread.finished.connect(self._ask_on_chat_finished)
+        self._ask_chat_thread.start()
+
+    def _ask_on_stream_chunk(self, piece: str) -> None:
+        """流式接收 AI 响应块，实时追加到对话区。"""
+        if self._ask_chat_display is None:
+            return
+        self._ask_ai_pending += piece
+
+        if self._ask_ai_just_started:
+            # 首次收到 chunk：插入 AI 标签
+            color_ai = theme_manager.token("color_primary")
+            self._ask_chat_display.append(
+                f'<p style="margin:4px 0;"><b style="color:{color_ai};">AI：</b>'
+            )
+            self._ask_ai_just_started = False
+
+        # 追加文本块（使用 QTextEdit 的 insertPlainText 以保持纯文本追加）
+        cursor = self._ask_chat_display.textCursor()
+        cursor.movePosition(cursor.End)
+        cursor.insertText(piece)
+        self._ask_chat_display.setTextCursor(cursor)
+        self._ask_chat_display.ensureCursorVisible()
+
+    def _ask_on_chat_finished(self, full_text: str, error: str) -> None:
+        """AI 对话完成：追加完整 AI 消息到对话历史。"""
+        # 恢复发送按钮
+        if self._ask_send_btn is not None:
+            self._ask_send_btn.setEnabled(True)
+            self._ask_send_btn.setText("发送")
+
+        if error:
+            self._ask_append_chat_message("system", f"⚠ {error}")
+            return
+
+        # 如果有流式输出，_ask_ai_pending 已包含完整文本
+        # 否则用 full_text
+        ai_text = self._ask_ai_pending if self._ask_ai_pending else full_text
+
+        if not ai_text.strip():
+            self._ask_append_chat_message("system", "AI 返回了空内容。")
+            return
+
+        # 追加 AI 消息到对话记录
+        self._ask_messages.append({"role": "assistant", "content": ai_text})
+        self._ask_update_token_display()
+
+        # 如果不是流式模式，需要手动追加显示
+        if not self._ask_ai_pending:
+            self._ask_append_chat_message("ai", ai_text)
+
+        # 第 6 步会在这里解析候选词
+        self._ask_parse_ai_response(ai_text)
+
+        self._ask_ai_pending = ""
+
+    def _build_ask_system_prompt(self, bundle: Dict[str, Any]) -> str:
+        """构建 ASK 对话模式的系统提示词。"""
+        from app.paperhub_client import _whitepaper_full, _vocabulary_list
+
+        lang_name = ""
+        lang = self._ph_lang
+        if lang and isinstance(lang, dict):
+            lang_name = lang.get("name", "")
+
+        wp = _whitepaper_full(bundle)
+        vocab = _vocabulary_list(bundle, max_items=120)
+
+        return (
+            "你是一个虚构语言翻译专家和创作顾问。"
+            f"当前语言是「{lang_name}」。"
+            "你可以与用户自由对话，讨论翻译方案、词源创作、风格变体等。\n"
+            "【重要规则】\n"
+            "- 优先使用词库中已有的词汇\n"
+            "- 创造新词时请提供：自创语形式、IPA音标、TTS拼写、含义、风格标签\n"
+            "- 新词请用如下格式输出以便系统自动提取：\n"
+            "  【新词】自创语|IPA|TTS|含义|风格标签\n"
+            "- 可以自然地解释构词逻辑和音系来源\n"
+            "- 保持活泼有趣的对话风格\n"
+            f"\n【语言白皮书】\n{wp}\n"
+            f"\n【词库】\n{vocab}\n"
+        )
+
+    def _ask_parse_ai_response(self, ai_text: str) -> None:
+        """解析 AI 响应中的候选词，添加到待审核表格（第 6 步完善）。"""
+        # 提取 【新词】xxx|IPA|TTS|含义|风格标签 格式的候选词
+        import re
+        pattern = r"【新词】(.+?)\|(.+?)\|(.+?)\|(.+?)\|(.+)"
+        matches = re.findall(pattern, ai_text)
+        if not matches:
+            return
+        for m in matches:
+            conlang, ipa, tts, meaning, tags = m
+            row_count = self._ask_pending_table.rowCount()
+            self._ask_pending_table.insertRow(row_count)
+            self._ask_pending_table.setItem(row_count, 0, QTableWidgetItem(conlang.strip()))
+            self._ask_pending_table.setItem(row_count, 1, QTableWidgetItem(ipa.strip()))
+            self._ask_pending_table.setItem(row_count, 2, QTableWidgetItem(tts.strip()))
+            self._ask_pending_table.setItem(row_count, 3, QTableWidgetItem(meaning.strip()))
+            self._ask_pending_table.setItem(row_count, 4, QTableWidgetItem(tags.strip()))
+        # 显示批量操作按钮
+        if self._ask_batch_confirm_btn is not None:
+            self._ask_batch_confirm_btn.setVisible(True)
+        if self._ask_batch_discard_btn is not None:
+            self._ask_batch_discard_btn.setVisible(True)
+
+    def _ask_input_key_event(self, event) -> None:
+        """拦截 Ctrl+Enter 发送消息，其余按键正常传递。"""
+        from PyQt5.QtCore import Qt as QtConst
+        if event.key() in (QtConst.Key_Return, QtConst.Key_Enter) and (
+            event.modifiers() & QtConst.ControlModifier
+        ):
+            self._ask_send_message()
+        else:
+            QPlainTextEdit.keyPressEvent(self._ask_input, event)
+
+    def _rebuild_template_buttons(self) -> None:
+        """根据 self._ask_templates 重新构建快捷提问按钮行。"""
+        if self._ask_template_row is None:
+            return
+        # 清除旧按钮
+        self._ask_template_btns.clear()
+        while self._ask_template_row.count():
+            item = self._ask_template_row.takeAt(0)
+            w = item.widget()
+            if w is not None:
+                w.deleteLater()
+
+        label = QLabel("快捷提问：")
+        self._ask_template_row.addWidget(label)
+
+        for tpl in self._ask_templates:
+            btn = QPushButton(tpl["name"])
+            btn.setProperty("class", "pill")
+            btn.setObjectName("cls_pill")
+            btn.setToolTip(tpl["prompt"])
+            btn.clicked.connect(self._ask_on_template_clicked)
+            self._ask_template_btns.append(btn)
+            self._ask_template_row.addWidget(btn)
+
+        # 管理模板按钮
+        manage_btn = QPushButton("管理模板…")
+        manage_btn.setProperty("class", "pill")
+        manage_btn.setObjectName("cls_pill")
+        manage_btn.clicked.connect(self._ask_manage_templates)
+        self._ask_template_btns.append(manage_btn)
+        self._ask_template_row.addWidget(manage_btn)
+
+        self._ask_template_row.addStretch(1)
+
+    def _ask_on_template_clicked(self) -> None:
+        """快捷提问模板按钮点击 — 将模板 prompt 文本填入输入框。"""
+        if self._ask_input is None:
+            return
+        sender = self.sender()
+        if sender and isinstance(sender, QPushButton):
+            name = sender.text()
+            # 查找对应的模板 prompt
+            for tpl in self._ask_templates:
+                if tpl["name"] == name:
+                    self._ask_input.setPlainText(tpl["prompt"])
+                    self._ask_input.setFocus()
+                    return
+
+    def _ask_manage_templates(self) -> None:
+        """打开模板管理对话框，允许用户增删改快捷提问模板。"""
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QListWidget, QHBoxLayout
+
+        dlg = QDialog(self)
+        dlg.setWindowTitle("管理快捷提问模板")
+        dlg.setMinimumSize(480, 360)
+        dlg.setObjectName("cls_ask_template_dialog")
+        layout = QVBoxLayout(dlg)
+
+        # 列表
+        list_widget = QListWidget()
+        list_widget.setObjectName("cls_ask_template_list")
+        templates_copy = [dict(t) for t in self._ask_templates]
+        for tpl in templates_copy:
+            list_widget.addItem(f"{tpl['name']}  ─  {tpl['prompt']}")
+        layout.addWidget(list_widget, 1)
+
+        # 操作按钮行
+        btn_row = QHBoxLayout()
+        btn_row.addStretch(1)
+
+        add_btn = QPushButton("新增")
+        add_btn.setProperty("class", "primary")
+        add_btn.setObjectName("cls_primary")
+        btn_row.addWidget(add_btn)
+
+        edit_btn = QPushButton("编辑")
+        edit_btn.setProperty("class", "small")
+        edit_btn.setObjectName("cls_small")
+        btn_row.addWidget(edit_btn)
+
+        del_btn = QPushButton("删除")
+        del_btn.setProperty("class", "small")
+        del_btn.setObjectName("cls_small")
+        btn_row.addWidget(del_btn)
+
+        layout.addLayout(btn_row)
+
+        # 确认/取消
+        confirm_row = QHBoxLayout()
+        confirm_row.addStretch(1)
+        ok_btn = QPushButton("确定")
+        ok_btn.setProperty("class", "primary")
+        ok_btn.setObjectName("cls_primary")
+        cancel_btn = QPushButton("取消")
+        cancel_btn.setProperty("class", "small")
+        cancel_btn.setObjectName("cls_small")
+        confirm_row.addWidget(ok_btn)
+        confirm_row.addWidget(cancel_btn)
+        layout.addLayout(confirm_row)
+
+        # ── 按钮逻辑 ──
+        def _add_template():
+            name, ok = QInputDialog.getText(dlg, "新增模板", "模板名称：")
+            if not ok or not name.strip():
+                return
+            prompt, ok2 = QInputDialog.getText(dlg, "新增模板", "提问文本：")
+            if not ok2 or not prompt.strip():
+                return
+            templates_copy.append({"name": name.strip(), "prompt": prompt.strip()})
+            list_widget.addItem(f"{name.strip()}  ─  {prompt.strip()}")
+
+        def _edit_template():
+            idx = list_widget.currentRow()
+            if idx < 0:
+                return
+            old = templates_copy[idx]
+            name, ok = QInputDialog.getText(dlg, "编辑模板", "模板名称：", text=old["name"])
+            if not ok or not name.strip():
+                return
+            prompt, ok2 = QInputDialog.getText(dlg, "编辑模板", "提问文本：", text=old["prompt"])
+            if not ok2 or not prompt.strip():
+                return
+            templates_copy[idx] = {"name": name.strip(), "prompt": prompt.strip()}
+            list_widget.item(idx).setText(f"{name.strip()}  ─  {prompt.strip()}")
+
+        def _del_template():
+            idx = list_widget.currentRow()
+            if idx < 0:
+                return
+            templates_copy.pop(idx)
+            list_widget.takeItem(idx)
+
+        add_btn.clicked.connect(_add_template)
+        edit_btn.clicked.connect(_edit_template)
+        del_btn.clicked.connect(_del_template)
+        ok_btn.clicked.connect(dlg.accept)
+        cancel_btn.clicked.connect(dlg.reject)
+
+        if dlg.exec_() == QDialog.Accepted:
+            self._ask_templates = templates_copy
+            save_ask_templates(templates_copy)
+            self._rebuild_template_buttons()
+
+    def _toggle_ask_pending(self) -> None:
+        """折叠/展开待审核候选词面板。"""
+        if self._ask_pending_table is None:
+            return
+        visible = self._ask_pending_table.isVisible()
+        self._ask_pending_table.setVisible(not visible)
+        if self._ask_pending_toggle is not None:
+            self._ask_pending_toggle.setText(
+                "收起  ▼" if not visible else "展开  ▶"
+            )
+
+    def _ask_batch_confirm_pending(self) -> None:
+        """批量确认所有待审核候选词，导入词库。"""
+        if self._ask_pending_table is None:
+            return
+        lang = self._ph_lang
+        if not lang or not isinstance(lang, dict):
+            QMessageBox.warning(self, "提示", "请先选择一种语言。")
+            return
+
+        new_words: List[NewWord] = []
+        for row in range(self._ask_pending_table.rowCount()):
+            conlang_item = self._ask_pending_table.item(row, 0)
+            ipa_item = self._ask_pending_table.item(row, 1)
+            tts_item = self._ask_pending_table.item(row, 2)
+            meaning_item = self._ask_pending_table.item(row, 3)
+            tags_item = self._ask_pending_table.item(row, 4)
+
+            nw = NewWord(
+                chinese=meaning_item.text().strip() if meaning_item else "",
+                conlang=conlang_item.text().strip() if conlang_item else "",
+                ipa=ipa_item.text().strip() if ipa_item else "",
+                tts=tts_item.text().strip() if tts_item else "",
+                logic=tags_item.text().strip() if tags_item else "",
+            )
+            if nw.chinese and nw.conlang:
+                new_words.append(nw)
+
+        if not new_words:
+            return
+
+        self._write_new_words_to_lexicon(new_words, lang)
+        self._ask_clear_pending_table()
+        self._ask_append_chat_message("system", f"✅ {len(new_words)} 个候选词已确认导入词库。")
+
+    def _ask_batch_discard_pending(self) -> None:
+        """批量丢弃所有待审核候选词。"""
+        if self._ask_pending_table is None:
+            return
+        count = self._ask_pending_table.rowCount()
+        if count == 0:
+            return
+        reply = QMessageBox.question(
+            self, "丢弃确认",
+            f"确定丢弃全部 {count} 个候选词？此操作不可撤销。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if reply != QMessageBox.Yes:
+            return
+        self._ask_clear_pending_table()
+        self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个候选词。")
+
+    def _ask_clear_pending_table(self) -> None:
+        """清空待审核表格并隐藏批量操作按钮。"""
+        if self._ask_pending_table is not None:
+            self._ask_pending_table.setRowCount(0)
+        if self._ask_batch_confirm_btn is not None:
+            self._ask_batch_confirm_btn.setVisible(False)
+        if self._ask_batch_discard_btn is not None:
+            self._ask_batch_discard_btn.setVisible(False)
+
+    def _ask_append_chat_message(self, role: str, content: str) -> None:
+        """向对话历史区追加一条消息。"""
+        if self._ask_chat_display is None:
+            return
+        label = "你" if role == "user" else "AI"
+        color_token = theme_manager.token("color_primary") if role == "ai" else theme_manager.token("color_text_primary")
+        self._ask_chat_display.append(
+            f'<p style="margin:4px 0;"><b style="color:{color_token};">{label}：</b>{content}</p>'
+        )
+
+    def _estimate_tokens(self, text: str) -> int:
+        """粗略估算文本的 Token 数量（中文字符 ≈2 token，英文单词 ≈1 token）。"""
+        cn_chars = sum(1 for c in text if '\u4e00' <= c <= '\u9fff')
+        en_chars = len(text) - cn_chars
+        return int(cn_chars * 2 + en_chars * 0.25)
+
+    def _ask_update_token_display(self) -> None:
+        """更新 Token 圆圈和标签：估算当前对话总 Token 并显示使用率。"""
+        total_text = "".join(m.get("content", "") for m in self._ask_messages)
+        estimated = self._estimate_tokens(total_text)
+        # 模型上下文上限（常见值）
+        context_limit = 8192
+        model = str(self.state.get("paperhub_model", "qwen3-max"))
+        if "128" in model:
+            context_limit = 128000
+        elif "32" in model:
+            context_limit = 32000
+        elif "max" in model or "pro" in model:
+            context_limit = 32000
+
+        ratio = estimated / context_limit if context_limit > 0 else 0.0
+
+        if self._ask_token_circle is not None:
+            self._ask_token_circle.set_ratio(ratio)
+        if self._ask_token_label is not None:
+            msg_count = len(self._ask_messages)
+            self._ask_token_label.setText(
+                f"消息 {msg_count} 条 · ~{estimated} / {context_limit} Token"
+            )
+
     def _toggle_batch_section(self) -> None:
         self._batch_expanded = not self._batch_expanded
         if self._batch_body is not None:
@@ -648,6 +1413,7 @@ class MainWindow(QMainWindow):
         for lang in languages:
             item = QListWidgetItem(self._language_row_text(lang))
             item.setData(Qt.UserRole, lang["id"])
+            self._set_language_tooltip(item, lang)
             self.language_list.addItem(item)
         self.language_list.setCurrentRow(0)
         self._refresh_asset_status()
@@ -668,6 +1434,15 @@ class MainWindow(QMainWindow):
             parts.append(self._status_symbol_for_result(result.status))
         return f"{lang.get('name', '未命名')}  {''.join(parts)}"
 
+    def _set_language_tooltip(self, item: QListWidgetItem, lang: Dict) -> None:
+        """Set tooltip on a language list item from the notes field.
+        If notes is empty or missing, no tooltip is shown."""
+        notes = lang.get("notes", "").strip()
+        if notes:
+            item.setToolTip(notes)
+        else:
+            item.setToolTip("")
+
     def _refresh_list_item_for_language(self, lang_id: str) -> None:
         assert self.language_list is not None
         for i in range(self.language_list.count()):
@@ -676,6 +1451,7 @@ class MainWindow(QMainWindow):
                 lang = self._language_by_id(lang_id)
                 if lang:
                     item.setText(self._language_row_text(lang))
+                    self._set_language_tooltip(item, lang)
                 break
 
     def _ensure_material_bundle(self, lang: Dict) -> None:
@@ -819,6 +1595,7 @@ class MainWindow(QMainWindow):
         assert self.language_list is not None
         item = QListWidgetItem(self._language_row_text(language))
         item.setData(Qt.UserRole, language["id"])
+        self._set_language_tooltip(item, language)
         self.language_list.addItem(item)
         self.language_list.setCurrentRow(self.language_list.count() - 1)
         self._save_state()
@@ -878,6 +1655,12 @@ class MainWindow(QMainWindow):
         def accept() -> None:
             lang["notes"] = text.toPlainText()
             self._save_state()
+            # Refresh tooltip for current language item
+            cur_row = self.language_list.currentRow()
+            if cur_row >= 0:
+                item = self.language_list.item(cur_row)
+                if item:
+                    self._set_language_tooltip(item, lang)
             dlg.accept()
 
         ok.clicked.connect(accept)
@@ -988,6 +1771,7 @@ class MainWindow(QMainWindow):
             lang = self._language_by_id(item.data(Qt.UserRole))
             if lang:
                 item.setText(self._language_row_text(lang))
+                self._set_language_tooltip(item, lang)
 
     def _export_language_pack(self, lang: Dict) -> None:
         default = f"{lang['name']}_语言包.zip"

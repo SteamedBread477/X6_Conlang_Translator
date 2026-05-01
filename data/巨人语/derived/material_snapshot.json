@@ -1274,7 +1274,10 @@
     "要": "vil",
     "优化": "optimera",
     "吗": "-ne",
-    "了": "ät"
+    "了": "ät",
+    "巨": "grav",
+    "王的": "kung",
+    "号粉丝": "fan"
   },
   "tts_map": {
     "sul": "sool",
@@ -3223,7 +3226,10 @@
     "optimera": "op-ti-ME-ra",
     "-ne": "neh",
     "ätat": "EH-taht",
-    "ät": "et"
+    "ät": "et",
+    "grav": "grahv",
+    "kung": "koong",
+    "fan": "fahn"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5172,20 +5178,26 @@
     "optimera": "/ɔp.tɪ'mɛ.ra/",
     "-ne": "/nɛ/",
     "ätat": "/ˈɛ.tat/",
-    "ät": "/ɛt/"
+    "ät": "/ɛt/",
+    "grav": "/grav/",
+    "kung": "/kuŋ/",
+    "fan": "/fan/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
     "你想干什么": "ti Kas zulit",
     "我要继续优化功能": "mivilFortsättoptimeraFunktion",
-    "你吃吗": "tiätat-ne"
+    "你吃吗": "tiätat-ne",
+    "你吃了吗": "tiätatät-ne",
+    "你好": "Sul hel.",
+    "我是巨人": "mi es grav Människa"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 816,
-    "mapping_count": 1995,
-    "ipa_count": 1995,
-    "anchor_count": 4
+    "lexicon_count": 819,
+    "mapping_count": 1998,
+    "ipa_count": 1998,
+    "anchor_count": 7
   }
 }
