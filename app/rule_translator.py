@@ -214,7 +214,18 @@ def _segment_longest_match(
 
 
 def _build_conlang_from_tokens(tokens: List[TokenResult]) -> str:
-    return "".join(tok.conlang for tok in tokens)
+    """词间加空格；标点直接附着在前一词后（无前置空格），标点后加空格。"""
+    if not tokens:
+        return ""
+    parts: List[str] = []
+    for i, tok in enumerate(tokens):
+        parts.append(tok.conlang)
+        if i < len(tokens) - 1:
+            next_tok = tokens[i + 1]
+            # 下一个 token 不是标点 → 加空格（标点直接附着到词上不加前置空格）
+            if not next_tok.is_punct:
+                parts.append(" ")
+    return "".join(parts)
 
 
 # ---------------------------------------------------------------------------
@@ -233,13 +244,15 @@ def _build_tts_from_tokens(
     - 标点 → 直接透传。
     """
     parts: List[str] = []
-    for tok in tokens:
+    for i, tok in enumerate(tokens):
         if tok.is_punct:
             parts.append(tok.conlang)
         elif tok.is_matched:
             parts.append(tts_map.get(tok.conlang, tok.conlang))
         else:
             parts.append(f"【{tok.source}】")
+        if i < len(tokens) - 1 and not tokens[i + 1].is_punct:
+            parts.append(" ")
     return "".join(parts)
 
 
@@ -323,8 +336,8 @@ def translate_rule(
 
     return RuleTranslationResult(
         source=source,
-        conlang="".join(conlang_parts),
-        phonetic="".join(phonetic_parts),
+        conlang=" ".join(p for p in conlang_parts if p),
+        phonetic=" ".join(p for p in phonetic_parts if p),
         unmatched_words=all_unmatched,
         match_count=total_match,
         total_tokens=total_tokens,
