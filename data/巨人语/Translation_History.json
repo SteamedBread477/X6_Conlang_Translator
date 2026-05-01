@@ -90,5 +90,24 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0006",
+    "timestamp": "2026-05-01T20:26:52",
+    "source": "你吃饭了吗",
+    "conlang": "Tu cib edanar-ne?",
+    "phonetic": "Too kib edanar-ne?",
+    "unmatched_words": [
+      "你吃饭了吗"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

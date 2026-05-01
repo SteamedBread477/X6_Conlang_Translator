@@ -22,7 +22,7 @@ import json
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from app.lexicon_segment import (
     gaps_from_segments,
@@ -321,10 +321,10 @@ def _parse_paperhub_response(raw: str) -> PaperHubResult:
 
 
 # ---------------------------------------------------------------------------
-# PaperHub API 调用（带超时与错误处理）
+# PaperHub API 调用（带超时与错误处理，支持流式输出）
 # ---------------------------------------------------------------------------
 
-_TIMEOUT_SECONDS = 30
+_DEFAULT_TIMEOUT = 90  # 秒；建议关闭思考模式 ≥60，开启思考模式 ≥120
 
 
 class PaperHubError(Exception):
@@ -335,6 +335,26 @@ class PaperHubError(Exception):
         self.status_code = status_code
 
 
+def _make_error_hint(exc_str: str, model: str, timeout: int) -> str:
+    """将 API 异常分类为用户友好提示。"""
+    s = exc_str.lower()
+    if "401" in exc_str or "authentication" in s or "unauthorized" in s:
+        return "API Key 无效或已过期，请检查设置中的 PaperHub API Key。"
+    if "404" in exc_str or "model_not_found" in s or "does not exist" in s:
+        return f"模型「{model}」不存在或不可用，建议在设置中刷新模型列表并重新选择。"
+    if "timeout" in s or "timed out" in s:
+        return (
+            f"API 请求超时（{timeout}s）。"
+            " 如已开启思考模式，建议关闭或将超时改为 120s 以上；"
+            " 也可尝试缩短输入或切换模型。"
+        )
+    if "connection" in s or "network" in s or "refused" in s:
+        return "网络连接失败，请检查网络是否能访问 PaperHub 服务。"
+    if "rate_limit" in s or "429" in exc_str:
+        return "API 请求频率超限，请稍后重试。"
+    return f"PaperHub API 调用失败：{exc_str[:200]}"
+
+
 def _call_paperhub_chat(
     api_key: str,
     base_url: str,
@@ -343,20 +363,21 @@ def _call_paperhub_chat(
     user_prompt: str,
     *,
     temperature: float = 0.7,
-    max_tokens: int = 4096,
-    reasoning_enabled: bool = True,
-    timeout: int = _TIMEOUT_SECONDS,
+    max_tokens: int = 1200,
+    reasoning_enabled: bool = False,
+    timeout: int = _DEFAULT_TIMEOUT,
+    stream: bool = True,
+    on_chunk: Optional[Callable[[str], None]] = None,
 ) -> str:
     """
-    调用 PaperHub Chat Completions 接口（系统+用户双消息），返回模型文本响应。
+    调用 PaperHub Chat Completions 接口（系统+用户双消息），返回模型完整文本响应。
 
-    错误处理：
-      - ImportError → 提示安装 openai
-      - 认证错误 (401) → 提示检查 API Key
-      - 网络错误 → 提示检查网络连接
-      - 超时 → 报告超时
-      - 模型不存在 (404) → 提示更换模型
-      - 其他 API 错误 → 显示原始错误
+    参数：
+      stream      True（默认）使用流式输出；on_chunk 每收到一个文本块时回调，
+                  调用方可借此实时更新 UI。流式模式不受单次超时中断影响（超时
+                  仅影响首 token 等待，后续增量传输独立计时）。
+      on_chunk    仅在 stream=True 时有效；签名 (chunk_text: str) -> None。
+      timeout     整体超时秒数；建议：关闭 reasoning ≥60s，开启 reasoning ≥120s。
     """
     try:
         from openai import OpenAI
@@ -390,47 +411,33 @@ def _call_paperhub_chat(
         create_kwargs["extra_body"] = {"reasoning": {"enabled": True}}
 
     try:
-        resp = client.chat.completions.create(**create_kwargs)
+        if stream:
+            create_kwargs["stream"] = True
+            accumulated = ""
+            resp_iter = client.chat.completions.create(**create_kwargs)
+            for chunk in resp_iter:
+                if not chunk.choices:
+                    continue
+                delta = chunk.choices[0].delta
+                piece = getattr(delta, "content", None) or ""
+                if piece:
+                    accumulated += piece
+                    if on_chunk is not None:
+                        on_chunk(piece)
+            return accumulated.strip()
+        else:
+            resp = client.chat.completions.create(**create_kwargs)
+            content: Optional[str] = None
+            if resp.choices:
+                content = getattr(resp.choices[0].message, "content", None)
+            return (content or "").strip()
+
     except Exception as exc:
         exc_str = str(exc)
-        # 分类错误
-        if "401" in exc_str or "authentication" in exc_str.lower() or "Unauthorized" in exc_str:
-            raise PaperHubError(
-                exc_str,
-                user_hint="API Key 无效或已过期，请检查设置中的 PaperHub API Key。",
-            ) from exc
-        if "404" in exc_str or "model_not_found" in exc_str.lower() or "does not exist" in exc_str.lower():
-            raise PaperHubError(
-                exc_str,
-                user_hint=f"模型「{model}」不存在或不可用，建议更换模型。",
-            ) from exc
-        if "timeout" in exc_str.lower() or "timed out" in exc_str.lower():
-            raise PaperHubError(
-                exc_str,
-                user_hint="API 请求超时（30秒），请检查网络连接，或尝试减少输入长度。",
-            ) from exc
-        if "connection" in exc_str.lower() or "network" in exc_str.lower() or "refused" in exc_str.lower():
-            raise PaperHubError(
-                exc_str,
-                user_hint="网络连接失败，请检查网络是否能访问 PaperHub 服务。",
-            ) from exc
-        if "rate_limit" in exc_str.lower() or "429" in exc_str:
-            raise PaperHubError(
-                exc_str,
-                user_hint="API 请求频率超限，请稍后重试。",
-                status_code=429,
-            ) from exc
-        # 通用错误
         raise PaperHubError(
             exc_str,
-            user_hint=f"PaperHub API 调用失败：{exc_str[:200]}",
+            user_hint=_make_error_hint(exc_str, model, timeout),
         ) from exc
-
-    content: Optional[str] = None
-    if resp.choices:
-        msg = resp.choices[0].message
-        content = getattr(msg, "content", None)
-    return (content or "").strip()
 
 
 # ---------------------------------------------------------------------------
@@ -501,9 +508,11 @@ def _get_settings_params(settings: Dict[str, Any]) -> Dict[str, Any]:
         "api_key": str(settings.get("paperhub_api_key") or "").strip(),
         "base_url": str(settings.get("paperhub_base_url") or "https://tc-paperhub.diezhi.net/v1"),
         "model": str(settings.get("paperhub_model") or "qwen3-max"),
-        "reasoning": bool(settings.get("paperhub_reasoning_enabled", True)),
+        "reasoning": bool(settings.get("paperhub_reasoning_enabled", False)),
         "temperature": float(settings.get("paperhub_temperature", 0.7)),
-        "max_tokens": int(settings.get("paperhub_max_tokens", 4096)),
+        "max_tokens": int(settings.get("paperhub_max_tokens", 1200)),
+        "timeout": max(10, int(settings.get("paperhub_timeout", _DEFAULT_TIMEOUT))),
+        "stream": bool(settings.get("paperhub_stream", True)),
         "strategy": str(settings.get("paperhub_strategy") or "unmatched_only"),
     }
 
@@ -546,6 +555,8 @@ def translate_with_paperhub(
     settings: Dict[str, Any],
     bundle: Dict[str, Any],
     text: str,
+    *,
+    on_chunk: Optional[Callable[[str], None]] = None,
 ) -> PaperHubResult:
     """
     PaperHub AI 翻译核心接口。
@@ -576,22 +587,26 @@ def translate_with_paperhub(
     strategy = params["strategy"]
     system_prompt = _build_system_prompt(bundle)
 
+    # 公共调用参数
+    _common = dict(
+        api_key=api_key,
+        base_url=params["base_url"],
+        model=params["model"],
+        system_prompt=system_prompt,
+        temperature=params["temperature"],
+        max_tokens=params["max_tokens"],
+        reasoning_enabled=params["reasoning"],
+        timeout=params["timeout"],
+        stream=params["stream"],
+        on_chunk=on_chunk,
+    )
+
     # ── always 策略：直接 AI 翻译 ───────────────────────────────────
     if strategy == "always":
         user_prompt = _build_user_prompt_full(text)
         try:
-            raw = _call_paperhub_chat(
-                api_key=api_key,
-                base_url=params["base_url"],
-                model=params["model"],
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                temperature=params["temperature"],
-                max_tokens=params["max_tokens"],
-                reasoning_enabled=params["reasoning"],
-            )
+            raw = _call_paperhub_chat(user_prompt=user_prompt, **_common)
         except PaperHubError as exc:
-            # 回退到规则翻译
             rule_result = translate_multiline_rule(text, lexicon, tts_map)
             return PaperHubResult(
                 conlang=rule_result.conlang,
@@ -604,7 +619,6 @@ def translate_with_paperhub(
         parsed.strategy_used = "always"
         parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
         if parsed.error and not parsed.conlang:
-            # AI 返回无法解析，回退规则翻译
             rule_result = translate_multiline_rule(text, lexicon, tts_map)
             parsed.conlang = rule_result.conlang
             parsed.tts = rule_result.phonetic
@@ -617,31 +631,17 @@ def translate_with_paperhub(
         unmatched = rule_result.unmatched_words
 
         if not unmatched:
-            # 词库全覆盖，不需要 AI
             return PaperHubResult(
                 conlang=rule_result.conlang,
                 tts=rule_result.phonetic,
                 strategy_used="unmatched_only→rule_only",
             )
 
-        # 有未匹配词汇，调用 AI 补全
-        # 清理 rule_result 中的 【】标记，作为参考
         rule_conlang_clean = re.sub(r"【.*?】", "[未匹配]", rule_result.conlang)
-
         user_prompt = _build_user_prompt_unmatched(text, unmatched, rule_conlang_clean)
         try:
-            raw = _call_paperhub_chat(
-                api_key=api_key,
-                base_url=params["base_url"],
-                model=params["model"],
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                temperature=params["temperature"],
-                max_tokens=params["max_tokens"],
-                reasoning_enabled=params["reasoning"],
-            )
+            raw = _call_paperhub_chat(user_prompt=user_prompt, **_common)
         except PaperHubError as exc:
-            # AI 失败，回退到规则翻译结果
             return PaperHubResult(
                 conlang=rule_result.conlang,
                 tts=rule_result.phonetic,
@@ -654,7 +654,6 @@ def translate_with_paperhub(
         parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
 
         if parsed.error and not parsed.conlang:
-            # AI 返回无法解析，保留规则翻译结果
             parsed.conlang = rule_result.conlang
             parsed.tts = rule_result.phonetic
             parsed.strategy_used = "unmatched_only→rule_fallback"
@@ -665,16 +664,7 @@ def translate_with_paperhub(
     if strategy == "confirm":
         user_prompt = _build_user_prompt_full(text)
         try:
-            raw = _call_paperhub_chat(
-                api_key=api_key,
-                base_url=params["base_url"],
-                model=params["model"],
-                system_prompt=system_prompt,
-                user_prompt=user_prompt,
-                temperature=params["temperature"],
-                max_tokens=params["max_tokens"],
-                reasoning_enabled=params["reasoning"],
-            )
+            raw = _call_paperhub_chat(user_prompt=user_prompt, **_common)
         except PaperHubError as exc:
             rule_result = translate_multiline_rule(text, lexicon, tts_map)
             return PaperHubResult(

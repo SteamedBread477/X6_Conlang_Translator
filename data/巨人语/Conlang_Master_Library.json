@@ -102,7 +102,7 @@
   "胸部": "pectus",
   "腹部": "ventrem",
   "腿": "crurum",
-  "吃": "edat",
+  "吃": "ed",
   "喝": "bibat",
   "走路": "ambulat",
   "睡觉": "dormiat",
@@ -282,7 +282,19 @@
       "created_by": "paperhub_ai",
       "created_time": "2026-05-01T18:42:00",
       "model": "deepseek-v4-pro"
+    },
+    "你吃饭了吗": {
+      "conlang": "Tu gran edanarne?",
+      "ipa": "/tu gran ɛd.a.ˈnar.nɛ/",
+      "tts": "too grahn ed-ah-NAHR-neh",
+      "logic": "SOV语序：tu(你) gran(饭) ed-(吃) -anar(过去时) -ne(疑问附着)；重音在倒数第二音节nar上。",
+      "created_by": "paperhub_ai",
+      "created_time": "2026-05-01T20:28:17",
+      "model": "deepseek-v4-pro"
     }
   },
-  "你喜欢": "tu dulat"
+  "你喜欢": "tu dulat",
+  "你": "tu",
+  "饭": "cib",
+  "你吃饭了吗": "Tu gran edanarne?"
 }

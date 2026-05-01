@@ -223,9 +223,27 @@ class PaperHubSettingsDialog(QDialog):
 
         self._reasoning_cb = QCheckBox("开启思考模式（reasoning.enabled = true）")
         self._reasoning_cb.setToolTip(
-            "启用后模型将进行链式推理（Chain-of-Thought），翻译质量更高，但响应稍慢。"
+            "启用后模型将进行链式推理（Chain-of-Thought），翻译质量更高，但响应时间显著增加（+30~90s）。"
         )
+        self._reasoning_cb.toggled.connect(self._on_reasoning_toggled)
         adv_layout.addWidget(self._reasoning_cb)
+
+        self._reasoning_warn_lbl = QLabel(
+            "⚠ 思考模式已开启：响应时间预计 30–90s，建议将超时设为 120s 以上。"
+        )
+        self._reasoning_warn_lbl.setWordWrap(True)
+        self._reasoning_warn_lbl.setStyleSheet(
+            f"color: {theme_manager.token('color_status_warn') or '#b45309'};"
+            " font-size: 11px;"
+        )
+        self._reasoning_warn_lbl.setVisible(False)
+        adv_layout.addWidget(self._reasoning_warn_lbl)
+
+        self._stream_cb = QCheckBox("启用流式输出（stream）")
+        self._stream_cb.setToolTip(
+            "开启后 AI 响应将逐字显示，首 token 即时可见，不会因超时整体中断。推荐开启。"
+        )
+        adv_layout.addWidget(self._stream_cb)
 
         temp_row = QHBoxLayout()
         temp_row.addWidget(QLabel("Temperature（0 – 2）："))
@@ -241,12 +259,24 @@ class PaperHubSettingsDialog(QDialog):
         tokens_row = QHBoxLayout()
         tokens_row.addWidget(QLabel("Max Tokens："))
         self._max_tokens_spin = QSpinBox()
-        self._max_tokens_spin.setRange(256, 32768)
-        self._max_tokens_spin.setSingleStep(256)
+        self._max_tokens_spin.setRange(256, 16384)
+        self._max_tokens_spin.setSingleStep(200)
         self._max_tokens_spin.setFixedWidth(100)
         tokens_row.addWidget(self._max_tokens_spin)
+        tokens_row.addWidget(QLabel("（翻译任务建议 800–1500，越小响应越快）"))
         tokens_row.addStretch(1)
         adv_layout.addLayout(tokens_row)
+
+        timeout_row = QHBoxLayout()
+        timeout_row.addWidget(QLabel("请求超时（秒）："))
+        self._timeout_spin = QSpinBox()
+        self._timeout_spin.setRange(10, 600)
+        self._timeout_spin.setSingleStep(15)
+        self._timeout_spin.setFixedWidth(100)
+        timeout_row.addWidget(self._timeout_spin)
+        timeout_row.addWidget(QLabel("（关闭思考模式建议 ≥60；开启建议 ≥120）"))
+        timeout_row.addStretch(1)
+        adv_layout.addLayout(timeout_row)
 
         layout.addWidget(adv_grp)
 
@@ -343,9 +373,13 @@ class PaperHubSettingsDialog(QDialog):
             if first:
                 first.setChecked(True)
 
-        self._reasoning_cb.setChecked(bool(s.get("paperhub_reasoning_enabled", True)))
+        reasoning = bool(s.get("paperhub_reasoning_enabled", False))
+        self._reasoning_cb.setChecked(reasoning)
+        self._reasoning_warn_lbl.setVisible(reasoning)
+        self._stream_cb.setChecked(bool(s.get("paperhub_stream", True)))
         self._temperature_spin.setValue(float(s.get("paperhub_temperature", 0.7)))
-        self._max_tokens_spin.setValue(int(s.get("paperhub_max_tokens", 2048)))
+        self._max_tokens_spin.setValue(int(s.get("paperhub_max_tokens", 1200)))
+        self._timeout_spin.setValue(int(s.get("paperhub_timeout", 90)))
 
     def _collect_values(self) -> Dict[str, Any]:
         selected_model = (
@@ -367,13 +401,20 @@ class PaperHubSettingsDialog(QDialog):
             "paperhub_model": selected_model,
             "paperhub_strategy": selected_strategy,
             "paperhub_reasoning_enabled": self._reasoning_cb.isChecked(),
+            "paperhub_stream": self._stream_cb.isChecked(),
             "paperhub_temperature": self._temperature_spin.value(),
             "paperhub_max_tokens": self._max_tokens_spin.value(),
+            "paperhub_timeout": self._timeout_spin.value(),
         }
 
     # ------------------------------------------------------------------
     # 事件处理
     # ------------------------------------------------------------------
+
+    def _on_reasoning_toggled(self, checked: bool) -> None:
+        self._reasoning_warn_lbl.setVisible(checked)
+        if checked and self._timeout_spin.value() < 120:
+            self._timeout_spin.setValue(120)
 
     def _toggle_key_visibility(self, checked: bool) -> None:
         self._api_key_edit.setEchoMode(

@@ -84,7 +84,8 @@ FILE_KEYS = ("whitepaper", "master_library", "mapping_rules", "translation_histo
 class _PaperHubTranslateThread(QThread):
     """后台线程执行 PaperHub AI 翻译，避免阻塞 UI。"""
 
-    finished = pyqtSignal(object)  # PaperHubResult
+    finished = pyqtSignal(object)   # PaperHubResult
+    stream_chunk = pyqtSignal(str)  # 流式输出块（逐字追加到输出框）
 
     def __init__(
         self,
@@ -99,8 +100,13 @@ class _PaperHubTranslateThread(QThread):
         self._text = text
 
     def run(self) -> None:
+        def _on_chunk(piece: str) -> None:
+            self.stream_chunk.emit(piece)
+
         try:
-            result = translate_with_paperhub(self._settings, self._bundle, self._text)
+            result = translate_with_paperhub(
+                self._settings, self._bundle, self._text, on_chunk=_on_chunk
+            )
         except Exception as exc:
             result = PaperHubResult(error=str(exc))
         self.finished.emit(result)
@@ -1016,7 +1022,20 @@ class MainWindow(QMainWindow):
             self._paperhub_settings, bundle, text, self,
         )
         self._ph_thread.finished.connect(self._on_paperhub_thread_finished)
+        # 流式输出：AI 返回内容时逐步追加到自创语输出框，让用户看到实时进度
+        if self._paperhub_settings.get("paperhub_stream", True):
+            if self.target_output is not None:
+                self.target_output.clear()
+            self._ph_thread.stream_chunk.connect(self._on_stream_chunk)
         self._ph_thread.start()
+
+    def _on_stream_chunk(self, piece: str) -> None:
+        """AI 流式输出块回调：逐步追加到自创语输出框。"""
+        if self.target_output is not None:
+            cursor = self.target_output.textCursor()
+            cursor.movePosition(cursor.End)
+            cursor.insertText(piece)
+            self.target_output.setTextCursor(cursor)
 
     def _on_paperhub_thread_finished(self, result_obj: Any) -> None:
         """PaperHub AI 翻译线程完成回调。"""
