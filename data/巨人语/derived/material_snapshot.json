@@ -1277,7 +1277,14 @@
     "了": "ät",
     "巨": "grav",
     "王的": "kung",
-    "号粉丝": "fan"
+    "号粉丝": "fan",
+    "饭": "mat",
+    "受伤，使受伤": "vunda",
+    "伤，伤口": "vund",
+    "灵魂之伤，精神创伤": "vund-sul",
+    "石之伤，无法愈合的旧伤": "vund-sten",
+    "血，血液": "blod",
+    "像……一样，……般的": "-lik"
   },
   "tts_map": {
     "sul": "sool",
@@ -3229,7 +3236,13 @@
     "ät": "et",
     "grav": "grahv",
     "kung": "koong",
-    "fan": "fahn"
+    "fan": "fahn",
+    "mat": "maht",
+    "vunda": "VOON-dah",
+    "vund": "voond",
+    "vund-sul": "VOOND-sool",
+    "vund-sten": "VOOND-sten",
+    "-lik": "lik"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5181,7 +5194,13 @@
     "ät": "/ɛt/",
     "grav": "/grav/",
     "kung": "/kuŋ/",
-    "fan": "/fan/"
+    "fan": "/fan/",
+    "mat": "/mat/",
+    "vunda": "/ˈvun.da/",
+    "vund": "/vund/",
+    "vund-sul": "/ˈvund.sul/",
+    "vund-sten": "/ˈvund.stɛn/",
+    "-lik": "/lik/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5190,14 +5209,17 @@
     "你吃吗": "tiätat-ne",
     "你吃了吗": "tiätatät-ne",
     "你好": "Sul hel.",
-    "我是巨人": "mi es grav Människa"
+    "我是巨人": "mi es grav Människa",
+    "我是巨人王的头号粉丝": "mi es grav Människa-kung  huvud-fan",
+    "我是 巨人王 的 头号粉丝": "mi es grav Människa-Kung-s huvud fan",
+    "你吃饭了吗": "ti ätat mat ät -ne"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 819,
-    "mapping_count": 1998,
-    "ipa_count": 1998,
-    "anchor_count": 7
+    "lexicon_count": 826,
+    "mapping_count": 2004,
+    "ipa_count": 2004,
+    "anchor_count": 10
   }
 }

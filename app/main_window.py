@@ -329,6 +329,8 @@ class MainWindow(QMainWindow):
         self._ask_pending_toggle: Optional[QPushButton] = None
         self._ask_batch_confirm_btn: Optional[QPushButton] = None
         self._ask_batch_discard_btn: Optional[QPushButton] = None
+        self._ask_confirm_selected_btn: Optional[QPushButton] = None
+        self._ask_discard_selected_btn: Optional[QPushButton] = None
         self._ask_templates: List[Dict[str, str]] = load_ask_templates()
         self._ask_template_btns: List[QPushButton] = []
         self._ask_template_row: Optional[QHBoxLayout] = None
@@ -856,15 +858,30 @@ class MainWindow(QMainWindow):
         self._ask_batch_discard_btn.setVisible(False)
         pending_hdr.addWidget(self._ask_batch_discard_btn)
 
+        self._ask_confirm_selected_btn = QPushButton("确认选中")
+        self._ask_confirm_selected_btn.setProperty("class", "primary")
+        self._ask_confirm_selected_btn.setObjectName("cls_primary")
+        self._ask_confirm_selected_btn.clicked.connect(self._ask_confirm_selected_pending)
+        self._ask_confirm_selected_btn.setVisible(False)
+        pending_hdr.addWidget(self._ask_confirm_selected_btn)
+
+        self._ask_discard_selected_btn = QPushButton("丢弃选中")
+        self._ask_discard_selected_btn.setProperty("class", "small")
+        self._ask_discard_selected_btn.setObjectName("cls_small")
+        self._ask_discard_selected_btn.clicked.connect(self._ask_discard_selected_pending)
+        self._ask_discard_selected_btn.setVisible(False)
+        pending_hdr.addWidget(self._ask_discard_selected_btn)
+
         pending_layout.addLayout(pending_hdr)
 
-        self._ask_pending_table = QTableWidget(0, 5)
+        self._ask_pending_table = QTableWidget(0, 6)
         self._ask_pending_table.setObjectName("cls_ask_pending_table")
         self._ask_pending_table.setHorizontalHeaderLabels(
-            ["自创语", "IPA", "TTS", "含义", "风格标签"]
+            ["自创语", "IPA", "TTS", "含义", "风格标签", "操作"]
         )
         self._ask_pending_table.horizontalHeader().setStretchLastSection(True)
         self._ask_pending_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self._ask_pending_table.setSelectionMode(QTableWidget.ExtendedSelection)
         self._ask_pending_table.setEditTriggers(QTableWidget.NoEditTriggers)
         pending_layout.addWidget(self._ask_pending_table, 1)
 
@@ -1112,18 +1129,16 @@ class MainWindow(QMainWindow):
             return
         for m in matches:
             conlang, ipa, tts, meaning, tags = m
-            row_count = self._ask_pending_table.rowCount()
-            self._ask_pending_table.insertRow(row_count)
-            self._ask_pending_table.setItem(row_count, 0, QTableWidgetItem(conlang.strip()))
-            self._ask_pending_table.setItem(row_count, 1, QTableWidgetItem(ipa.strip()))
-            self._ask_pending_table.setItem(row_count, 2, QTableWidgetItem(tts.strip()))
-            self._ask_pending_table.setItem(row_count, 3, QTableWidgetItem(meaning.strip()))
-            self._ask_pending_table.setItem(row_count, 4, QTableWidgetItem(tags.strip()))
+            self._ask_add_pending_row(conlang.strip(), ipa.strip(), tts.strip(), meaning.strip(), tags.strip())
         # 显示批量操作按钮
         if self._ask_batch_confirm_btn is not None:
             self._ask_batch_confirm_btn.setVisible(True)
         if self._ask_batch_discard_btn is not None:
             self._ask_batch_discard_btn.setVisible(True)
+        if self._ask_confirm_selected_btn is not None:
+            self._ask_confirm_selected_btn.setVisible(True)
+        if self._ask_discard_selected_btn is not None:
+            self._ask_discard_selected_btn.setVisible(True)
 
     def _ask_input_key_event(self, event) -> None:
         """拦截 Ctrl+Enter 发送消息，其余按键正常传递。"""
@@ -1349,6 +1364,228 @@ class MainWindow(QMainWindow):
             self._ask_batch_confirm_btn.setVisible(False)
         if self._ask_batch_discard_btn is not None:
             self._ask_batch_discard_btn.setVisible(False)
+        if self._ask_confirm_selected_btn is not None:
+            self._ask_confirm_selected_btn.setVisible(False)
+        if self._ask_discard_selected_btn is not None:
+            self._ask_discard_selected_btn.setVisible(False)
+
+    def _ask_add_pending_row(
+        self, conlang: str, ipa: str, tts: str, meaning: str, tags: str
+    ) -> None:
+        """向待审核表格添加一行候选词，并在「操作」列放置 ✓确认 / ✗丢弃 按钮。"""
+        if self._ask_pending_table is None:
+            return
+        row = self._ask_pending_table.rowCount()
+        self._ask_pending_table.insertRow(row)
+        self._ask_pending_table.setItem(row, 0, QTableWidgetItem(conlang))
+        self._ask_pending_table.setItem(row, 1, QTableWidgetItem(ipa))
+        self._ask_pending_table.setItem(row, 2, QTableWidgetItem(tts))
+        self._ask_pending_table.setItem(row, 3, QTableWidgetItem(meaning))
+        self._ask_pending_table.setItem(row, 4, QTableWidgetItem(tags))
+
+        # 操作列：✓确认 + ✗丢弃 按钮
+        op_widget = QWidget()
+        op_layout = QHBoxLayout(op_widget)
+        op_layout.setContentsMargins(2, 2, 2, 2)
+        op_layout.setSpacing(4)
+
+        btn_confirm = QPushButton("✓")
+        btn_confirm.setProperty("class", "primary")
+        btn_confirm.setObjectName("cls_primary")
+        btn_confirm.setFixedSize(28, 24)
+        btn_confirm.setToolTip("确认导入此词")
+        btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
+
+        btn_discard = QPushButton("✗")
+        btn_discard.setProperty("class", "small")
+        btn_discard.setObjectName("cls_small")
+        btn_discard.setFixedSize(28, 24)
+        btn_discard.setToolTip("丢弃此词")
+        btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
+
+        op_layout.addWidget(btn_confirm)
+        op_layout.addWidget(btn_discard)
+        op_widget.setLayout(op_layout)
+        self._ask_pending_table.setCellWidget(row, 5, op_widget)
+
+    def _ask_confirm_single_pending(self, row: int) -> None:
+        """确认导入单条候选词到词库。"""
+        if self._ask_pending_table is None:
+            return
+        if row < 0 or row >= self._ask_pending_table.rowCount():
+            return
+
+        lang = self._ph_lang
+        if not lang or not isinstance(lang, dict):
+            QMessageBox.warning(self, "提示", "请先选择一种语言。")
+            return
+
+        conlang_item = self._ask_pending_table.item(row, 0)
+        ipa_item = self._ask_pending_table.item(row, 1)
+        tts_item = self._ask_pending_table.item(row, 2)
+        meaning_item = self._ask_pending_table.item(row, 3)
+        tags_item = self._ask_pending_table.item(row, 4)
+
+        nw = NewWord(
+            chinese=meaning_item.text().strip() if meaning_item else "",
+            conlang=conlang_item.text().strip() if conlang_item else "",
+            ipa=ipa_item.text().strip() if ipa_item else "",
+            tts=tts_item.text().strip() if tts_item else "",
+            logic=tags_item.text().strip() if tags_item else "",
+        )
+        if nw.chinese and nw.conlang:
+            self._write_new_words_to_lexicon([nw], lang)
+
+        self._ask_pending_table.removeRow(row)
+        # 按钮的 row 引用的是旧行号，移除后后续行的按钮 row 需要更新
+        self._ask_refresh_pending_row_buttons()
+        self._ask_append_chat_message("system", f"✅ 候选词「{nw.chinese} → {nw.conlang}」已确认导入词库。")
+
+        # 如果表格清空，隐藏按钮
+        if self._ask_pending_table.rowCount() == 0:
+            self._ask_clear_pending_table()
+
+    def _ask_discard_single_pending(self, row: int) -> None:
+        """丢弃单条候选词。"""
+        if self._ask_pending_table is None:
+            return
+        if row < 0 or row >= self._ask_pending_table.rowCount():
+            return
+
+        meaning_item = self._ask_pending_table.item(row, 3)
+        conlang_item = self._ask_pending_table.item(row, 0)
+        label = f"{meaning_item.text() if meaning_item else ''} → {conlang_item.text() if conlang_item else ''}"
+
+        self._ask_pending_table.removeRow(row)
+        self._ask_refresh_pending_row_buttons()
+        self._ask_append_chat_message("system", f"🗑 已丢弃候选词「{label}」。")
+
+        if self._ask_pending_table.rowCount() == 0:
+            self._ask_clear_pending_table()
+
+    def _ask_confirm_selected_pending(self) -> None:
+        """确认导入选中行的候选词到词库。"""
+        if self._ask_pending_table is None:
+            return
+        lang = self._ph_lang
+        if not lang or not isinstance(lang, dict):
+            QMessageBox.warning(self, "提示", "请先选择一种语言。")
+            return
+
+        selected_rows = sorted(
+            set(idx.row() for idx in self._ask_pending_table.selectedIndexes()),
+            reverse=True
+        )
+        if not selected_rows:
+            self.statusBar().showMessage("请先在表格中选择要确认的候选词", 3000)
+            return
+
+        new_words: List[NewWord] = []
+        for row in selected_rows:
+            conlang_item = self._ask_pending_table.item(row, 0)
+            ipa_item = self._ask_pending_table.item(row, 1)
+            tts_item = self._ask_pending_table.item(row, 2)
+            meaning_item = self._ask_pending_table.item(row, 3)
+            tags_item = self._ask_pending_table.item(row, 4)
+
+            nw = NewWord(
+                chinese=meaning_item.text().strip() if meaning_item else "",
+                conlang=conlang_item.text().strip() if conlang_item else "",
+                ipa=ipa_item.text().strip() if ipa_item else "",
+                tts=tts_item.text().strip() if tts_item else "",
+                logic=tags_item.text().strip() if tags_item else "",
+            )
+            if nw.chinese and nw.conlang:
+                new_words.append(nw)
+
+        if new_words:
+            self._write_new_words_to_lexicon(new_words, lang)
+
+        # 从表格移除选中行（倒序移除以保持索引正确）
+        for row in selected_rows:
+            self._ask_pending_table.removeRow(row)
+        self._ask_refresh_pending_row_buttons()
+        self._ask_append_chat_message("system", f"✅ {len(new_words)} 个选中候选词已确认导入词库。")
+
+        if self._ask_pending_table.rowCount() == 0:
+            self._ask_clear_pending_table()
+
+    def _ask_discard_selected_pending(self) -> None:
+        """丢弃选中行的候选词。"""
+        if self._ask_pending_table is None:
+            return
+        selected_rows = sorted(
+            set(idx.row() for idx in self._ask_pending_table.selectedIndexes()),
+            reverse=True
+        )
+        if not selected_rows:
+            self.statusBar().showMessage("请先在表格中选择要丢弃的候选词", 3000)
+            return
+
+        count = len(selected_rows)
+        reply = QMessageBox.question(
+            self, "丢弃确认",
+            f"确定丢弃选中的 {count} 个候选词？此操作不可撤销。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if reply != QMessageBox.Yes:
+            return
+
+        for row in selected_rows:
+            self._ask_pending_table.removeRow(row)
+        self._ask_refresh_pending_row_buttons()
+        self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个选中候选词。")
+
+        if self._ask_pending_table.rowCount() == 0:
+            self._ask_clear_pending_table()
+
+    def _ask_refresh_pending_row_buttons(self) -> None:
+        """移除行后重新绑定每行操作按钮的 row 参数，确保索引正确。"""
+        if self._ask_pending_table is None:
+            return
+        for row in range(self._ask_pending_table.rowCount()):
+            op_widget = self._ask_pending_table.cellWidget(row, 5)
+            if op_widget is None:
+                # 如果该行没有操作按钮（旧数据），重新添加
+                self._ask_rebuild_row_buttons(row)
+                continue
+            btns = op_widget.findChildren(QPushButton)
+            for btn in btns:
+                # 断开旧连接，重新绑定当前行号
+                btn.clicked.disconnect()
+                if btn.toolTip().startswith("确认"):
+                    btn.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
+                else:
+                    btn.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
+
+    def _ask_rebuild_row_buttons(self, row: int) -> None:
+        """为没有操作按钮的已有行重新创建按钮 widget。"""
+        if self._ask_pending_table is None:
+            return
+        op_widget = QWidget()
+        op_layout = QHBoxLayout(op_widget)
+        op_layout.setContentsMargins(2, 2, 2, 2)
+        op_layout.setSpacing(4)
+
+        btn_confirm = QPushButton("✓")
+        btn_confirm.setProperty("class", "primary")
+        btn_confirm.setObjectName("cls_primary")
+        btn_confirm.setFixedSize(28, 24)
+        btn_confirm.setToolTip("确认导入此词")
+        btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
+
+        btn_discard = QPushButton("✗")
+        btn_discard.setProperty("class", "small")
+        btn_discard.setObjectName("cls_small")
+        btn_discard.setFixedSize(28, 24)
+        btn_discard.setToolTip("丢弃此词")
+        btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
+
+        op_layout.addWidget(btn_confirm)
+        op_layout.addWidget(btn_discard)
+        op_widget.setLayout(op_layout)
+        self._ask_pending_table.setCellWidget(row, 5, op_widget)
 
     def _ask_append_chat_message(self, role: str, content: str) -> None:
         """向对话历史区追加一条消息。"""

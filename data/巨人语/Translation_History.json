@@ -286,5 +286,75 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0017",
+    "timestamp": "2026-05-01T23:20:42",
+    "source": "你吃饭了吗",
+    "conlang": "ti ätat mat -ne",
+    "phonetic": "tee eh-taht maht neh",
+    "unmatched_words": [
+      "饭"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0018",
+    "timestamp": "2026-05-01T23:21:46",
+    "source": "你吃饭了吗",
+    "conlang": "ti ätat mat ät -ne",
+    "phonetic": "ti EH-taht maht et neh",
+    "unmatched_words": [],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "rule",
+    "emotion": {
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0019",
+    "timestamp": "2026-05-01T23:22:07",
+    "source": "你吃饭了吗",
+    "conlang": "ti ätat mat ät -ne",
+    "phonetic": "ti EH-taht maht et neh",
+    "unmatched_words": [],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "rule",
+    "emotion": {
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0020",
+    "timestamp": "2026-05-01T23:31:38",
+    "source": "你吃饭了吗",
+    "conlang": "ti ätat mat ät -ne",
+    "phonetic": "ti EH-taht maht et neh",
+    "unmatched_words": [],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "rule",
+    "emotion": {
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
+      "tts_rate_hint": "normal"
+    }
   }
 ]
