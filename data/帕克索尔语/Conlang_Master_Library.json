@@ -119,5 +119,22 @@
   "啊": "ha",
   "隙": "kra",
   "魂": "sul",
-  "痛苦": "agon"
+  "痛苦": "agon",
+  "风": "vint",
+  "喜欢今天": "mova?",
+  "太阳": "sol",
+  "今天": "nol",
+  "vocabulary": {
+    "喜欢今天": {
+      "conlang": "mova?",
+      "ipa": "/ˈmo.vaʔ/",
+      "tts": "MOH-vah",
+      "logic": "源自词根“mova”（爱），添加后缀“?”表示情感倾向或偏好，形成“喜欢”之意。",
+      "created_by": "paperhub_ai",
+      "created_time": "2026-05-01T21:41:44",
+      "model": "deepseek-v4-pro"
+    }
+  },
+  "我喜欢今天的太阳": "mi",
+  "喜欢": "mova"
 }

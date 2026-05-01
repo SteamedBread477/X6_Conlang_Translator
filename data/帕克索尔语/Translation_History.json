@@ -319,5 +319,118 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0019",
+    "timestamp": "2026-05-01T21:40:53",
+    "source": "风",
+    "conlang": "vint",
+    "phonetic": "vint",
+    "unmatched_words": [
+      "风"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0020",
+    "timestamp": "2026-05-01T21:41:11",
+    "source": "风",
+    "conlang": "vint",
+    "phonetic": "vint",
+    "unmatched_words": [],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "rule",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0021",
+    "timestamp": "2026-05-01T21:41:27",
+    "source": "我喜欢今天的太阳",
+    "conlang": "mi mova nol de sol",
+    "phonetic": "mee MOH-vah nohl deh sohl",
+    "unmatched_words": [
+      "喜欢今天",
+      "太阳"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0022",
+    "timestamp": "2026-05-01T21:42:09",
+    "source": "我喜欢今天的太阳",
+    "conlang": "mi mova nol de sol",
+    "phonetic": "mee MOH-vah nohl deh sohl",
+    "unmatched_words": [
+      "我喜欢今天的太阳"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0023",
+    "timestamp": "2026-05-01T21:42:24",
+    "source": "我喜欢今天的太阳",
+    "conlang": "mi mova nol de sol",
+    "phonetic": "mee MOH-vah nohl deh sohl",
+    "unmatched_words": [
+      "我喜欢今天的太阳"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0024",
+    "timestamp": "2026-05-01T21:42:34",
+    "source": "我喜欢今天的太阳",
+    "conlang": "mi mova nol de sol",
+    "phonetic": "mee MOH-vah nohl deh sohl",
+    "unmatched_words": [
+      "我喜欢今天的太阳"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

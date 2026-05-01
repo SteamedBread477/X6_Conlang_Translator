@@ -512,6 +512,10 @@ class MainWindow(QMainWindow):
             )
         )
 
+        # 输入框清空时同步清空输出
+        if self.source_input is not None:
+            self.source_input.textChanged.connect(self._on_source_input_text_changed)
+
         outer.addWidget(single, 1)
 
         # ── 批量翻译区（可折叠） ────────────────────────────────────
@@ -586,6 +590,40 @@ class MainWindow(QMainWindow):
         return panel
 
     # ── 辅助方法 ──────────────────────────────────────────────────────
+
+    def _clear_all_outputs(self) -> None:
+        """清空所有输入和输出区域。"""
+        if self.source_input is not None:
+            self.source_input.clear()
+        if self.target_output is not None:
+            self.target_output.clear()
+        if self.tts_output is not None:
+            self.tts_output.clear()
+        self.clear_realtime_generation()
+        self.clear_ipa_output()
+        if self._stats_label is not None:
+            self._stats_label.setText("")
+        if self._add_word_btn is not None:
+            self._add_word_btn.setVisible(False)
+        self._last_unmatched = []
+
+    def _on_source_input_text_changed(self) -> None:
+        """当中文输入框文本变化时，如果全部清空则同步清空所有输出区域。"""
+        if self.source_input is None:
+            return
+        text = self.source_input.toPlainText()
+        if not text.strip():
+            if self.target_output is not None:
+                self.target_output.clear()
+            if self.tts_output is not None:
+                self.tts_output.clear()
+            self.clear_realtime_generation()
+            self.clear_ipa_output()
+            if self._stats_label is not None:
+                self._stats_label.setText("")
+            if self._add_word_btn is not None:
+                self._add_word_btn.setVisible(False)
+            self._last_unmatched = []
 
     def _toggle_batch_section(self) -> None:
         self._batch_expanded = not self._batch_expanded

@@ -1,50 +1,53 @@
 [
   {
     "id": "TH_0001",
-    "timestamp": "2026-05-01T18:36:45",
-    "source": "做",
-    "conlang": "agat",
-    "phonetic": "AH-gaht",
-    "unmatched_words": [
-      "做"
-    ],
+    "timestamp": "2026-05-01T21:33:52",
+    "source": "我是蒸汽面包",
+    "conlang": "tiesKul",
+    "phonetic": "tieskul",
+    "unmatched_words": [],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
+    "translation_mode": "rule",
     "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
   },
   {
     "id": "TH_0002",
-    "timestamp": "2026-05-01T18:37:04",
-    "source": "做",
-    "conlang": "fac",
-    "phonetic": "fac",
-    "unmatched_words": [],
+    "timestamp": "2026-05-01T21:34:15",
+    "source": "你想干什么",
+    "conlang": "ti Kas zulit",
+    "phonetic": "tee kas ZOO-lit",
+    "unmatched_words": [
+      "想干"
+    ],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "rule",
+    "translation_mode": "ai_assisted",
     "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
   },
   {
     "id": "TH_0003",
-    "timestamp": "2026-05-01T18:37:07",
-    "source": "说",
-    "conlang": "dic",
-    "phonetic": "dic",
-    "unmatched_words": [],
+    "timestamp": "2026-05-01T21:34:43",
+    "source": "我要继续优化功能",
+    "conlang": "mi vil fortsätta optimera funktion",
+    "phonetic": "mi vil fort-SET-ta op-ti-ME-ra funk-TSION",
+    "unmatched_words": [
+      "要",
+      "优化"
+    ],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "rule",
+    "translation_mode": "ai_assisted",
     "emotion": {
       "label": "neutral",
       "intensity": 0.5,
@@ -54,36 +57,31 @@
   },
   {
     "id": "TH_0004",
-    "timestamp": "2026-05-01T18:43:20",
-    "source": "你喜欢吃什么",
-    "conlang": "【你喜欢】edat【什么】",
-    "phonetic": "【你喜欢】EH-daht【什么】",
-    "unmatched_words": [
-      "你喜欢",
-      "什么"
-    ],
+    "timestamp": "2026-05-01T21:34:52",
+    "source": "我要继续优化功能",
+    "conlang": "mivilFortsättoptimeraFunktion",
+    "phonetic": "mivilFortsättop-ti-ME-raFunktion",
+    "unmatched_words": [],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "ai_fallback",
+    "translation_mode": "rule",
     "emotion": {
-      "label": "question",
-      "intensity": 0.2,
-      "tts_pitch_hint": "rising",
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
   },
   {
     "id": "TH_0005",
-    "timestamp": "2026-05-01T18:44:04",
-    "source": "吃",
-    "conlang": "vor",
-    "phonetic": "vor",
-    "unmatched_words": [
-      "吃"
-    ],
+    "timestamp": "2026-05-01T21:35:01",
+    "source": "我要继续优化功能",
+    "conlang": "mivilFortsättoptimeraFunktion",
+    "phonetic": "mivilFortsättop-ti-ME-raFunktion",
+    "unmatched_words": [],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
+    "translation_mode": "rule",
     "emotion": {
       "label": "neutral",
       "intensity": 0.5,
@@ -93,12 +91,12 @@
   },
   {
     "id": "TH_0006",
-    "timestamp": "2026-05-01T20:26:52",
-    "source": "你吃饭了吗",
-    "conlang": "Tu cib edanar-ne?",
-    "phonetic": "Too kib edanar-ne?",
+    "timestamp": "2026-05-01T21:35:15",
+    "source": "你吃吗",
+    "conlang": "ti ätat-ne",
+    "phonetic": "tee EH-taht-neh",
     "unmatched_words": [
-      "你吃饭了吗"
+      "吗"
     ],
     "source_language": "中文",
     "target_language": "巨人语",
@@ -112,236 +110,54 @@
   },
   {
     "id": "TH_0007",
-    "timestamp": "2026-05-01T20:42:26",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Salv, novvenit viator!",
-    "phonetic": "Salv, nov-ve-nit vi-a-tor.",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
+    "timestamp": "2026-05-01T21:35:22",
+    "source": "你吃吗",
+    "conlang": "tiätat-ne",
+    "phonetic": "tiEH-tahtneh",
+    "unmatched_words": [],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
+    "translation_mode": "rule",
     "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
   },
   {
     "id": "TH_0008",
-    "timestamp": "2026-05-01T20:48:32",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Tu novvenus viator salvat.",
-    "phonetic": "too nov-VEN-us vee-AH-tor SAL-vaht",
+    "timestamp": "2026-05-01T21:37:04",
+    "source": "你吃了吗",
+    "conlang": "ti ätat-ne",
+    "phonetic": "tee et-at neh",
     "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
+      "了"
     ],
     "source_language": "中文",
     "target_language": "巨人语",
     "translation_mode": "ai_assisted",
     "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
   },
   {
     "id": "TH_0009",
-    "timestamp": "2026-05-01T20:49:58",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Salv, novvenit viator!",
-    "phonetic": "salv, nov-VEH-nit vee-AH-tor!",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
+    "timestamp": "2026-05-01T21:37:10",
+    "source": "你吃了吗",
+    "conlang": "tiätatät-ne",
+    "phonetic": "tiEH-tahtetneh",
+    "unmatched_words": [],
     "source_language": "中文",
     "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
+    "translation_mode": "rule",
     "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0010",
-    "timestamp": "2026-05-01T20:51:57",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Tu novvenus viator salvat.",
-    "phonetic": "too nov-VEH-nus wee-AH-tor SAL-wat",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0011",
-    "timestamp": "2026-05-01T20:58:31",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Salv, novvenit viator!",
-    "phonetic": "Salv, novvenit viator!",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0012",
-    "timestamp": "2026-05-01T20:59:08",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Tu novvenus viator salvat.",
-    "phonetic": "too naw-VEH-noos vee-AH-tawr SAHL-vaht",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0013",
-    "timestamp": "2026-05-01T20:59:49",
-    "source": "旅客",
-    "conlang": "viator",
-    "phonetic": "vee-AH-tor",
-    "unmatched_words": [
-      "旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0014",
-    "timestamp": "2026-05-01T21:00:13",
-    "source": "旅客",
-    "conlang": "viator",
-    "phonetic": "vee-AH-tor",
-    "unmatched_words": [
-      "旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0015",
-    "timestamp": "2026-05-01T21:00:28",
-    "source": "欢迎你，新到来的旅客",
-    "conlang": "Tu novvenus viator salvat.",
-    "phonetic": "Too nov-VEH-noos vee-AH-tor SAL-vaht.",
-    "unmatched_words": [
-      "欢迎你",
-      "新到来的旅客"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0016",
-    "timestamp": "2026-05-01T21:00:51",
-    "source": "我是巨人王的头号粉丝",
-    "conlang": "Ego gigantum regis primus fanaticus sum.",
-    "phonetic": "EH-go gi-GAN-tum REH-gis PRI-mus fa-NA-ti-kus sum",
-    "unmatched_words": [
-      "我是巨人王的头号粉丝"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0017",
-    "timestamp": "2026-05-01T21:17:56",
-    "source": "我是巨人王的头号粉丝",
-    "conlang": "Ego gigantum regis primus fanaticus sum.",
-    "phonetic": "EH-go gi-GAN-tum REH-gis PRI-mus fa-NA-ti-kus sum",
-    "unmatched_words": [
-      "我是巨人王的头号粉丝"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0018",
-    "timestamp": "2026-05-01T21:18:42",
-    "source": "我是巨人王的头号粉丝",
-    "conlang": "Ego gigantum regis primus fanaticus sum.",
-    "phonetic": "EH-goh gee-GAN-tum REH-gis PREE-mus fah-NAH-tee-kus soom.",
-    "unmatched_words": [
-      "我是巨人王的头号粉丝"
-    ],
-    "source_language": "中文",
-    "target_language": "巨人语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
+      "label": "question",
+      "intensity": 0.2,
+      "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
   }
