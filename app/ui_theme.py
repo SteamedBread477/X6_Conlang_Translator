@@ -80,12 +80,12 @@ class ThemeTokens:
 
     # ── 字体 ──────────────────────────────────────────────────
     font_family: str = "Segoe UI, Microsoft YaHei, sans-serif"
-    font_size_xs: str = "11px"                # 极小（辅助标注）
-    font_size_sm: str = "12px"                # 小（统计、提示）
-    font_size_base: str = "13px"              # 基础（正文）
-    font_size_md: str = "14px"                # 中（标题）
-    font_size_lg: str = "16px"                # 大（对话框标题）
-    font_size_xl: str = "18px"                # 极大（窗口标题）
+    font_size_xs: str = "13px"                # 极小（辅助标注）
+    font_size_sm: str = "14px"                # 小（统计、提示）
+    font_size_base: str = "15px"              # 基础（正文）
+    font_size_md: str = "17px"                # 中（标题）
+    font_size_lg: str = "20px"                # 大（对话框标题）
+    font_size_xl: str = "24px"                # 极大（窗口标题）
     font_weight_normal: str = "normal"
     font_weight_bold: str = "bold"
     font_weight_semi: str = "600"
@@ -106,20 +106,20 @@ class ThemeTokens:
     shadow_focus: str = "0 0 0 3px rgba(179,157,219,0.3)"
 
     # ── 间距 ──────────────────────────────────────────────────
-    spacing_xs: str = "4px"
-    spacing_sm: str = "6px"
-    spacing_md: str = "8px"
-    spacing_lg: str = "12px"
-    spacing_xl: str = "16px"
-    spacing_xxl: str = "24px"
+    spacing_xs: str = "5px"
+    spacing_sm: str = "8px"
+    spacing_md: str = "10px"
+    spacing_lg: str = "16px"
+    spacing_xl: str = "20px"
+    spacing_xxl: str = "32px"
 
     # ── 尺寸 ──────────────────────────────────────────────────
-    button_height_sm: str = "28px"
-    button_height_md: str = "36px"
-    button_height_lg: str = "44px"
-    input_min_height: str = "60px"
-    panel_min_width: str = "200px"
-    sidebar_width: str = "220px"
+    button_height_sm: str = "34px"
+    button_height_md: str = "44px"
+    button_height_lg: str = "54px"
+    input_min_height: str = "80px"
+    panel_min_width: str = "260px"
+    sidebar_width: str = "280px"
 
     # ── 动画（QSS transition 目前仅部分 Qt 支持，留做预留）──────
     transition_fast: str = "150ms"
@@ -445,7 +445,7 @@ QProgressBar {{
     background: {color_bg_hover};
     border: 1px solid {color_border};
     border-radius: {radius_pill};
-    height: 18px;
+    height: 24px;
     text-align: center;
     font-size: {font_size_xs};
     color: {color_text_primary};
@@ -620,8 +620,8 @@ QCheckBox {{
 }}
 
 QCheckBox::indicator {{
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: {radius_sm};
     border: 2px solid {color_border};
     background: {color_bg_input};
@@ -645,8 +645,8 @@ QRadioButton {{
 }}
 
 QRadioButton::indicator {{
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: {radius_pill};
     border: 2px solid {color_border};
     background: {color_bg_input};

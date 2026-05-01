@@ -24,6 +24,7 @@ else:
 def main() -> int:
     try:
         from PyQt5.QtWidgets import QApplication
+        from PyQt5.QtCore import Qt
         from app.main_window import MainWindow
     except ImportError as exc:
         # 打包模式下缺失依赖时给出友好提示
@@ -32,6 +33,10 @@ def main() -> int:
         if not getattr(sys, "frozen", False):
             print("开发模式请运行: pip install -r requirements.txt")
         return 1
+
+    # 启用高 DPI 缩放，让 Qt 根据 OS 设置自动放大控件和字体
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
 
     app = QApplication(sys.argv)
     app.setApplicationName("Nikki Conlang Forge")
