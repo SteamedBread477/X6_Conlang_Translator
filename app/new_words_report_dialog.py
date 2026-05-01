@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.paperhub_client import NewWord
+from app.ui_theme import theme_manager
 
 
 class NewWordsReportDialog(QDialog):
@@ -54,7 +55,7 @@ class NewWordsReportDialog(QDialog):
 
         # ── 标题 ──────────────────────────────────────────────────
         header = QLabel(f"本次翻译共创造 {len(new_words)} 个新词汇：")
-        header.setStyleSheet("font-weight: bold;")
+        header.setProperty("class", "title")
         layout.addWidget(header)
 
         # ── 表格 ──────────────────────────────────────────────────
@@ -76,7 +77,10 @@ class NewWordsReportDialog(QDialog):
         # ── AI来源说明 ─────────────────────────────────────────────
         if ai_model:
             note = QLabel(f"※ 所有新创词汇均由 PaperHub AI（{ai_model}）生成")
-            note.setStyleSheet("color: #757575; font-style: italic;")
+            note.setStyleSheet(theme_manager.inline_style(
+                color="color_text_muted",
+                font_style="italic",
+            ))
             layout.addWidget(note)
 
         # ── 按钮 ──────────────────────────────────────────────────

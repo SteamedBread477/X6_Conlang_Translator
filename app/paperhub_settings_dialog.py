@@ -43,6 +43,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QUrl
 
+from app.ui_theme import theme_manager
 from app.paperhub_settings import (
     DEFAULT_PAPERHUB_SETTINGS,
     PAPERHUB_DASHBOARD_URL,
@@ -133,7 +134,7 @@ class PaperHubSettingsDialog(QDialog):
 
         # ── 总开关 ─────────────────────────────────────────────────
         self._enabled_cb = QCheckBox("启用 AI 辅助翻译")
-        self._enabled_cb.setStyleSheet("font-weight: bold;")
+        self._enabled_cb.setStyleSheet(theme_manager.inline_style(font_weight="font_weight_bold"))
         layout.addWidget(self._enabled_cb)
 
         layout.addWidget(_separator())
@@ -160,7 +161,7 @@ class PaperHubSettingsDialog(QDialog):
         url_row.addWidget(QLabel("服务地址："))
         self._base_url_lbl = QLabel(DEFAULT_PAPERHUB_SETTINGS["paperhub_base_url"])
         self._base_url_lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        self._base_url_lbl.setStyleSheet("color: #555;")
+        self._base_url_lbl.setProperty("class", "secondary")
         url_row.addWidget(self._base_url_lbl, 1)
         api_layout.addLayout(url_row)
 
@@ -189,7 +190,7 @@ class PaperHubSettingsDialog(QDialog):
             f"内置备用列表，共 {len(_BUILTIN_MODEL_IDS)} 个模型。"
             "填写 API Key 后点击「刷新模型列表」获取完整列表。"
         )
-        self._model_status_lbl.setStyleSheet("color: #666; font-size: 11px;")
+        self._model_status_lbl.setProperty("class", "muted")
         self._model_status_lbl.setWordWrap(True)
         model_layout.addWidget(self._model_status_lbl)
 
@@ -269,13 +270,13 @@ class PaperHubSettingsDialog(QDialog):
         help_lbl = QLabel(
             "API Key 获取方式：PaperHub 工作台 → API Key → 新建 Key → 选择 llm_api 类型"
         )
-        help_lbl.setStyleSheet("color: #666; font-size: 11px;")
+        help_lbl.setProperty("class", "muted")
         help_lbl.setWordWrap(True)
         root.addWidget(help_lbl)
 
         dashboard_btn = QPushButton("打开 PaperHub 工作台")
         dashboard_btn.setFlat(True)
-        dashboard_btn.setStyleSheet("color: #0066cc; text-decoration: underline;")
+        dashboard_btn.setProperty("class", "link")
         dashboard_btn.setCursor(Qt.PointingHandCursor)
         dashboard_btn.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(PAPERHUB_DASHBOARD_URL))
@@ -386,14 +387,20 @@ class PaperHubSettingsDialog(QDialog):
         api_key = self._api_key_edit.text().strip()
         if not api_key:
             self._model_status_lbl.setText("❌ 请先填写 API Key 再刷新。")
-            self._model_status_lbl.setStyleSheet("color: #cc0000; font-size: 11px;")
+            self._model_status_lbl.setStyleSheet(
+                f"color: {theme_manager.token('color_status_error')}; "
+                f"font-size: {theme_manager.token('font_size_xs')};"
+            )
             return
 
         base_url = DEFAULT_PAPERHUB_SETTINGS["paperhub_base_url"]
         self._fetch_models_btn.setEnabled(False)
         self._fetch_models_btn.setText("获取中…")
         self._model_status_lbl.setText("正在从 PaperHub 拉取模型列表，请稍候…")
-        self._model_status_lbl.setStyleSheet("color: #888; font-size: 11px;")
+        self._model_status_lbl.setStyleSheet(
+            f"color: {theme_manager.token('color_text_muted')}; "
+            f"font-size: {theme_manager.token('font_size_xs')};"
+        )
 
         self._fetch_thread = _FetchModelsThread(api_key, base_url, self)
         self._fetch_thread.result_ready.connect(self._on_fetch_models_result)
@@ -410,12 +417,18 @@ class PaperHubSettingsDialog(QDialog):
             self._model_status_lbl.setText(
                 f"✓ 已获取 {len(model_ids)} 个可用模型。"
             )
-            self._model_status_lbl.setStyleSheet("color: #007700; font-size: 11px;")
+            self._model_status_lbl.setStyleSheet(
+                f"color: {theme_manager.token('color_status_ok')}; "
+                f"font-size: {theme_manager.token('font_size_xs')};"
+            )
         else:
             self._model_status_lbl.setText(
                 f"✗ 获取失败：{err}\n（当前使用内置备用列表）"
             )
-            self._model_status_lbl.setStyleSheet("color: #cc0000; font-size: 11px;")
+            self._model_status_lbl.setStyleSheet(
+                f"color: {theme_manager.token('color_status_error')}; "
+                f"font-size: {theme_manager.token('font_size_xs')};"
+            )
 
     # ── 测试连接 ─────────────────────────────────────────────────────
 
@@ -427,13 +440,13 @@ class PaperHubSettingsDialog(QDialog):
 
         if not api_key:
             self._test_status_lbl.setText("❌ 请先填写 API Key")
-            self._test_status_lbl.setStyleSheet("color: #cc0000;")
+            self._test_status_lbl.setStyleSheet(f"color: {theme_manager.token('color_status_error')};")
             return
 
         self._test_btn.setEnabled(False)
         self._test_btn.setText("测试中…")
         self._test_status_lbl.setText("正在连接，请稍候…")
-        self._test_status_lbl.setStyleSheet("color: #888;")
+        self._test_status_lbl.setStyleSheet(f"color: {theme_manager.token('color_text_muted')};")
 
         self._test_thread = _TestConnectionThread(api_key, base_url, model, self)
         self._test_thread.result_ready.connect(self._on_test_result)
@@ -444,10 +457,10 @@ class PaperHubSettingsDialog(QDialog):
         self._test_btn.setText("测试连接")
         if ok:
             self._test_status_lbl.setText(f"✓ {message}")
-            self._test_status_lbl.setStyleSheet("color: #007700;")
+            self._test_status_lbl.setStyleSheet(f"color: {theme_manager.token('color_status_ok')};")
         else:
             self._test_status_lbl.setText(f"✗ {message}")
-            self._test_status_lbl.setStyleSheet("color: #cc0000;")
+            self._test_status_lbl.setStyleSheet(f"color: {theme_manager.token('color_status_error')};")
 
     # ── 保存 ─────────────────────────────────────────────────────────
 

@@ -72,7 +72,8 @@ from app.paperhub_settings import load_paperhub_settings
 from app.paperhub_settings_dialog import PaperHubSettingsDialog
 from app.rule_translator import RuleTranslationResult, translate_multiline_rule
 from app.storage import JsonStorage
-from app.ui_theme import UITheme
+from app.ui_theme import UITheme, theme_manager
+from app.appearance_dialog import AppearanceDialog
 
 FILE_KEYS = ("whitepaper", "master_library", "mapping_rules", "translation_history")
 
@@ -196,6 +197,9 @@ class MainWindow(QMainWindow):
         act_ai = QAction("PaperHub 设置…", self)
         act_ai.triggered.connect(self._open_paperhub_settings)
         tools_menu.addAction(act_ai)
+        act_appearance = QAction("外观与主题…", self)
+        act_appearance.triggered.connect(self._open_appearance_settings)
+        tools_menu.addAction(act_appearance)
 
         help_menu = menubar.addMenu("帮助")
         act_about = QAction("关于", self)
@@ -226,12 +230,27 @@ class MainWindow(QMainWindow):
 
     def _build_left_panel(self) -> QWidget:
         panel = QWidget()
+        panel.setProperty("class", "sidebar")
+        panel.setObjectName("cls_sidebar")
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(8)
 
+        # 语言选择区域（辅色背景）
+        lang_selector = QWidget()
+        lang_selector.setProperty("class", "lang-selector")
+
+        lang_selector.setObjectName("cls_lang_selector")
+
+        lang_layout = QVBoxLayout(lang_selector)
+        lang_layout.setContentsMargins(4, 4, 4, 4)
+        lang_layout.setSpacing(4)
+
         title = QLabel("语言")
-        title.setStyleSheet("font-weight: bold;")
+        title.setProperty("class", "title")
+
+        title.setObjectName("cls_title")
+
 
         self.language_list = QListWidget()
         self.language_list.setSelectionMode(QListWidget.SingleSelection)
@@ -252,7 +271,10 @@ class MainWindow(QMainWindow):
         sep.setFrameShadow(QFrame.Sunken)
 
         assets_title = QLabel("当前语言资料")
-        assets_title.setStyleSheet("font-weight: bold;")
+        assets_title.setProperty("class", "title")
+
+        assets_title.setObjectName("cls_title")
+
 
         assets_box = QGroupBox()
         assets_form = QFormLayout(assets_box)
@@ -269,15 +291,32 @@ class MainWindow(QMainWindow):
             assets_form.addRow(lbl)
 
         btn_import = QPushButton("导入资料")
+        btn_import.setProperty("class", "highlight")
+
+        btn_import.setObjectName("cls_highlight")
+
         btn_import.clicked.connect(self.open_import_dialog)
 
-        layout.addWidget(title)
-        layout.addWidget(self.language_list, 1)
-        layout.addLayout(btn_row)
-        layout.addWidget(sep)
-        layout.addWidget(assets_title)
-        layout.addWidget(assets_box)
-        layout.addWidget(btn_import)
+        lang_layout.addWidget(title)
+        lang_layout.addWidget(self.language_list, 1)
+        lang_layout.addLayout(btn_row)
+
+        # 资料区域（主色浅背景）
+        assets_panel = QWidget()
+        assets_panel.setProperty("class", "assets-panel")
+
+        assets_panel.setObjectName("cls_assets_panel")
+
+        assets_layout = QVBoxLayout(assets_panel)
+        assets_layout.setContentsMargins(4, 4, 4, 4)
+        assets_layout.setSpacing(4)
+
+        assets_layout.addWidget(assets_title)
+        assets_layout.addWidget(assets_box)
+        assets_layout.addWidget(btn_import)
+
+        layout.addWidget(lang_selector, 1)
+        layout.addWidget(assets_panel, 0)
 
         return panel
 
@@ -303,7 +342,10 @@ class MainWindow(QMainWindow):
         src_hdr.addWidget(QLabel("中文输入"))
         src_hdr.addStretch(1)
         btn_copy_src = QPushButton("复制")
-        btn_copy_src.setFixedWidth(54)
+        btn_copy_src.setProperty("class", "small")
+
+        btn_copy_src.setObjectName("cls_small")
+
         btn_copy_src.setToolTip("复制中文输入文本")
         src_hdr.addWidget(btn_copy_src)
         io_grid.addLayout(src_hdr, 0, 0)
@@ -313,7 +355,10 @@ class MainWindow(QMainWindow):
         con_hdr.addWidget(QLabel("自创语输出"))
         con_hdr.addStretch(1)
         btn_copy_con = QPushButton("复制")
-        btn_copy_con.setFixedWidth(54)
+        btn_copy_con.setProperty("class", "small")
+
+        btn_copy_con.setObjectName("cls_small")
+
         btn_copy_con.setToolTip("复制自创语翻译结果")
         con_hdr.addWidget(btn_copy_con)
         io_grid.addLayout(con_hdr, 0, 1)
@@ -332,6 +377,9 @@ class MainWindow(QMainWindow):
         btn_row = QHBoxLayout()
         btn_row.addStretch(1)
         self._translate_btn = QPushButton("翻译")
+        self._translate_btn.setProperty("class", "primary")
+
+        self._translate_btn.setObjectName("cls_primary")
         self._translate_btn.setMinimumWidth(88)
         self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
         self._translate_btn.clicked.connect(self._on_translate_clicked)
@@ -348,7 +396,9 @@ class MainWindow(QMainWindow):
         self._ai_progress.setMaximumHeight(18)
         ai_progress_row.addWidget(self._ai_progress, 1)
         self._ai_progress_label = QLabel("")
-        self._ai_progress_label.setStyleSheet("color: #555; font-size: 11px;")
+        self._ai_progress_label.setProperty("class", "muted")
+
+        self._ai_progress_label.setObjectName("cls_muted")
         ai_progress_row.addWidget(self._ai_progress_label)
         single_layout.addLayout(ai_progress_row)
 
@@ -357,7 +407,10 @@ class MainWindow(QMainWindow):
         tts_hdr.addWidget(QLabel("TTS 音译"))
         tts_hdr.addStretch(1)
         btn_copy_tts = QPushButton("复制")
-        btn_copy_tts.setFixedWidth(54)
+        btn_copy_tts.setProperty("class", "small")
+
+        btn_copy_tts.setObjectName("cls_small")
+
         btn_copy_tts.setToolTip("复制 TTS 友好音译")
         tts_hdr.addWidget(btn_copy_tts)
         single_layout.addLayout(tts_hdr)
@@ -371,7 +424,9 @@ class MainWindow(QMainWindow):
         # 统计行
         stats_row = QHBoxLayout()
         self._stats_label = QLabel("")
-        self._stats_label.setStyleSheet("color: #555; font-size: 12px;")
+        self._stats_label.setProperty("class", "secondary")
+
+        self._stats_label.setObjectName("cls_secondary")
         stats_row.addWidget(self._stats_label, 1)
 
         self._add_word_btn = QPushButton("将未匹配词添加到词库…")
@@ -406,7 +461,9 @@ class MainWindow(QMainWindow):
         batch_outer.setSpacing(4)
 
         self._batch_toggle_btn = QPushButton("批量翻译  ▶")
-        self._batch_toggle_btn.setStyleSheet("text-align: left; padding: 6px;")
+        self._batch_toggle_btn.setProperty("class", "toggle-btn")
+
+        self._batch_toggle_btn.setObjectName("cls_toggle_btn")
         self._batch_toggle_btn.clicked.connect(self._toggle_batch_section)
 
         self._batch_body = QWidget()
@@ -438,7 +495,9 @@ class MainWindow(QMainWindow):
 
         self.batch_path_display = QLabel("未选择文件")
         self.batch_path_display.setWordWrap(True)
-        self.batch_path_display.setStyleSheet("color: #666;")
+        self.batch_path_display.setProperty("class", "muted")
+
+        self.batch_path_display.setObjectName("cls_muted")
 
         self.batch_progress = QProgressBar()
         self.batch_progress.setRange(0, 100)
@@ -537,6 +596,11 @@ class MainWindow(QMainWindow):
         if dlg.exec_() == QDialog.Accepted:
             self._paperhub_settings = load_paperhub_settings()
             self.statusBar().showMessage("PaperHub 设置已保存", 4000)
+
+    def _open_appearance_settings(self) -> None:
+        """打开外观与主题设置对话框。"""
+        dlg = AppearanceDialog(self)
+        dlg.exec_()
 
     def _language_by_id(self, lang_id: str) -> Optional[Dict]:
         for lang in self.state.get("languages", []):
@@ -1529,7 +1593,10 @@ class MainWindow(QMainWindow):
             f"情绪类型：{stats.emotion_count}"
         )
         stats_label = QLabel(stats_text)
-        stats_label.setStyleSheet("font-weight: bold; font-size: 13px; padding: 4px;")
+        stats_label.setProperty("class", "heading")
+
+        stats_label.setObjectName("cls_heading")
+
         preview_layout.addWidget(stats_label)
 
         # 预览表格（最多5行）

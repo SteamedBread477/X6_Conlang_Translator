@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "language_id": "e0e43255-6ee3-42c5-9df0-6a8a63fb7271",
+  "whitepaper": {
+    "version": 1,
+    "phoneme_tables": [],
+    "phoneme_row_count": 0,
+    "grammar_rules": [],
+    "grammar_rule_count": 0,
+    "morphology_rules": [],
+    "morphology_rule_count": 0,
+    "sections": {
+      "序言": "",
+      "种族语言逻辑白皮书": "（在此编写语言逻辑与约束；阶段二已自动创建占位文件。）"
+    }
+  },
+  "lexicon": {},
+  "tts_map": {},
+  "anchors": {},
+  "summary": {
+    "phoneme_row_count": 0,
+    "grammar_rule_count": 0,
+    "lexicon_count": 0,
+    "mapping_count": 0,
+    "anchor_count": 0
+  }
+}

@@ -41,6 +41,7 @@ from app.paperhub_client import (
     _whitepaper_full,
     _vocabulary_list,
 )
+from app.ui_theme import theme_manager
 
 
 # ---------------------------------------------------------------------------
@@ -435,7 +436,7 @@ class UnmatchedWordsDialog(QDialog):
 
         # 状态提示
         self._status_label = QLabel("")
-        self._status_label.setStyleSheet("color: #555; font-size: 12px;")
+        self._status_label.setProperty("class", "secondary")
         layout.addWidget(self._status_label)
 
         # 底部按钮行

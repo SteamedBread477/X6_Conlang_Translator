@@ -37,6 +37,11 @@ def main() -> int:
     app.setApplicationName("Nikki Conlang Forge")
     app.setOrganizationName("X6")
 
+    # 应用主题（全局 QSS + 旧兼容层同步）
+    from app.ui_theme import theme_manager, UITheme
+    theme_manager.apply(app)
+    UITheme.sync_from_manager()
+
     window = MainWindow()
     window.show()
 

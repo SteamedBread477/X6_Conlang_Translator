@@ -29,6 +29,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.paperhub_client import NewWord
+from app.ui_theme import theme_manager
 
 
 class ExportResultDialog(QDialog):
@@ -55,13 +56,13 @@ class ExportResultDialog(QDialog):
 
         # ── 标题 ──────────────────────────────────────────────────
         title = QLabel("✓ 文件已保存")
-        title.setStyleSheet("font-size: 16px; font-weight: bold; color: #2e7d32;")
+        title.setProperty("class", "heading status-ok")
         layout.addWidget(title)
 
         # ── 路径 ──────────────────────────────────────────────────
         path_label = QLabel(f"路径：{output_path}")
         path_label.setWordWrap(True)
-        path_label.setStyleSheet("color: #555;")
+        path_label.setProperty("class", "muted")
         layout.addWidget(path_label)
 
         # ── 统计 ──────────────────────────────────────────────────
@@ -84,7 +85,11 @@ class ExportResultDialog(QDialog):
         stats_text = "\n".join(stats_lines)
 
         stats_label = QLabel(stats_text)
-        stats_label.setStyleSheet("padding: 8px; background: #f5f5f5; border-radius: 4px;")
+        stats_label.setStyleSheet(theme_manager.inline_style(
+                padding="spacing_lg",
+                background="color_bg_hover",
+                border_radius="radius_sm",
+            ))
         layout.addWidget(stats_label)
 
         # ── 按钮 ──────────────────────────────────────────────────

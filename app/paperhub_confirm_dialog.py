@@ -32,6 +32,7 @@ from PyQt5.QtWidgets import (
 )
 
 from app.paperhub_client import NewWord, PaperHubResult
+from app.ui_theme import theme_manager
 
 
 class ConfirmResult:
@@ -84,7 +85,7 @@ class PaperHubConfirmDialog(QDialog):
 
         # ── 标题 ─────────────────────────────────────────────────────
         title = QLabel("AI 建议翻译")
-        title.setStyleSheet("font-weight: bold; font-size: 14px;")
+        title.setProperty("class", "heading")
         layout.addWidget(title)
 
         # ── 自创语文本 ───────────────────────────────────────────────
@@ -141,7 +142,10 @@ class PaperHubConfirmDialog(QDialog):
         # ── 错误提示（如果有） ────────────────────────────────────────
         if self._ai_result.error:
             error_lbl = QLabel(f"⚠ {self._ai_result.error}")
-            error_lbl.setStyleSheet("color: #cc0000; font-size: 12px;")
+            error_lbl.setStyleSheet(
+                f"color: {theme_manager.token('color_status_error')}; "
+                f"font-size: {theme_manager.token('font_size_sm')};"
+            )
             error_lbl.setWordWrap(True)
             layout.addWidget(error_lbl)
 
