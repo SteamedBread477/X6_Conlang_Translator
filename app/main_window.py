@@ -405,6 +405,9 @@ class MainWindow(QMainWindow):
         # 右侧区域使用 QTabWidget 分为「翻译」和「ASK」两个页签
         self._right_tabs = QTabWidget()
         self._right_tabs.setObjectName("cls_right_tabs")
+        # 每个 Tab 按文字自然宽度显示（min-width 由 QSS 保证足够空间）
+        self._right_tabs.tabBar().setExpanding(False)
+        self._right_tabs.tabBar().setUsesScrollButtons(False)
 
         translate_page = self._build_right_panel()
         ask_page = self._build_ask_page()
@@ -515,7 +518,7 @@ class MainWindow(QMainWindow):
     def _build_right_panel(self) -> QWidget:
         panel = QWidget()
         outer = QVBoxLayout(panel)
-        outer.setContentsMargins(8, 8, 8, 8)
+        outer.setContentsMargins(12, 12, 12, 12)
         outer.setSpacing(10)
 
         # ── 单句翻译区 ──────────────────────────────────────────────
@@ -779,7 +782,7 @@ class MainWindow(QMainWindow):
         page = QWidget()
         page.setObjectName("cls_ask_page")
         page_layout = QVBoxLayout(page)
-        page_layout.setContentsMargins(8, 8, 8, 8)
+        page_layout.setContentsMargins(12, 12, 12, 12)
         page_layout.setSpacing(0)
 
         # ── 垂直分割器：上(对话) → 中(待审核) → 下(提问) ────────

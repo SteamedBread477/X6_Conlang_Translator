@@ -394,7 +394,7 @@ QGroupBox {{
     background: {color_bg_card};
     border: 1px solid {color_border};
     border-radius: {radius_lg};
-    margin-top: {spacing_xl};
+    margin-top: {spacing_xxl};
     padding: {spacing_xl} {spacing_lg} {spacing_lg} {spacing_lg};
     font-weight: {font_weight_bold};
     font-size: {font_size_md};
@@ -672,6 +672,7 @@ QTabWidget::pane {{
     background: {color_bg_card};
     border: 1px solid {color_border};
     border-radius: {radius_md};
+    padding: {spacing_xs};
 }}
 
 QTabBar::tab {{
@@ -679,9 +680,10 @@ QTabBar::tab {{
     border: 1px solid {color_border};
     border-bottom: none;
     border-radius: {radius_sm} {radius_sm} {radius_none} {radius_none};
-    padding: {spacing_sm} {spacing_xl};
+    padding: {spacing_sm} {spacing_md};
     font-size: {font_size_base};
     color: {color_text_secondary};
+    min-width: 150px;
 }}
 
 QTabBar::tab:hover {{
