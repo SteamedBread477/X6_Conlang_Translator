@@ -76,6 +76,7 @@ a = Analysis(
         'app.asset_validation',
         'app.material_service',
         'app.batch_translate_dialog',
+        'app.appearance_dialog',
     ],
     hookspath=[],
     hooksconfig={},

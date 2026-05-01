@@ -1,0 +1,10 @@
+{
+  "paperhub_enabled": true,
+  "paperhub_api_key": "sk-MD5EVI7X207G_GCpwiK6DKaKnI5gEyjUEA_B8lWPHK-8yYbp",
+  "paperhub_base_url": "https://tc-paperhub.diezhi.net/v1",
+  "paperhub_model": "deepseek-v4-pro",
+  "paperhub_strategy": "unmatched_only",
+  "paperhub_reasoning_enabled": true,
+  "paperhub_temperature": 0.7,
+  "paperhub_max_tokens": 4096
+}

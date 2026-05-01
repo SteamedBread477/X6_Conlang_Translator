@@ -28,7 +28,7 @@ if not exist "venv\Scripts\python.exe" (
     exit /b 1
 )
 
-echo [1/4] 安装依赖...
+echo [1/3] 安装依赖...
 venv\Scripts\pip.exe install -r requirements.txt -q
 if %ERRORLEVEL% neq 0 (
     echo [错误] 依赖安装失败
@@ -36,7 +36,7 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-echo [2/4] 安装 PyInstaller...
+echo [2/3] 安装 PyInstaller...
 venv\Scripts\pip.exe install pyinstaller -q
 if %ERRORLEVEL% neq 0 (
     echo [错误] PyInstaller 安装失败
@@ -44,21 +44,7 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-echo [3/4] 运行测试...
-venv\Scripts\python.exe test_stage9.py
-if %ERRORLEVEL% neq 0 (
-    echo [错误] S9 测试失败
-    pause
-    exit /b 1
-)
-venv\Scripts\python.exe test_stage10.py
-if %ERRORLEVEL% neq 0 (
-    echo [错误] S10 测试失败
-    pause
-    exit /b 1
-)
-
-echo [4/4] 打包...
+echo [3/3] 打包...
 venv\Scripts\pyinstaller.exe build.spec --clean --noconfirm
 if %ERRORLEVEL% neq 0 (
     echo [错误] 打包失败

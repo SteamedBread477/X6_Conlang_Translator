@@ -5,13 +5,19 @@
       "id": "e0e43255-6ee3-42c5-9df0-6a8a63fb7271",
       "name": "帕克索尔语",
       "folder": "帕克索尔语",
-      "notes": ""
+      "notes": "来源：@歪欧"
     },
     {
       "id": "0fc6ae01-4cde-4116-884a-1fa2b6d736cc",
       "name": "菇菇语",
       "folder": "菇菇语",
-      "notes": ""
+      "notes": "来源：@歪欧"
+    },
+    {
+      "id": "c8dc69b8-ee5a-496a-a462-6d83e5052894",
+      "name": "巨人语",
+      "folder": "巨人语",
+      "notes": "来源：@Edward"
     }
   ]
 }
