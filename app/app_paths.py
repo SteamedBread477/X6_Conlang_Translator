@@ -58,9 +58,21 @@ def get_assets_dir() -> Path:
     """返回 assets 目录路径，并确保目录存在。
 
     位置: get_app_dir() / "assets"
+
+    PyInstaller 打包后，exe 旁边的 assets 目录可能为空（图标等资源打包在内部），
+    此时回退到 sys._MEIPASS 下的 assets 目录以确保能找到图标等资源。
     """
     assets_dir = get_app_dir() / "assets"
     assets_dir.mkdir(parents=True, exist_ok=True)
+
+    # frozen 模式下，若外部 assets 目录无图标文件，回退到打包内部
+    if getattr(sys, "frozen", False):
+        has_icon = any(assets_dir.glob("app_icon.*"))
+        if not has_icon:
+            meipass_assets = Path(sys._MEIPASS) / "assets"
+            if meipass_assets.is_dir() and any(meipass_assets.glob("app_icon.*")):
+                return meipass_assets
+
     return assets_dir
 
 

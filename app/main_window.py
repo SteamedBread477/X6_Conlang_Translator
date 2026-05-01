@@ -468,6 +468,7 @@ class MainWindow(QMainWindow):
 
         title = QLabel("语言")
         title.setProperty("class", "title")
+        title.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
         title.setObjectName("cls_title")
 
@@ -492,6 +493,7 @@ class MainWindow(QMainWindow):
 
         assets_title = QLabel("当前语言资料")
         assets_title.setProperty("class", "title")
+        assets_title.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
 
         assets_title.setObjectName("cls_title")
 
@@ -531,12 +533,14 @@ class MainWindow(QMainWindow):
         assets_layout.setContentsMargins(4, 4, 4, 4)
         assets_layout.setSpacing(4)
 
+        assets_layout.addStretch(1)
         assets_layout.addWidget(assets_title)
         assets_layout.addWidget(assets_box)
         assets_layout.addWidget(btn_import)
+        assets_layout.addStretch(1)
 
-        layout.addWidget(lang_selector, 1)
-        layout.addWidget(assets_panel, 0)
+        layout.addWidget(lang_selector, 7)
+        layout.addWidget(assets_panel, 3)
 
         return panel
 

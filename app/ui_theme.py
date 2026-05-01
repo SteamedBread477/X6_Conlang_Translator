@@ -44,7 +44,7 @@ class ThemeTokens:
     # 辅色系
     color_secondary: str = "#BFF629"          # 辅色（青柠绿）
     color_secondary_hover: str = "#A8E020"    # 辅色悬停
-    color_secondary_light: str = "#E1F5FE"    # 辅色浅色（语言选择区背景）
+    color_secondary_light: str = "#F0FBD0"    # 辅色浅色（语言选择区背景）
 
     # 强调色
     color_highlight: str = "#F4FF81"          # 强调色（导入按钮、复制标签）
@@ -55,9 +55,9 @@ class ThemeTokens:
     color_bg_panel: str = "#F5F2FA"           # 左侧面板背景
     color_bg_card: str = "#FFFFFF"            # 卡片/分组框背景
     color_bg_input: str = "#FFFFFF"           # 输入框背景
-    color_bg_hover: str = "#F0EDE8"           # 通用悬停背景
+    color_bg_hover: str = "#E8DFF5"           # 通用悬停背景
     color_bg_selected: str = "#E8DFF5"        # 选中行背景
-    color_bg_status_bar: str = "#F0EDE8"      # 状态栏背景
+    color_bg_status_bar: str = "#E8DFF5"      # 状态栏背景
 
     # 文字色
     color_text_primary: str = "#2D2D2D"       # 主要文字（深炭灰）
@@ -69,7 +69,7 @@ class ThemeTokens:
     # 边框色
     color_border: str = "#E0DDD8"             # 通用边框
     color_border_focus: str = "#B39DDB"       # 聚焦边框（=主色）
-    color_border_light: str = "#F0EDE8"       # 轻边框（分隔线）
+    color_border_light: str = "#E8DFF5"       # 轻边框（分隔线）
 
     # 状态色
     color_status_ok: str = "#2e7d32"          # ✓ 成功状态

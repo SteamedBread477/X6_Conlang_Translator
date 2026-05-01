@@ -111,7 +111,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='X6_Conlang_Translator',
+    name='Nikki Conlang Forge',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
