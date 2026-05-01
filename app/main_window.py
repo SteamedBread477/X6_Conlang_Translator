@@ -37,7 +37,6 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from app.add_word_dialog import AddWordDialog
 from app.asset_validation import check_asset
 from app.batch_translate_dialog import BatchTranslateDialog, BatchTranslateSettings
 from app.batch_translator import (
