@@ -69,6 +69,8 @@ from app.paperhub_client import (
 from app.paperhub_confirm_dialog import PaperHubConfirmDialog
 from app.paperhub_settings import load_paperhub_settings
 from app.paperhub_settings_dialog import PaperHubSettingsDialog
+from app.ipa_generator import generate_ipa_rule
+from app.parse_mapping_csv import load_ipa_mapping
 from app.rule_translator import RuleTranslationResult, translate_multiline_rule
 from app.storage import JsonStorage
 from app.ui_theme import UITheme, theme_manager
@@ -1120,6 +1122,24 @@ class MainWindow(QMainWindow):
         if self.ipa_output is not None:
             self.ipa_output.clear()
 
+    def _get_ipa_map(self, lang: Dict) -> Dict[str, str]:
+        """
+        获取当前语言的 IPA 映射表。
+        优先从已缓存的 bundle 读取；若 bundle 中无 ipa_map（旧快照），
+        则直接从磁盘 Mapping_Rules.csv 读取并回写到 bundle。
+        """
+        bundle = self._material_by_lang.get(lang.get("id", ""), {})
+        ipa_map: Dict[str, str] = bundle.get("ipa_map") or {}
+        if not ipa_map:
+            try:
+                mapping_path = self.storage.asset_path(lang, "mapping_rules")
+                if mapping_path.is_file():
+                    ipa_map, _ = load_ipa_mapping(mapping_path)
+                    bundle["ipa_map"] = ipa_map
+            except Exception:
+                pass
+        return {str(k): str(v) for k, v in ipa_map.items() if str(k).strip()}
+
     def _on_paperhub_thread_finished(self, result_obj: Any) -> None:
         """PaperHub AI 翻译线程完成回调。"""
         # 恢复 UI 状态
@@ -1161,9 +1181,12 @@ class MainWindow(QMainWindow):
                 tts_out = confirm_result.tts
                 translation_mode = "ai_confirm"
 
-                # 询问是否将新词添加到词库
-                if confirm_result.new_words:
-                    self._ask_add_new_words_to_lexicon(confirm_result.new_words, lang)
+            # 询问是否将新词添加到词库
+            if confirm_result.new_words:
+                self._ask_add_new_words_to_lexicon(
+                    confirm_result.new_words, lang,
+                    unmatched_words=list(rule_result.unmatched_words),
+                )
             else:
                 # 用户放弃了 AI 建议，使用规则翻译结果
                 conlang_out = rule_result.conlang
@@ -1201,7 +1224,10 @@ class MainWindow(QMainWindow):
 
             # 询问是否将新词添加到词库
             if ph_result.new_words:
-                self._ask_add_new_words_to_lexicon(ph_result.new_words, lang)
+                self._ask_add_new_words_to_lexicon(
+                    ph_result.new_words, lang,
+                    unmatched_words=list(rule_result.unmatched_words),
+                )
 
         self._display_translation_result(
             conlang=conlang_out,
@@ -1229,6 +1255,17 @@ class MainWindow(QMainWindow):
             self.target_output.setPlainText(conlang)
         if self.tts_output is not None:
             self.tts_output.setPlainText(tts)
+
+        # ── 国际音标读音 ──────────────────────────────────────────
+        if conlang.strip():
+            ipa_map = self._get_ipa_map(lang)
+            if ipa_map:
+                ipa_str, _missing = generate_ipa_rule(conlang, ipa_map)
+                self.update_ipa_output(ipa_str)
+            else:
+                self.update_ipa_output("")
+        else:
+            self.update_ipa_output("")
 
         # ── 更新统计栏 ────────────────────────────────────────────
         rate_pct = int(rule_result.match_rate * 100)
@@ -1325,10 +1362,52 @@ class MainWindow(QMainWindow):
 
     # ── 新词入库询问（阶段六新增）───────────────────────────────────
 
-    def _ask_add_new_words_to_lexicon(self, new_words: List[NewWord], lang: Dict) -> None:
-        """翻译完成后，如果有新创词汇，询问用户是否添加到词库。"""
+    def _ask_add_new_words_to_lexicon(
+        self,
+        new_words: List[NewWord],
+        lang: Dict,
+        *,
+        unmatched_words: Optional[List[str]] = None,
+    ) -> None:
+        """翻译完成后，如果有新创词汇，询问用户是否添加到词库。
+
+        unmatched_words：规则翻译器产出的未匹配词列表（精确分词键）。
+        传入后会修正 AI 新词的 chinese 字段，确保写入词库的键与下次分词完全一致。
+        """
         if not new_words:
             return
+
+        # ── 修正 chinese 键：用 unmatched_words 的精确分词结果覆盖 AI 自己的解释 ──
+        # AI 返回的 nw.chinese 可能与规则分词器产出的 unmatched_words 有细微差异，
+        # 以 unmatched_words 为准，确保下次翻译时词库命中。
+        if unmatched_words:
+            # 构建 AI 新词的 conlang 映射（用 AI 的 chinese 作临时 key 查 conlang）
+            ai_map: Dict[str, NewWord] = {nw.chinese.strip(): nw for nw in new_words if nw.chinese.strip()}
+            corrected: List[NewWord] = []
+            for uw in unmatched_words:
+                uw = uw.strip()
+                if not uw:
+                    continue
+                if uw in ai_map:
+                    # 完全匹配：直接使用
+                    corrected.append(ai_map[uw])
+                else:
+                    # 不完全匹配：尝试包含关系（AI 词包含 unmatched_word 或反过来）
+                    found = next(
+                        (nw for k, nw in ai_map.items() if uw in k or k in uw),
+                        None,
+                    )
+                    if found:
+                        # 强制用精确的 unmatched_word 作为词库键
+                        from dataclasses import replace as dc_replace
+                        corrected.append(dc_replace(found, chinese=uw))
+            # 合并：corrected 优先，其余保留原 new_words 中未被覆盖的词
+            covered_conlangs = {nw.conlang for nw in corrected}
+            for nw in new_words:
+                if nw.conlang not in covered_conlangs:
+                    corrected.append(nw)
+            if corrected:
+                new_words = corrected
 
         # 构造展示文本
         word_lines: List[str] = []
@@ -1346,7 +1425,7 @@ class MainWindow(QMainWindow):
             "添加新词到词库？",
             f"AI 翻译中创造了 {len(new_words)} 个新词汇：\n\n{detail}\n\n"
             "是否将这些新词添加到主词库和映射表？\n"
-            "（添加后下次翻译时词库将包含这些词汇）",
+            "（添加后下次翻译时词库将直接命中这些词，不再调用 AI）",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.Yes,
         )

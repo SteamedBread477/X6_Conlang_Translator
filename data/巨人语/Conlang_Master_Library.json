@@ -151,7 +151,7 @@
   "软的": "mollis",
   "沉重的": "gravosus",
   "轻的": "levis",
-  "是": "esse",
+  "是": "sum",
   "拥有": "habere",
   "去": "ire",
   "来": "venire",
@@ -299,5 +299,11 @@
   "你吃饭了吗": "Tu gran edanarne?",
   "欢迎": "salvat",
   "新到来的": "novvenus",
-  "旅客": "viator"
+  "旅客": "viator",
+  "欢迎你": "salvat",
+  "新到来的旅客": "novvenus",
+  "我是巨人王的头号粉丝": "ego",
+  "王": "regis",
+  "头号": "primus",
+  "粉丝": "fanaticus"
 }

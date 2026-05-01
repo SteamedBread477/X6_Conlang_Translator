@@ -17,7 +17,7 @@ from app.import_classify import (
 )
 from app.parse_history_json import load_translation_anchors
 from app.parse_lexicon import load_master_library
-from app.parse_mapping_csv import load_tts_mapping
+from app.parse_mapping_csv import load_ipa_mapping, load_tts_mapping
 from app.parse_whitepaper import parse_whitepaper
 
 SNAPSHOT_VERSION = 1
@@ -58,6 +58,7 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
         "whitepaper": {},
         "lexicon": {},
         "tts_map": {},
+        "ipa_map": {},
         "anchors": {},
         "summary": {},
     }
@@ -90,6 +91,9 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
             tts, n = load_tts_mapping(mapping)
             bundle["tts_map"] = tts
             bundle["summary"]["mapping_count"] = n
+            ipa, ni = load_ipa_mapping(mapping)
+            bundle["ipa_map"] = ipa
+            bundle["summary"]["ipa_count"] = ni
         except Exception as exc:
             parse_notes.append(f"映射表解析失败：{exc}")
 

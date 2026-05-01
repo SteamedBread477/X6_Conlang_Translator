@@ -36,6 +36,32 @@ def _match_columns(headers: List[str]) -> Tuple[int | None, int | None, int | No
     return idx_word, idx_ipa, idx_tts
 
 
+def load_ipa_mapping(path: Path) -> Tuple[Dict[str, str], int]:
+    """建立 自创语 → IPA音标 映射。若文件无 IPA 列则静默返回空字典。"""
+    mapping: Dict[str, str] = {}
+    count = 0
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        reader = csv.reader(handle)
+        rows = list(reader)
+    if not rows:
+        return {}, 0
+
+    idx_word, idx_ipa, _idx_tts = _match_columns(rows[0])
+    if idx_word is None or idx_ipa is None:
+        return {}, 0
+
+    for row in rows[1:]:
+        if idx_word >= len(row) or idx_ipa >= len(row):
+            continue
+        word = row[idx_word].strip()
+        ipa = row[idx_ipa].strip()
+        if not word or not ipa:
+            continue
+        mapping[word] = ipa
+        count += 1
+    return mapping, count
+
+
 def load_tts_mapping(path: Path) -> Tuple[Dict[str, str], int]:
     """建立 自创语 → TTS 友好拼写 映射；IPA 列用于校验存在性，不进入映射。"""
     mapping: Dict[str, str] = {}
