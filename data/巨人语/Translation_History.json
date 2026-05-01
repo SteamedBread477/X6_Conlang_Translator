@@ -109,5 +109,45 @@
       "tts_pitch_hint": "rising",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0007",
+    "timestamp": "2026-05-01T20:42:26",
+    "source": "欢迎你，新到来的旅客",
+    "conlang": "Salv, novvenit viator!",
+    "phonetic": "Salv, nov-ve-nit vi-a-tor.",
+    "unmatched_words": [
+      "欢迎你",
+      "新到来的旅客"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
+  },
+  {
+    "id": "TH_0008",
+    "timestamp": "2026-05-01T20:48:32",
+    "source": "欢迎你，新到来的旅客",
+    "conlang": "Tu novvenus viator salvat.",
+    "phonetic": "too nov-VEN-us vee-AH-tor SAL-vaht",
+    "unmatched_words": [
+      "欢迎你",
+      "新到来的旅客"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

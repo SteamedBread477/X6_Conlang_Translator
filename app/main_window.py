@@ -134,6 +134,8 @@ class MainWindow(QMainWindow):
         self.source_input: Optional[QPlainTextEdit] = None
         self.target_output: Optional[QPlainTextEdit] = None
         self.tts_output: Optional[QPlainTextEdit] = None
+        self.ipa_output: Optional[QPlainTextEdit] = None      # 国际音标读音
+        self._realtime_output: Optional[QPlainTextEdit] = None  # 实时生成过程
         self.batch_log: Optional[QPlainTextEdit] = None
         self.batch_progress: Optional[QProgressBar] = None
         self.batch_path_display: Optional[QLabel] = None
@@ -407,24 +409,70 @@ class MainWindow(QMainWindow):
         ai_progress_row.addWidget(self._ai_progress_label)
         single_layout.addLayout(ai_progress_row)
 
-        # TTS 音译区
+        # ── 实时生成过程区 ─────────────────────────────────────────
+        realtime_hdr = QHBoxLayout()
+        realtime_hdr.addWidget(QLabel("实时生成过程"))
+        realtime_hdr.addStretch(1)
+        btn_clear_realtime = QPushButton("清空")
+        btn_clear_realtime.setProperty("class", "small")
+        btn_clear_realtime.setObjectName("cls_small")
+        btn_clear_realtime.setToolTip("清空实时生成内容")
+        btn_clear_realtime.clicked.connect(self.clear_realtime_generation)
+        realtime_hdr.addWidget(btn_clear_realtime)
+        single_layout.addLayout(realtime_hdr)
+
+        self._realtime_output = QPlainTextEdit()
+        self._realtime_output.setReadOnly(True)
+        self._realtime_output.setPlaceholderText(
+            "流式翻译时，AI 生成的 token 将实时显示在这里…\n"
+            "非流式模式下保持为空。"
+        )
+        self._realtime_output.setMaximumHeight(100)
+        single_layout.addWidget(self._realtime_output)
+
+        # ── TTS 音译 + 国际音标读音 并排 ────────────────────────────
+        phonetics_row = QHBoxLayout()
+        phonetics_row.setSpacing(6)
+
+        # 左：TTS 音译
+        tts_col = QVBoxLayout()
+        tts_col.setSpacing(3)
         tts_hdr = QHBoxLayout()
         tts_hdr.addWidget(QLabel("TTS 音译"))
         tts_hdr.addStretch(1)
         btn_copy_tts = QPushButton("复制")
         btn_copy_tts.setProperty("class", "small")
-
         btn_copy_tts.setObjectName("cls_small")
-
         btn_copy_tts.setToolTip("复制 TTS 友好音译")
         tts_hdr.addWidget(btn_copy_tts)
-        single_layout.addLayout(tts_hdr)
-
+        tts_col.addLayout(tts_hdr)
         self.tts_output = QPlainTextEdit()
         self.tts_output.setReadOnly(True)
         self.tts_output.setPlaceholderText("TTS 友好音译（供语音合成使用）")
         self.tts_output.setMaximumHeight(90)
-        single_layout.addWidget(self.tts_output)
+        tts_col.addWidget(self.tts_output)
+        phonetics_row.addLayout(tts_col, 1)
+
+        # 右：国际音标读音
+        ipa_col = QVBoxLayout()
+        ipa_col.setSpacing(3)
+        ipa_hdr = QHBoxLayout()
+        ipa_hdr.addWidget(QLabel("国际音标读音"))
+        ipa_hdr.addStretch(1)
+        btn_copy_ipa = QPushButton("复制")
+        btn_copy_ipa.setProperty("class", "small")
+        btn_copy_ipa.setObjectName("cls_small")
+        btn_copy_ipa.setToolTip("复制国际音标读音")
+        ipa_hdr.addWidget(btn_copy_ipa)
+        ipa_col.addLayout(ipa_hdr)
+        self.ipa_output = QPlainTextEdit()
+        self.ipa_output.setReadOnly(True)
+        self.ipa_output.setPlaceholderText("国际音标（IPA）待生成")
+        self.ipa_output.setMaximumHeight(90)
+        ipa_col.addWidget(self.ipa_output)
+        phonetics_row.addLayout(ipa_col, 1)
+
+        single_layout.addLayout(phonetics_row)
 
         # 统计行
         stats_row = QHBoxLayout()
@@ -454,6 +502,11 @@ class MainWindow(QMainWindow):
         btn_copy_tts.clicked.connect(
             lambda: QApplication.clipboard().setText(
                 self.tts_output.toPlainText() if self.tts_output else ""
+            )
+        )
+        btn_copy_ipa.clicked.connect(
+            lambda: QApplication.clipboard().setText(
+                self.ipa_output.toPlainText() if self.ipa_output else ""
             )
         )
 
@@ -972,6 +1025,14 @@ class MainWindow(QMainWindow):
             if isinstance(k, str) and k.strip()
         }
 
+        # ── 翻译开始：清空所有输出区域（防止残留上次内容）────────────
+        if self.target_output is not None:
+            self.target_output.clear()
+        if self.tts_output is not None:
+            self.tts_output.clear()
+        self.clear_realtime_generation()
+        self.clear_ipa_output()
+
         # ── 始终执行规则翻译（提供匹配统计）────────────────────────
         rule_result = translate_multiline_rule(text, lexicon, tts_map)
         self._last_rule_result = rule_result
@@ -1022,20 +1083,42 @@ class MainWindow(QMainWindow):
             self._paperhub_settings, bundle, text, self,
         )
         self._ph_thread.finished.connect(self._on_paperhub_thread_finished)
-        # 流式输出：AI 返回内容时逐步追加到自创语输出框，让用户看到实时进度
+        # 流式输出：token 实时追加到「实时生成过程」模块，不写入自创语输出框
         if self._paperhub_settings.get("paperhub_stream", True):
-            if self.target_output is not None:
-                self.target_output.clear()
             self._ph_thread.stream_chunk.connect(self._on_stream_chunk)
         self._ph_thread.start()
 
     def _on_stream_chunk(self, piece: str) -> None:
-        """AI 流式输出块回调：逐步追加到自创语输出框。"""
-        if self.target_output is not None:
-            cursor = self.target_output.textCursor()
-            cursor.movePosition(cursor.End)
-            cursor.insertText(piece)
-            self.target_output.setTextCursor(cursor)
+        """AI 流式输出块回调：追加到「实时生成过程」模块，不写入自创语输出框。"""
+        self.append_realtime_generation(piece)
+
+    # ------------------------------------------------------------------
+    # 实时生成过程 / 国际音标读音 helper 方法
+    # ------------------------------------------------------------------
+
+    def append_realtime_generation(self, text: str) -> None:
+        """追加文本到「实时生成过程」模块。"""
+        if self._realtime_output is None:
+            return
+        cursor = self._realtime_output.textCursor()
+        cursor.movePosition(cursor.End)
+        cursor.insertText(text)
+        self._realtime_output.setTextCursor(cursor)
+
+    def clear_realtime_generation(self) -> None:
+        """清空「实时生成过程」模块。"""
+        if self._realtime_output is not None:
+            self._realtime_output.clear()
+
+    def update_ipa_output(self, text: str) -> None:
+        """更新「国际音标读音」模块（供后续 IPA 生成逻辑调用）。"""
+        if self.ipa_output is not None:
+            self.ipa_output.setPlainText(text)
+
+    def clear_ipa_output(self) -> None:
+        """清空「国际音标读音」模块。"""
+        if self.ipa_output is not None:
+            self.ipa_output.clear()
 
     def _on_paperhub_thread_finished(self, result_obj: Any) -> None:
         """PaperHub AI 翻译线程完成回调。"""

@@ -700,20 +700,26 @@
     "tu": "too",
     "cib": "kib",
     "ed": "ed",
-    "Tu gran edanarne?": "too grahn ed-ah-NAHR-neh"
+    "Tu gran edanarne?": "too grahn ed-ah-NAHR-neh",
+    "salv": "salv",
+    "novvenit": "nov-ve-nit",
+    "viator": "vi-a-tor",
+    "salvat": "SAL-vaht",
+    "novvenus": "nov-VEN-us"
   },
   "anchors": {
     "做": "fac",
     "说": "dic",
     "你喜欢吃什么": "【你喜欢】edat【什么】",
     "吃": "vor",
-    "你吃饭了吗": "Tu cib edanar-ne?"
+    "你吃饭了吗": "Tu cib edanar-ne?",
+    "欢迎你，新到来的旅客": "Salv, novvenit viator!"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
     "lexicon_count": 0,
-    "mapping_count": 241,
-    "anchor_count": 5
+    "mapping_count": 246,
+    "anchor_count": 6
   }
 }
