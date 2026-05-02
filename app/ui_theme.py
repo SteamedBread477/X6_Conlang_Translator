@@ -876,13 +876,13 @@ QTabWidget[class="right-tabs"] {{
 
 /* ── Inner Tabs (翻译页签内部的 单句/批量 子Tab) ─── */
 QTabWidget[class="inner-tabs"] {{
-    background: {color_bg_card};
+    background: #FAF8FD;
     border: none;
     border-radius: 0px;
 }}
 
 QTabWidget[class="inner-tabs"]::pane {{
-    background: {color_bg_card};
+    background: #FAF8FD;
     border: none;
     border-radius: 0px;
     padding: 0px;
@@ -890,6 +890,10 @@ QTabWidget[class="inner-tabs"]::pane {{
 
 QTabWidget[class="inner-tabs"] QTabBar::tab {{
     min-width: 120px;
+}}
+
+QTabWidget[class="inner-tabs"] QTabBar::tab:selected {{
+    background: #FAF8FD;
 }}
 
 /* ── ASK 页签 ────────────────────────────────────────────── */
