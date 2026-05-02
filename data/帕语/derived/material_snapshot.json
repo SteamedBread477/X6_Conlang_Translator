@@ -43,7 +43,9 @@
     "es": "ess",
     "gigantul": "gee-GAHN-tool",
     "max poten": "mahks POH-ten",
-    "mekinforjor": "meh-keen-FOR-yor"
+    "mekinforjor": "meh-keen-FOR-yor",
+    "kavon": "kah-VON",
+    "zeltra": "ZEL-trah"
   },
   "ipa_map": {
     "kh-": "/x/",
@@ -73,7 +75,9 @@
     "es": "/es/",
     "gigantul": "/gi'gan.tul/",
     "max poten": "/maks 'po.ten/",
-    "mekinforjor": "/me.kin'for.jor/"
+    "mekinforjor": "/me.kin'for.jor/",
+    "kavon": "/kaˈvon/",
+    "zeltra": "/ˈzel.tra/"
   },
   "anchors": {
     "灵魂": "sul",
@@ -83,14 +87,15 @@
     "魂隙": "sulkra",
     "痛苦": "drak",
     "风": "vint",
-    "我喜欢今天的太阳": "mi mova nol de sol"
+    "我喜欢今天的太阳": "mi mova nol de sol",
+    "我 是 巨人族 最厉害 的 机器制造师": "mi es gigantul max poten de mekinforjor"
   },
   "summary": {
     "phoneme_row_count": 0,
     "grammar_rule_count": 0,
     "lexicon_count": 0,
-    "mapping_count": 28,
-    "ipa_count": 28,
-    "anchor_count": 8
+    "mapping_count": 30,
+    "ipa_count": 30,
+    "anchor_count": 9
   }
 }

@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
+    QHeaderView,
     QInputDialog,
     QLabel,
     QListWidget,
@@ -942,7 +943,11 @@ class MainWindow(QMainWindow):
         self._ask_pending_table.setHorizontalHeaderLabels(
             ["自创语", "IPA", "TTS", "含义", "风格标签", "操作"]
         )
-        self._ask_pending_table.horizontalHeader().setStretchLastSection(True)
+        self._ask_pending_table.horizontalHeader().setStretchLastSection(False)
+        for i in range(5):
+            self._ask_pending_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
+        self._ask_pending_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Fixed)
+        self._ask_pending_table.setColumnWidth(5, 80)
         self._ask_pending_table.setSelectionBehavior(QTableWidget.SelectRows)
         self._ask_pending_table.setSelectionMode(QTableWidget.ExtendedSelection)
         self._ask_pending_table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -1434,6 +1439,8 @@ class MainWindow(QMainWindow):
             self._ask_confirm_selected_btn.setVisible(False)
         if self._ask_discard_selected_btn is not None:
             self._ask_discard_selected_btn.setVisible(False)
+
+    
 
     def _ask_add_pending_row(
         self, conlang: str, ipa: str, tts: str, meaning: str, tags: str
