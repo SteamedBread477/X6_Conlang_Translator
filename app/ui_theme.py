@@ -260,8 +260,9 @@ QLabel[class="heading"] {{
 
 QLabel[class="section-title"] {{
     font-weight: {font_weight_bold};
-    font-size: {font_size_lg};
+    font-size: {font_size_md};
     color: {color_text_primary};
+    padding-top: 8px;
 }}
 
 QLabel[class="muted"] {{
@@ -399,6 +400,48 @@ QPushButton[class="small"]:hover {{
 QPushButton[class="small"]:pressed {{
     background: {color_primary_pressed};
     color: {color_text_on_primary};
+}}
+
+/* ── 加粗小号绿色按钮 ── */
+QPushButton[class="bold-small"] {{
+    min-height: {button_height_sm};
+    padding: {spacing_sm} {spacing_lg};
+    font-size: {font_size_sm};
+    font-weight: {font_weight_bold};
+    border: none;
+    border-radius: {radius_pill};
+    background: {color_green_btn_bg};
+    color: {color_green_btn_text};
+}}
+
+QPushButton[class="bold-small"]:hover {{
+    background: {color_green_btn_hover};
+    color: {color_text_on_primary};
+}}
+
+QPushButton[class="bold-small"]:pressed {{
+    background: {color_primary_pressed};
+    color: {color_text_on_primary};
+}}
+
+/* ── 加粗小号主色按钮 ── */
+QPushButton[class="bold-primary-sm"] {{
+    background: {color_primary};
+    color: {color_text_on_primary};
+    border: none;
+    min-height: {button_height_sm};
+    padding: {spacing_sm} {spacing_lg};
+    font-size: {font_size_sm};
+    font-weight: {font_weight_bold};
+    border-radius: {radius_pill};
+}}
+
+QPushButton[class="bold-primary-sm"]:hover {{
+    background: {color_primary_hover};
+}}
+
+QPushButton[class="bold-primary-sm"]:pressed {{
+    background: {color_primary_pressed};
 }}
 
 QPushButton[class="pill"] {{
@@ -677,21 +720,23 @@ QStatusBar {{
 
 /* ── Splitter ──────────────────────────────────────────── */
 QSplitter::handle:horizontal {{
-    width: 6px;
+    width: 4px;
     background: {color_border_light};
-    border-radius: 3px;
+    border-radius: 2px;
 }}
 
 QSplitter::handle:vertical {{
-    height: 6px;
+    height: 4px;
     background: {color_border_light};
-    border-radius: 3px;
+    border-radius: 2px;
 }}
 
 QSplitter::handle:hover {{
     background: {color_primary};
-    border-radius: 3px;
+    border-radius: 2px;
 }}
+
+
 
 /* ── 分隔线 ────────────────────────────────────────────── */
 QFrame[frameShape="4"] /* HLine */ {{

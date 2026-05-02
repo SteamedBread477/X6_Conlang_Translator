@@ -219,8 +219,8 @@ class _TokenCircleWidget(QWidget):
         h = self.height()
         cx = w / 2
         cy = h / 2
-        radius = min(w, h) / 2 - 4
-        pen_width = 5
+        pen_width = 6
+        radius = min(w, h) / 2 - pen_width / 2
 
         # 背景环（灰色）
         bg_color = QColor(theme_manager.token("color_border") or "#555555")
@@ -322,7 +322,6 @@ class MainWindow(QMainWindow):
         self._ask_send_btn: Optional[QPushButton] = None
         self._ask_clear_btn: Optional[QPushButton] = None
         self._ask_token_circle: Optional[QWidget] = None
-        self._ask_token_label: Optional[QLabel] = None
         self._ask_pending_panel: Optional[QWidget] = None
         self._ask_pending_table: Optional[QTableWidget] = None
         self._ask_pending_toggle: Optional[QPushButton] = None
@@ -594,27 +593,33 @@ class MainWindow(QMainWindow):
 
         # 中文输入 — 标题行
         src_hdr = QHBoxLayout()
-        src_hdr.addWidget(QLabel("中文输入"))
+        _t = QLabel("中文输入")
+        _t.setProperty("class", "section-title")
+        _t.setObjectName("cls_section_title")
+        src_hdr.addWidget(_t)
         src_hdr.addStretch(1)
         btn_copy_src = QPushButton("复制")
-        btn_copy_src.setProperty("class", "small")
-        btn_copy_src.setObjectName("cls_small")
+        btn_copy_src.setProperty("class", "bold-small")
+        btn_copy_src.setObjectName("cls_bold_small")
         btn_copy_src.setToolTip("复制中文输入文本")
         src_hdr.addWidget(btn_copy_src)
         io_grid.addLayout(src_hdr, 0, 0)
 
         # 自创语输出 — 标题行（标签左，复制+翻译按钮右）
         con_hdr = QHBoxLayout()
-        con_hdr.addWidget(QLabel("自创语输出"))
+        _t = QLabel("自创语输出")
+        _t.setProperty("class", "section-title")
+        _t.setObjectName("cls_section_title")
+        con_hdr.addWidget(_t)
         con_hdr.addStretch(1)
         btn_copy_con = QPushButton("复制")
-        btn_copy_con.setProperty("class", "small")
-        btn_copy_con.setObjectName("cls_small")
+        btn_copy_con.setProperty("class", "bold-small")
+        btn_copy_con.setObjectName("cls_bold_small")
         btn_copy_con.setToolTip("复制自创语翻译结果")
         con_hdr.addWidget(btn_copy_con)
         self._translate_btn = QPushButton("翻译")
-        self._translate_btn.setProperty("class", "primary-sm")
-        self._translate_btn.setObjectName("cls_primary_sm")
+        self._translate_btn.setProperty("class", "bold-primary-sm")
+        self._translate_btn.setObjectName("cls_bold_primary_sm")
         self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
         self._translate_btn.clicked.connect(self._on_translate_clicked)
         con_hdr.addWidget(self._translate_btn)
@@ -649,7 +654,10 @@ class MainWindow(QMainWindow):
         realtime_section.addLayout(ai_progress_row)
 
         realtime_hdr = QHBoxLayout()
-        realtime_hdr.addWidget(QLabel("实时生成过程"))
+        _t = QLabel("实时生成过程")
+        _t.setProperty("class", "section-title")
+        _t.setObjectName("cls_section_title")
+        realtime_hdr.addWidget(_t)
         realtime_hdr.addStretch(1)
         realtime_section.addLayout(realtime_hdr)
 
@@ -672,11 +680,14 @@ class MainWindow(QMainWindow):
         tts_col = QVBoxLayout()
         tts_col.setSpacing(8)
         tts_hdr = QHBoxLayout()
-        tts_hdr.addWidget(QLabel("TTS 音译"))
+        _t = QLabel("TTS 音译")
+        _t.setProperty("class", "section-title")
+        _t.setObjectName("cls_section_title")
+        tts_hdr.addWidget(_t)
         tts_hdr.addStretch(1)
         btn_copy_tts = QPushButton("复制")
-        btn_copy_tts.setProperty("class", "small")
-        btn_copy_tts.setObjectName("cls_small")
+        btn_copy_tts.setProperty("class", "bold-small")
+        btn_copy_tts.setObjectName("cls_bold_small")
         btn_copy_tts.setToolTip("复制 TTS 友好音译")
         tts_hdr.addWidget(btn_copy_tts)
         tts_col.addLayout(tts_hdr)
@@ -691,11 +702,14 @@ class MainWindow(QMainWindow):
         ipa_col = QVBoxLayout()
         ipa_col.setSpacing(8)
         ipa_hdr = QHBoxLayout()
-        ipa_hdr.addWidget(QLabel("国际音标读音"))
+        _t = QLabel("国际音标读音")
+        _t.setProperty("class", "section-title")
+        _t.setObjectName("cls_section_title")
+        ipa_hdr.addWidget(_t)
         ipa_hdr.addStretch(1)
         btn_copy_ipa = QPushButton("复制")
-        btn_copy_ipa.setProperty("class", "small")
-        btn_copy_ipa.setObjectName("cls_small")
+        btn_copy_ipa.setProperty("class", "bold-small")
+        btn_copy_ipa.setObjectName("cls_bold_small")
         btn_copy_ipa.setToolTip("复制国际音标读音")
         ipa_hdr.addWidget(btn_copy_ipa)
         ipa_col.addLayout(ipa_hdr)
@@ -838,18 +852,28 @@ class MainWindow(QMainWindow):
 
         # ── 上区：对话历史 ────────────────────────────────────────
         chat_wrap = QWidget()
+        chat_wrap.setObjectName("cls_ask_chat_wrap")
         chat_layout = QVBoxLayout(chat_wrap)
-        chat_layout.setContentsMargins(0, 0, 0, 0)
+        chat_layout.setContentsMargins(0, 0, 0, 4)
         chat_layout.setSpacing(16)
 
         chat_hdr = QHBoxLayout()
-        chat_hdr.addWidget(QLabel("对话历史"))
+        _title = QLabel("对话历史")
+        _title.setProperty("class", "section-title")
+        _title.setObjectName("cls_section_title")
+        chat_hdr.addWidget(_title)
         chat_hdr.addStretch(1)
-        self._ask_clear_btn = QPushButton("清空对话")
-        self._ask_clear_btn.setProperty("class", "small")
-        self._ask_clear_btn.setObjectName("cls_small")
+        self._ask_token_circle = _TokenCircleWidget()
+        self._ask_token_circle.setFixedSize(38, 38)
+        self._ask_token_circle.setObjectName("cls_ask_token_circle")
+        self._ask_token_circle.setToolTip("— / —")
+        chat_hdr.addWidget(self._ask_token_circle, 0, Qt.AlignVCenter)
+        self._ask_clear_btn = QPushButton("清空")
+        self._ask_clear_btn.setProperty("class", "bold-small")
+        self._ask_clear_btn.setObjectName("cls_bold_small")
+        self._ask_clear_btn.setFixedHeight(38)
         self._ask_clear_btn.clicked.connect(self._ask_clear_conversation)
-        chat_hdr.addWidget(self._ask_clear_btn)
+        chat_hdr.addWidget(self._ask_clear_btn, 0, Qt.AlignVCenter)
         chat_layout.addLayout(chat_hdr)
 
         self._ask_chat_display = QTextEdit()
@@ -861,63 +885,52 @@ class MainWindow(QMainWindow):
         )
         chat_layout.addWidget(self._ask_chat_display, 1)
 
-        # Token 圆圈 + 数量标签
-        token_row = QHBoxLayout()
-        token_row.setSpacing(6)
-        self._ask_token_circle = _TokenCircleWidget()
-        self._ask_token_circle.setFixedSize(48, 48)
-        self._ask_token_circle.setObjectName("cls_ask_token_circle")
-        self._ask_token_label = QLabel("— / —")
-        self._ask_token_label.setProperty("class", "muted")
-        self._ask_token_label.setObjectName("cls_muted")
-        self._ask_token_label.setToolTip("当前 Token 用量 / 模型上下文上限")
-        token_row.addWidget(self._ask_token_circle)
-        token_row.addWidget(self._ask_token_label)
-        token_row.addStretch(1)
-        chat_layout.addLayout(token_row)
-
         v_splitter.addWidget(chat_wrap)
 
         # ── 中区：待审核候选词 ────────────────────────────────────
         pending_wrap = QWidget()
+        pending_wrap.setObjectName("cls_ask_pending_wrap")
         pending_layout = QVBoxLayout(pending_wrap)
-        pending_layout.setContentsMargins(0, 0, 0, 0)
+        pending_layout.setContentsMargins(0, 8, 0, 8)
         pending_layout.setSpacing(16)
 
         pending_hdr = QHBoxLayout()
-        pending_hdr.addWidget(QLabel("待审核候选词"))
+        _title = QLabel("待审核候选词")
+        _title.setProperty("class", "section-title")
+        _title.setObjectName("cls_section_title")
+        pending_hdr.addWidget(_title)
         pending_hdr.addStretch(1)
 
-        self._ask_pending_toggle = QPushButton("收起  ▼")
-        self._ask_pending_toggle.setProperty("class", "small")
-        self._ask_pending_toggle.setObjectName("cls_small")
+        self._ask_pending_toggle = QPushButton("收起")
+        self._ask_pending_toggle.setProperty("class", "bold-small")
+        self._ask_pending_toggle.setObjectName("cls_ask_pending_toggle_btn")
         self._ask_pending_toggle.clicked.connect(self._toggle_ask_pending)
         pending_hdr.addWidget(self._ask_pending_toggle)
 
         self._ask_batch_confirm_btn = QPushButton("全部确认")
-        self._ask_batch_confirm_btn.setProperty("class", "primary")
-        self._ask_batch_confirm_btn.setObjectName("cls_primary")
+        self._ask_batch_confirm_btn.setProperty("class", "bold-primary-sm")
+        self._ask_batch_confirm_btn.setObjectName("cls_bold_primary_sm")
         self._ask_batch_confirm_btn.clicked.connect(self._ask_batch_confirm_pending)
         self._ask_batch_confirm_btn.setVisible(False)
         pending_hdr.addWidget(self._ask_batch_confirm_btn)
 
         self._ask_batch_discard_btn = QPushButton("全部丢弃")
-        self._ask_batch_discard_btn.setProperty("class", "small")
-        self._ask_batch_discard_btn.setObjectName("cls_small")
+        self._ask_batch_discard_btn.setProperty("class", "bold-small")
+        self._ask_batch_discard_btn.setObjectName("cls_bold_small")
         self._ask_batch_discard_btn.clicked.connect(self._ask_batch_discard_pending)
         self._ask_batch_discard_btn.setVisible(False)
         pending_hdr.addWidget(self._ask_batch_discard_btn)
 
         self._ask_confirm_selected_btn = QPushButton("确认选中")
-        self._ask_confirm_selected_btn.setProperty("class", "primary")
-        self._ask_confirm_selected_btn.setObjectName("cls_primary")
+        self._ask_confirm_selected_btn.setProperty("class", "bold-primary-sm")
+        self._ask_confirm_selected_btn.setObjectName("cls_bold_primary_sm")
         self._ask_confirm_selected_btn.clicked.connect(self._ask_confirm_selected_pending)
         self._ask_confirm_selected_btn.setVisible(False)
         pending_hdr.addWidget(self._ask_confirm_selected_btn)
 
         self._ask_discard_selected_btn = QPushButton("丢弃选中")
-        self._ask_discard_selected_btn.setProperty("class", "small")
-        self._ask_discard_selected_btn.setObjectName("cls_small")
+        self._ask_discard_selected_btn.setProperty("class", "bold-small")
+        self._ask_discard_selected_btn.setObjectName("cls_bold_small")
         self._ask_discard_selected_btn.clicked.connect(self._ask_discard_selected_pending)
         self._ask_discard_selected_btn.setVisible(False)
         pending_hdr.addWidget(self._ask_discard_selected_btn)
@@ -940,8 +953,9 @@ class MainWindow(QMainWindow):
 
         # ── 下区：提问输入区 ──────────────────────────────────────
         input_wrap = QWidget()
+        input_wrap.setObjectName("cls_ask_input_wrap")
         input_layout = QVBoxLayout(input_wrap)
-        input_layout.setContentsMargins(0, 0, 0, 0)
+        input_layout.setContentsMargins(0, 8, 0, 0)
         input_layout.setSpacing(16)
 
         # 快捷提问模板按钮行（动态构建）
@@ -1213,6 +1227,8 @@ class MainWindow(QMainWindow):
                 w.deleteLater()
 
         label = QLabel("快捷提问：")
+        label.setProperty("class", "section-title")
+        label.setObjectName("cls_section_title")
         self._ask_template_row.addWidget(label)
 
         for tpl in self._ask_templates:
@@ -1351,7 +1367,7 @@ class MainWindow(QMainWindow):
         self._ask_pending_table.setVisible(not visible)
         if self._ask_pending_toggle is not None:
             self._ask_pending_toggle.setText(
-                "收起  ▼" if not visible else "展开  ▶"
+                "收起" if not visible else "展开"
             )
 
     def _ask_batch_confirm_pending(self) -> None:
@@ -1440,16 +1456,16 @@ class MainWindow(QMainWindow):
         op_layout.setSpacing(4)
 
         btn_confirm = QPushButton("✓")
-        btn_confirm.setProperty("class", "primary")
-        btn_confirm.setObjectName("cls_primary")
-        btn_confirm.setFixedSize(36, 28)
+        btn_confirm.setProperty("class", "bold-primary-sm")
+        btn_confirm.setObjectName("cls_bold_primary_sm")
+        btn_confirm.setFixedSize(32, 30)
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
         btn_discard = QPushButton("✗")
-        btn_discard.setProperty("class", "small")
-        btn_discard.setObjectName("cls_small")
-        btn_discard.setFixedSize(36, 28)
+        btn_discard.setProperty("class", "bold-small")
+        btn_discard.setObjectName("cls_bold_small")
+        btn_discard.setFixedSize(32, 30)
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 
@@ -1619,16 +1635,16 @@ class MainWindow(QMainWindow):
         op_layout.setSpacing(4)
 
         btn_confirm = QPushButton("✓")
-        btn_confirm.setProperty("class", "primary")
-        btn_confirm.setObjectName("cls_primary")
-        btn_confirm.setFixedSize(36, 28)
+        btn_confirm.setProperty("class", "bold-primary-sm")
+        btn_confirm.setObjectName("cls_bold_primary_sm")
+        btn_confirm.setFixedSize(32, 30)
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
         btn_discard = QPushButton("✗")
-        btn_discard.setProperty("class", "small")
-        btn_discard.setObjectName("cls_small")
-        btn_discard.setFixedSize(36, 28)
+        btn_discard.setProperty("class", "bold-small")
+        btn_discard.setObjectName("cls_bold_small")
+        btn_discard.setFixedSize(32, 30)
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 
@@ -1671,9 +1687,8 @@ class MainWindow(QMainWindow):
 
         if self._ask_token_circle is not None:
             self._ask_token_circle.set_ratio(ratio)
-        if self._ask_token_label is not None:
             msg_count = len(self._ask_messages)
-            self._ask_token_label.setText(
+            self._ask_token_circle.setToolTip(
                 f"消息 {msg_count} 条 · ~{estimated} / {context_limit} Token"
             )
 
