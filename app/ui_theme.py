@@ -19,8 +19,9 @@
 
 from __future__ import annotations
 
+import re as _re
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from PyQt5.QtWidgets import QApplication
 
@@ -91,7 +92,7 @@ class ThemeTokens:
     color_status_info: str = "#0066cc"        # 信息链接
 
     # ── 字体 ──────────────────────────────────────────────────
-    font_family: str = "Quicksand, HarmonyOS Sans SC, Microsoft YaHei UI, Segoe UI, sans-serif"
+    font_family: str = "Noto Sans SC, Quicksand, HarmonyOS Sans SC, Microsoft YaHei UI, Segoe UI, sans-serif"
     font_size_xs: str = "13px"                # 极小（辅助标注）
     font_size_sm: str = "14px"                # 小（统计、提示）
     font_size_base: str = "15px"              # 基础（正文）
@@ -271,6 +272,13 @@ QLabel[class="muted"] {{
 QLabel[class="secondary"] {{
     color: {color_text_secondary};
     font-size: {font_size_sm};
+}}
+
+QLabel[class="font-preview"] {{
+    background: {color_bg_input_jelly};
+    border: none;
+    border-radius: {radius_jelly};
+    padding: {spacing_xl};
 }}
 
 QLabel[class="link"] {{
@@ -741,6 +749,34 @@ QSpinBox:focus, QDoubleSpinBox:focus {{
     background: {color_bg_input_jelly};
 }}
 
+/* ── Slider ────────────────────────────────────────────── */
+QSlider::groove:horizontal {{
+    background: {color_primary_light};
+    height: 8px;
+    border-radius: 4px;
+}}
+
+QSlider::handle:horizontal {{
+    background: {color_primary};
+    width: 20px;
+    height: 20px;
+    margin: -6px 0;
+    border-radius: 10px;
+}}
+
+QSlider::handle:horizontal:hover {{
+    background: {color_primary_hover};
+}}
+
+QSlider::handle:horizontal:pressed {{
+    background: {color_primary_pressed};
+}}
+
+QSlider::sub-page:horizontal {{
+    background: {color_primary};
+    border-radius: 4px;
+}}
+
 /* ── CheckBox ────────────────────────────────────────────── */
 QCheckBox {{
     font-family: {font_family};
@@ -969,6 +1005,13 @@ QTextEdit[class="chat-display"]:focus {{
 # ThemeManager：全局单例
 # ---------------------------------------------------------------------------
 
+# 字号 token 名称列表（用于全局 scale 缩放）
+_FONT_SIZE_TOKENS: List[str] = [
+    "font_size_xs", "font_size_sm", "font_size_base",
+    "font_size_md", "font_size_lg", "font_size_xl",
+]
+
+
 class ThemeManager:
     """全局主题管理器。
 
@@ -977,12 +1020,17 @@ class ThemeManager:
       tm.apply(app)               # 应用当前主题
       tm.switch_theme("dark_mode")# 切换主题（自动重新 apply）
       tm.token("color.primary")   # 获取单个 token 值
+      tm.apply_font_override(fs)  # 应用用户字体偏好覆写
     """
 
     def __init__(self) -> None:
         self._themes: Dict[str, ThemeTokens] = {}
         self._current_name: str = "macaron_purple"
         self._app: Optional[QApplication] = None
+
+        # 字体覆写层：用户偏好叠加在主题 token 之上
+        self._font_override: Optional[Dict[str, Any]] = None
+        self._original_tokens: Optional[Dict[str, str]] = None  # 見写前备份
 
         # 注册内置主题
         self._register_builtin_themes()
@@ -1004,11 +1052,19 @@ class ThemeManager:
     # ── 切换主题 ──────────────────────────────────────────────
 
     def switch_theme(self, name: str) -> None:
-        """切换当前主题并重新应用。"""
+        """切换当前主题并重新应用。
+
+        切换主题后自动重新叠加字体覆写偏好（若有），
+        确保用户字体设置在主题切换时不丢失。
+        """
         if name not in self._themes:
             raise ValueError(f"未知主题: {name}，可选: {self.available_themes()}")
         self._current_name = name
-        if self._app is not None:
+        # 清除旧主题的备份，以便下次覆写时从新主题读取原始值
+        self._original_tokens = None
+        if self._font_override is not None:
+            self.apply_font_override(self._font_override)
+        elif self._app is not None:
             self.apply(self._app)
 
     def current_theme_name(self) -> str:
@@ -1066,6 +1122,98 @@ class ThemeManager:
         """将当前主题的 QSS 应用到 QApplication。"""
         self._app = app
         app.setStyleSheet(self.generate_qss())
+
+    # ── 字体覆写 ──────────────────────────────────────────────
+
+    def apply_font_override(self, font_settings: Dict[str, Any]) -> None:
+        """将用户字体偏好叠加到当前主题 token 上，并重新应用 QSS。
+
+        font_settings 结构：
+          {
+            "family_override": "微软雅黑",  # 空=不覆写
+            "size_scale": 1.1,             # 1.0=不缩放
+            "size_offsets": {              # 预留偏移微调（UI 未解锁）
+              "button": 0, "title": 0, "input": 0
+            }
+          }
+
+        原始 token 值会被备份，reset_font_override() 可恢复。
+        """
+        t = self.tokens()
+
+        # 首次覆写前备份原始值
+        if self._original_tokens is None:
+            self._original_tokens = {
+                "font_family": t.font_family,
+            }
+            for key in _FONT_SIZE_TOKENS:
+                self._original_tokens[key] = getattr(t, key)
+
+        # ── 覆写字体族 ──
+        family = font_settings.get("family_override", "")
+        if family:
+            # 用户选的字体排最前，后面保留原有 fallback 链
+            original_family = self._original_tokens["font_family"]
+            # 去掉 fallback 链中与用户选择相同的字体（避免重复）
+            fallbacks = [f.strip() for f in original_family.split(",")]
+            fallbacks = [f for f in fallbacks if f.lower() != family.lower()]
+            t.font_family = family + ", " + ", ".join(fallbacks)
+        else:
+            t.font_family = self._original_tokens["font_family"]
+
+        # ── 覆写字号（全局 scale + 偏移预留通道）──
+        scale = float(font_settings.get("size_scale", 1.0))
+        offsets = font_settings.get("size_offsets", {})
+
+        # 偏移预留映射：哪些 token 受哪个 offset 影响
+        # 当前 UI 不解锁偏移，offsets 全为 0，scale 是唯一生效参数
+        _OFFSET_MAP = {
+            "font_size_xs": None,
+            "font_size_sm": None,
+            "font_size_base": None,   # base 不受任何 offset（正文基准）
+            "font_size_md": "title",
+            "font_size_lg": "title",
+            "font_size_xl": "title",
+        }
+        # 按钮字号受 button offset 影响：
+        #   QSS 中 QPushButton 用 font_size_base / font_size_sm / font_size_xs
+        #   这些 token 同时服务于按钮和非按钮控件，单独偏移按钮需要 QSS 级分离，
+        #   目前通过额外 QSS 规则实现（见 generate_qss 中的 button offset 区块）。
+        # 输入框字号受 input offset 影响：
+        #   QSS 中 QPlainTextEdit/QTextEdit/QLineEdit 用 font_size_base，
+        #   同理需要 QSS 级分离。
+
+        for key in _FONT_SIZE_TOKENS:
+            original_px_str = self._original_tokens[key]
+            original_val = int(_re.sub(r"[^\d]", "", original_px_str))
+            offset_key = _OFFSET_MAP.get(key)
+            offset = int(offsets.get(offset_key, 0)) if offset_key else 0
+            new_val = max(8, round(original_val * scale) + offset)
+            setattr(t, key, f"{new_val}px")
+
+        # 记录当前覆写参数
+        self._font_override = font_settings
+
+        # 重新应用 QSS
+        if self._app is not None:
+            self.apply(self._app)
+
+    def reset_font_override(self) -> None:
+        """清除字体覆写，恢复主题原始 token 值。"""
+        if self._original_tokens is None:
+            return
+        t = self.tokens()
+        t.font_family = self._original_tokens["font_family"]
+        for key in _FONT_SIZE_TOKENS:
+            setattr(t, key, self._original_tokens[key])
+        self._original_tokens = None
+        self._font_override = None
+        if self._app is not None:
+            self.apply(self._app)
+
+    def has_font_override(self) -> bool:
+        """是否有活跃的字体覆写。"""
+        return self._font_override is not None
 
     # ── 快捷样式片段（供组件局部使用）──────────────────────────
 

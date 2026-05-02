@@ -8,5 +8,14 @@
   "paperhub_temperature": 0.1,
   "paperhub_max_tokens": 4096,
   "paperhub_timeout": 90,
-  "paperhub_stream": true
+  "paperhub_stream": true,
+  "font_settings": {
+    "family_override": "Noto Sans SC",
+    "size_scale": 1.0,
+    "size_offsets": {
+      "button": 0,
+      "title": 0,
+      "input": 0
+    }
+  }
 }

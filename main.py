@@ -73,6 +73,14 @@ def main() -> int:
     theme_manager.apply(app)
     UITheme.sync_from_manager()
 
+    # 加载字体偏好覆写（若有）
+    from app.font_settings import load_font_settings
+    fs = load_font_settings()
+    family = fs.get("family_override", "")
+    scale = fs.get("size_scale", 1.0)
+    if family or scale != 1.0:
+        theme_manager.apply_font_override(fs)
+
     window = MainWindow()
     window.show()
 
