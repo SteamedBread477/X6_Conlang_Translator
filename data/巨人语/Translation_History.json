@@ -419,5 +419,25 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0024",
+    "timestamp": "2026-05-02T18:33:13",
+    "source": "就是非常想发疯购物",
+    "conlang": "se es mycket vil vild-köp-sjuk ",
+    "phonetic": "seh es mycket vil vild-koep-shook",
+    "unmatched_words": [
+      "就",
+      "发疯购物"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

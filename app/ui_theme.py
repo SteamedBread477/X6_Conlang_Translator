@@ -257,6 +257,12 @@ QLabel[class="heading"] {{
     font-size: {font_size_lg};
 }}
 
+QLabel[class="section-title"] {{
+    font-weight: {font_weight_bold};
+    font-size: {font_size_lg};
+    color: {color_text_primary};
+}}
+
 QLabel[class="muted"] {{
     color: {color_text_muted};
     font-size: {font_size_sm};
@@ -453,19 +459,6 @@ QPushButton[class="green-btn"]:hover {{
 QPushButton[class="green-btn"]:pressed {{
     background: {color_primary_pressed};
     color: {color_text_on_primary};
-}}
-
-QPushButton[class="toggle-btn"] {{
-    text-align: left;
-    padding: {spacing_sm} {spacing_lg};
-    background: {color_bg_hover};
-    border: none;
-    border-radius: {radius_ios};
-    font-weight: {font_weight_semi};
-}}
-
-QPushButton[class="toggle-btn"]:hover {{
-    background: {color_bg_selected};
 }}
 
 /* ── 输入框 ────────────────────────────────────────────── */
@@ -879,6 +872,24 @@ QTabWidget[class="right-tabs"] {{
     background: {color_bg_card};
     border: none;
     border-radius: {radius_card_lg};
+}}
+
+/* ── Inner Tabs (翻译页签内部的 单句/批量 子Tab) ─── */
+QTabWidget[class="inner-tabs"] {{
+    background: {color_bg_card};
+    border: none;
+    border-radius: 0px;
+}}
+
+QTabWidget[class="inner-tabs"]::pane {{
+    background: {color_bg_card};
+    border: none;
+    border-radius: 0px;
+    padding: 0px;
+}}
+
+QTabWidget[class="inner-tabs"] QTabBar::tab {{
+    min-width: 120px;
 }}
 
 /* ── ASK 页签 ────────────────────────────────────────────── */

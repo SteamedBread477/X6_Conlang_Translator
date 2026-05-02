@@ -284,9 +284,6 @@ class MainWindow(QMainWindow):
         self._right_tabs: Optional[QTabWidget] = None
         self.language_list: Optional[QListWidget] = None
         self._status_labels: Dict[str, QLabel] = {}
-        self._batch_body: Optional[QWidget] = None
-        self._batch_toggle_btn: Optional[QPushButton] = None
-        self._batch_expanded = False
 
         self.source_input: Optional[QPlainTextEdit] = None
         self.target_output: Optional[QPlainTextEdit] = None
@@ -425,8 +422,8 @@ class MainWindow(QMainWindow):
         self._splitter = QSplitter(Qt.Horizontal)
 
         left = self._build_left_panel()
-        left.setMinimumWidth(160)
-        left.resize(200, left.height())
+        left.setMinimumWidth(200)
+        left.resize(240, left.height())
 
         # 右侧区域使用 QTabWidget 分为「翻译」和「ASK」两个页签
         self._right_tabs = QTabWidget()
@@ -451,7 +448,7 @@ class MainWindow(QMainWindow):
         self._splitter.addWidget(self._right_tabs)
         self._splitter.setStretchFactor(0, 0)
         self._splitter.setStretchFactor(1, 1)
-        self._splitter.setSizes([200, 1200])
+        self._splitter.setSizes([240, 1160])
 
         self.setCentralWidget(self._splitter)
 
@@ -564,14 +561,30 @@ class MainWindow(QMainWindow):
         outer.setContentsMargins(24, 24, 24, 24)
         outer.setSpacing(24)
 
-        # ── 垂直分割器：上方单句翻译 / 下方批量翻译（可拖拽调整比例）──
-        self._translate_v_splitter = QSplitter(Qt.Vertical)
-        self._translate_v_splitter.setObjectName("cls_translate_v_splitter")
+        # ── 翻译子页签：单句翻译 / 批量翻译 ──
+        self._translate_tabs = QTabWidget()
+        self._translate_tabs.setProperty("class", "inner-tabs")
+        self._translate_tabs.setObjectName("cls_inner_tabs")
+        self._translate_tabs.tabBar().setExpanding(False)
+        self._translate_tabs.tabBar().setUsesScrollButtons(False)
 
-        # ── 单句翻译区 ──────────────────────────────────────────────
-        single = QGroupBox("单句翻译")
-        single_layout = QVBoxLayout(single)
-        single_layout.setSpacing(24)
+        single_page = self._build_single_translate_page()
+        batch_page = self._build_batch_translate_page()
+
+        self._translate_tabs.addTab(single_page, "单句翻译")
+        self._translate_tabs.addTab(batch_page, "批量翻译")
+
+        outer.addWidget(self._translate_tabs, 1)
+
+        return panel
+
+    # ── 单句翻译页签 ──────────────────────────────────────────────────
+
+    def _build_single_translate_page(self) -> QWidget:
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(24)
 
         # 输入 / 输出 并排区域
         io_grid = QGridLayout()
@@ -585,9 +598,7 @@ class MainWindow(QMainWindow):
         src_hdr.addStretch(1)
         btn_copy_src = QPushButton("复制")
         btn_copy_src.setProperty("class", "small")
-
         btn_copy_src.setObjectName("cls_small")
-
         btn_copy_src.setToolTip("复制中文输入文本")
         src_hdr.addWidget(btn_copy_src)
         io_grid.addLayout(src_hdr, 0, 0)
@@ -598,16 +609,12 @@ class MainWindow(QMainWindow):
         con_hdr.addStretch(1)
         btn_copy_con = QPushButton("复制")
         btn_copy_con.setProperty("class", "small")
-
         btn_copy_con.setObjectName("cls_small")
-
         btn_copy_con.setToolTip("复制自创语翻译结果")
         con_hdr.addWidget(btn_copy_con)
         self._translate_btn = QPushButton("翻译")
         self._translate_btn.setProperty("class", "primary-sm")
-
         self._translate_btn.setObjectName("cls_primary_sm")
-
         self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
         self._translate_btn.clicked.connect(self._on_translate_clicked)
         con_hdr.addWidget(self._translate_btn)
@@ -621,9 +628,9 @@ class MainWindow(QMainWindow):
         io_grid.addWidget(self.source_input, 1, 0)
         io_grid.addWidget(self.target_output, 1, 1)
 
-        single_layout.addLayout(io_grid)
+        layout.addLayout(io_grid)
 
-        # AI 翻译进度行（阶段六新增）
+        # AI 翻译进度行
         ai_progress_row = QHBoxLayout()
         self._ai_progress = QProgressBar()
         self._ai_progress.setRange(0, 0)  # 无限循环模式（翻译进行中）
@@ -634,16 +641,17 @@ class MainWindow(QMainWindow):
         ai_progress_row.addWidget(self._ai_progress, 1)
         self._ai_progress_label = QLabel("")
         self._ai_progress_label.setProperty("class", "muted")
-
         self._ai_progress_label.setObjectName("cls_muted")
         ai_progress_row.addWidget(self._ai_progress_label)
-        single_layout.addLayout(ai_progress_row)
+        # ── AI 进度 + 实时生成区（紧凑合并，减少与上方文本框的间距）──
+        realtime_section = QVBoxLayout()
+        realtime_section.setSpacing(8)
+        realtime_section.addLayout(ai_progress_row)
 
-        # ── 实时生成过程区 ─────────────────────────────────────────
         realtime_hdr = QHBoxLayout()
         realtime_hdr.addWidget(QLabel("实时生成过程"))
         realtime_hdr.addStretch(1)
-        single_layout.addLayout(realtime_hdr)
+        realtime_section.addLayout(realtime_hdr)
 
         self._realtime_output = QPlainTextEdit()
         self._realtime_output.setReadOnly(True)
@@ -651,8 +659,10 @@ class MainWindow(QMainWindow):
             "流式翻译时，AI 生成的 token 将实时显示在这里…\n"
             "非流式模式下保持为空。"
         )
-        self._realtime_output.setMinimumHeight(40)
-        single_layout.addWidget(self._realtime_output)
+        self._realtime_output.setMinimumHeight(120)
+        realtime_section.addWidget(self._realtime_output)
+
+        layout.addLayout(realtime_section)
 
         # ── TTS 音译 + 国际音标读音 并排 ────────────────────────────
         phonetics_row = QHBoxLayout()
@@ -696,13 +706,12 @@ class MainWindow(QMainWindow):
         ipa_col.addWidget(self.ipa_output)
         phonetics_row.addLayout(ipa_col, 1)
 
-        single_layout.addLayout(phonetics_row)
+        layout.addLayout(phonetics_row)
 
         # 统计行
         stats_row = QHBoxLayout()
         self._stats_label = QLabel("")
         self._stats_label.setProperty("class", "secondary")
-
         self._stats_label.setObjectName("cls_secondary")
         stats_row.addWidget(self._stats_label, 1)
 
@@ -710,7 +719,7 @@ class MainWindow(QMainWindow):
         self._add_word_btn.setVisible(False)
         self._add_word_btn.clicked.connect(self._on_add_unmatched_words)
         stats_row.addWidget(self._add_word_btn)
-        single_layout.addLayout(stats_row)
+        layout.addLayout(stats_row)
 
         # 连接复制按钮
         btn_copy_src.clicked.connect(
@@ -738,28 +747,26 @@ class MainWindow(QMainWindow):
         if self.source_input is not None:
             self.source_input.textChanged.connect(self._on_source_input_text_changed)
 
-        self._translate_v_splitter.addWidget(single)
+        layout.addStretch(1)
+        return page
 
-        # ── 批量翻译区（可折叠） ────────────────────────────────────
-        batch_wrap = QWidget()
-        batch_outer = QVBoxLayout(batch_wrap)
-        batch_outer.setContentsMargins(0, 0, 0, 0)
-        batch_outer.setSpacing(16)
+    # ── 批量翻译页签 ──────────────────────────────────────────────────
 
-        self._batch_toggle_btn = QPushButton("批量翻译  ▶")
-        self._batch_toggle_btn.setProperty("class", "toggle-btn")
+    def _build_batch_translate_page(self) -> QWidget:
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(32)
 
-        self._batch_toggle_btn.setObjectName("cls_toggle_btn")
-        self._batch_toggle_btn.clicked.connect(self._toggle_batch_section)
+        # ── 标题 ──
+        title_label = QLabel("批量翻译")
+        title_label.setProperty("class", "section-title")
+        title_label.setObjectName("cls_section_title")
+        layout.addWidget(title_label)
 
-        self._batch_body = QWidget()
-        batch_layout = QVBoxLayout(self._batch_body)
-        batch_layout.setSpacing(24)
-
-        batch_box = QGroupBox("批量翻译")
-        inner = QVBoxLayout(batch_box)
-
+        # ── 操作按钮行 ──
         btn_row2 = QHBoxLayout()
+        btn_row2.setSpacing(12)
         btn_pick = QPushButton("选择 Excel")
         btn_pick.setProperty("class", "green-btn")
         btn_pick.setObjectName("cls_green_btn")
@@ -784,47 +791,36 @@ class MainWindow(QMainWindow):
         btn_row2.addWidget(self._btn_batch_cancel)
         btn_row2.addWidget(btn_export)
         btn_row2.addStretch(1)
+        layout.addLayout(btn_row2)
 
+        # ── 文件路径显示 ──
         self.batch_path_display = QLabel("未选择文件")
         self.batch_path_display.setWordWrap(True)
         self.batch_path_display.setProperty("class", "muted")
-
         self.batch_path_display.setObjectName("cls_muted")
+        layout.addWidget(self.batch_path_display)
 
+        # ── 进度条 ──
         self.batch_progress = QProgressBar()
         self.batch_progress.setRange(0, 100)
         self.batch_progress.setValue(0)
         self.batch_progress.setFormat("%p%")
+        layout.addWidget(self.batch_progress)
+
+        # ── 日志区 ──
+        log_hdr = QHBoxLayout()
+        log_hdr.addWidget(QLabel("日志"))
+        log_hdr.addStretch(1)
+        layout.addLayout(log_hdr)
 
         self.batch_log = QPlainTextEdit()
         self.batch_log.setReadOnly(True)
         self.batch_log.setPlaceholderText("日志：批量翻译进度将显示在这里")
-        self.batch_log.setMinimumHeight(60)
+        self.batch_log.setMinimumHeight(120)
+        layout.addWidget(self.batch_log)
 
-        inner.addLayout(btn_row2)
-        inner.addWidget(self.batch_path_display)
-        inner.addWidget(self.batch_progress)
-        inner.addWidget(QLabel("日志"))
-        inner.addWidget(self.batch_log)
-
-        batch_layout.addWidget(batch_box)
-
-        self._batch_body.setVisible(False)
-        batch_outer.addWidget(self._batch_toggle_btn)
-        batch_outer.addWidget(self._batch_body)
-
-        self._translate_v_splitter.addWidget(batch_wrap)
-        self._translate_v_splitter.setStretchFactor(0, 3)  # single: 3/4
-        self._translate_v_splitter.setStretchFactor(1, 1)  # batch: 1/4
-        self._translate_v_splitter.setSizes([500, 150])
-
-        # 让两个子面板可以缩小到最小高度，确保 splitter 可以自由拖拽
-        single.setMinimumHeight(80)
-        batch_wrap.setMinimumHeight(30)
-
-        outer.addWidget(self._translate_v_splitter, 1)
-
-        return panel
+        layout.addStretch(1)
+        return page
 
     # ── ASK 页签 ─────────────────────────────────────────────────────
 
@@ -1679,15 +1675,6 @@ class MainWindow(QMainWindow):
             msg_count = len(self._ask_messages)
             self._ask_token_label.setText(
                 f"消息 {msg_count} 条 · ~{estimated} / {context_limit} Token"
-            )
-
-    def _toggle_batch_section(self) -> None:
-        self._batch_expanded = not self._batch_expanded
-        if self._batch_body is not None:
-            self._batch_body.setVisible(self._batch_expanded)
-        if self._batch_toggle_btn is not None:
-            self._batch_toggle_btn.setText(
-                "批量翻译  ▼" if self._batch_expanded else "批量翻译  ▶"
             )
 
     def _load_languages(self) -> None:

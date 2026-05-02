@@ -1293,7 +1293,9 @@
     "界面": "gräns-sida",
     "布局": "plan",
     "外观": "utseende",
-    "想": "vil"
+    "想": "vil",
+    "就": "se",
+    "发疯购物": "vild-köp-sjuk"
   },
   "tts_map": {
     "sul": "sool",
@@ -3259,7 +3261,8 @@
     "justerat": "yoos-TEH-raht",
     "gräns-sida": "grens-SEE-dah",
     "plan": "plahn",
-    "utseende": "oot-SEH-en-deh"
+    "utseende": "oot-SEH-en-deh",
+    "vild-köp-sjuk": "vild-koep-shook"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5225,7 +5228,8 @@
     "justerat": "/jusˈtɛrat/",
     "gräns-sida": "/grɛnsˈsida/",
     "plan": "/plan/",
-    "utseende": "/utˈsɛɛndɛ/"
+    "utseende": "/utˈsɛɛndɛ/",
+    "vild-köp-sjuk": "/vɪld kœp ʃʊk/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5239,14 +5243,15 @@
     "我是 巨人王 的 头号粉丝": "mi es grav Människa-Kung-s huvud fan",
     "你吃饭了吗": "ti ätat mat ät -ne",
     "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar",
-    "调整了界面的布局和外观": "justerat gräns-sida-s plan Dö utseende"
+    "调整了界面的布局和外观": "justerat gräns-sida-s plan Dö utseende",
+    "我 想 吃饭 了": "mi vil ätat mat ät"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 835,
-    "mapping_count": 2012,
-    "ipa_count": 2012,
-    "anchor_count": 12
+    "lexicon_count": 837,
+    "mapping_count": 2013,
+    "ipa_count": 2013,
+    "anchor_count": 13
   }
 }
