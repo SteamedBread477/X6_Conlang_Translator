@@ -440,8 +440,53 @@ QPushButton[class="bold-primary-sm"]:hover {{
     background: {color_primary_hover};
 }}
 
-QPushButton[class="bold-primary-sm"]:pressed {{
+QPushButton[class=\"bold-primary-sm\"]:pressed {{
     background: {color_primary_pressed};
+}}
+
+/* ── 表格行内圆形按钮 ── */
+#cls_round_confirm {{
+    background: {color_primary};
+    color: {color_text_on_primary};
+    border: none;
+    border-radius: 9px;
+    min-width: 18px;
+    max-width: 18px;
+    min-height: 18px;
+    max-height: 18px;
+    padding: 0;
+    icon-size: 12px;
+    font-size: {font_size_xs};
+    font-weight: {font_weight_bold};
+}}
+#cls_round_confirm:hover {{
+    background: {color_primary_hover};
+}}
+#cls_round_confirm:pressed {{
+    background: {color_primary_pressed};
+}}
+
+#cls_round_discard {{
+    background: {color_green_btn_bg};
+    color: {color_green_btn_text};
+    border: none;
+    border-radius: 9px;
+    min-width: 18px;
+    max-width: 18px;
+    min-height: 18px;
+    max-height: 18px;
+    padding: 0;
+    icon-size: 12px;
+    font-size: {font_size_xs};
+    font-weight: {font_weight_bold};
+}}
+#cls_round_discard:hover {{
+    background: {color_green_btn_hover};
+    color: {color_text_on_primary};
+}}
+#cls_round_discard:pressed {{
+    background: {color_primary_pressed};
+    color: {color_text_on_primary};
 }}
 
 QPushButton[class="pill"] {{

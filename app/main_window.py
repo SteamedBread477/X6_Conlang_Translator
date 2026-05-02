@@ -5,11 +5,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path
+from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path, get_icon_path
 from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QIcon
+from PyQt5.QtGui import QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -1452,20 +1452,26 @@ class MainWindow(QMainWindow):
         # 操作列：✓确认 + ✗丢弃 按钮
         op_widget = QWidget()
         op_layout = QHBoxLayout(op_widget)
-        op_layout.setContentsMargins(2, 2, 2, 2)
+        op_layout.setContentsMargins(0, 0, 0, 0)
         op_layout.setSpacing(4)
 
-        btn_confirm = QPushButton("✓")
-        btn_confirm.setProperty("class", "bold-primary-sm")
-        btn_confirm.setObjectName("cls_bold_primary_sm")
-        btn_confirm.setFixedSize(32, 30)
+        confirm_icon_path = get_icon_path("confirm")
+        btn_confirm = QPushButton()
+        btn_confirm.setObjectName("cls_round_confirm")
+        if confirm_icon_path:
+            btn_confirm.setIcon(QIcon(str(confirm_icon_path)))
+        else:
+            btn_confirm.setText("✓")
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
-        btn_discard = QPushButton("✗")
-        btn_discard.setProperty("class", "bold-small")
-        btn_discard.setObjectName("cls_bold_small")
-        btn_discard.setFixedSize(32, 30)
+        discard_icon_path = get_icon_path("discard")
+        btn_discard = QPushButton()
+        btn_discard.setObjectName("cls_round_discard")
+        if discard_icon_path:
+            btn_discard.setIcon(QIcon(str(discard_icon_path)))
+        else:
+            btn_discard.setText("✗")
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 
@@ -1631,20 +1637,26 @@ class MainWindow(QMainWindow):
             return
         op_widget = QWidget()
         op_layout = QHBoxLayout(op_widget)
-        op_layout.setContentsMargins(2, 2, 2, 2)
+        op_layout.setContentsMargins(0, 0, 0, 0)
         op_layout.setSpacing(4)
 
-        btn_confirm = QPushButton("✓")
-        btn_confirm.setProperty("class", "bold-primary-sm")
-        btn_confirm.setObjectName("cls_bold_primary_sm")
-        btn_confirm.setFixedSize(32, 30)
+        confirm_icon_path = get_icon_path("confirm")
+        btn_confirm = QPushButton()
+        btn_confirm.setObjectName("cls_round_confirm")
+        if confirm_icon_path:
+            btn_confirm.setIcon(QIcon(str(confirm_icon_path)))
+        else:
+            btn_confirm.setText("✓")
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
-        btn_discard = QPushButton("✗")
-        btn_discard.setProperty("class", "bold-small")
-        btn_discard.setObjectName("cls_bold_small")
-        btn_discard.setFixedSize(32, 30)
+        discard_icon_path = get_icon_path("discard")
+        btn_discard = QPushButton()
+        btn_discard.setObjectName("cls_round_discard")
+        if discard_icon_path:
+            btn_discard.setIcon(QIcon(str(discard_icon_path)))
+        else:
+            btn_discard.setText("✗")
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 

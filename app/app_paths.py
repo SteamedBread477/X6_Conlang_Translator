@@ -53,6 +53,40 @@ def get_config_path() -> Path:
 # 支持 jpg / png / ico 格式，首次运行会自动转换为 .ico。
 ICON_SOURCE_NAME: str = "app_icon.jpg"
 
+# ------------------------------------------------------------------
+# 图标映射表（assets/icons/ 目录）
+# ------------------------------------------------------------------
+# key   → 用途描述（用于代码中引用）
+# value → assets/icons/ 下的文件名（png/svg 等格式）
+ICON_MAP: dict[str, str] = {
+    "confirm":   "confirm.png",      # ✓ 确认操作
+    "discard":   "discard.png",      # ✗ 丢弃/删除操作
+    "copy":      "copy.png",         # 复制操作
+    "translate": "translate.png",    # 翻译操作
+}
+
+
+def get_icons_dir() -> Path:
+    """返回 assets/icons 目录路径，并确保目录存在。
+
+    位置: get_assets_dir() / "icons"
+    """
+    icons_dir = get_assets_dir() / "icons"
+    icons_dir.mkdir(parents=True, exist_ok=True)
+    return icons_dir
+
+
+def get_icon_path(icon_key: str) -> Path:
+    """根据 ICON_MAP 的 key 返回对应图标文件的完整路径。
+
+    若文件不存在则返回空 Path（调用方应做回退处理）。
+    """
+    filename = ICON_MAP.get(icon_key)
+    if not filename:
+        return Path()
+    path = get_icons_dir() / filename
+    return path if path.is_file() else Path()
+
 
 def get_assets_dir() -> Path:
     """返回 assets 目录路径，并确保目录存在。
