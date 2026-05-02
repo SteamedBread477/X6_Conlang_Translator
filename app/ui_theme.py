@@ -678,14 +678,18 @@ QStatusBar {{
 QSplitter::handle:horizontal {{
     width: 6px;
     background: {color_border_light};
+    border-radius: 3px;
 }}
+
 QSplitter::handle:vertical {{
     height: 6px;
     background: {color_border_light};
+    border-radius: 3px;
 }}
 
 QSplitter::handle:hover {{
     background: {color_primary};
+    border-radius: 3px;
 }}
 
 /* ── 分隔线 ────────────────────────────────────────────── */
@@ -804,21 +808,21 @@ QScrollArea {{
 QTabWidget::pane {{
     background: {color_bg_card};
     border: none;
-    border-radius: {radius_card};
+    border-radius: 0px;
     padding: {spacing_ios};
 }}
 
 QTabBar {{
     background: {color_tab_unselected_bg};
     border: none;
-    border-radius: {radius_ios};
+    border-radius: 0px;
     padding: 3px;
 }}
 
 QTabBar::tab {{
     background: transparent;
     border: none;
-    border-radius: {radius_ios};
+    border-radius: 0px;
     padding: {spacing_sm} {spacing_xl};
     font-size: {font_size_base};
     color: {color_tab_unselected_text};
@@ -895,6 +899,8 @@ QGroupBox[class="inner-card"]::title {{
     background: transparent;
     border-radius: 0;
 }}
+
+
 
 /* ── ASK 页签 ────────────────────────────────────────────── */
 QTextEdit[class="chat-display"] {{
