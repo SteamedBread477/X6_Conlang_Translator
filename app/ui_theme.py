@@ -96,6 +96,7 @@ class ThemeTokens:
     radius_md: str = "8px"                    # 中圆角（卡片、输入框）
     radius_lg: str = "12px"                   # 大圆角（面板、对话框）
     radius_xl: str = "16px"                   # 极大圆角（主按钮）
+    radius_ios: str = "20px"                  # iOS 极简大圆角（卡片、胶囊按钮）
     radius_pill: str = "9999px"               # 药丸形（标签、徽章）
 
     # ── 阴影 ──────────────────────────────────────────────────
@@ -294,6 +295,27 @@ QPushButton[class="primary"]:pressed {{
     background: {color_primary_pressed};
 }}
 
+/* ── 小号主色按钮（主色配色 + small 尺寸）── */
+QPushButton[class="primary-sm"] {{
+    background: {color_primary};
+    color: {color_text_on_primary};
+    border: 1px solid {color_primary_hover};
+    min-height: {button_height_sm};
+    max-height: {button_height_sm};
+    padding: {spacing_xs} {spacing_md};
+    font-size: {font_size_sm};
+    font-weight: {font_weight_semi};
+    border-radius: {radius_sm};
+}}
+
+QPushButton[class="primary-sm"]:hover {{
+    background: {color_primary_hover};
+}}
+
+QPushButton[class="primary-sm"]:pressed {{
+    background: {color_primary_pressed};
+}}
+
 QPushButton[class="highlight"] {{
     background: {color_highlight};
     color: {color_text_on_highlight};
@@ -326,6 +348,45 @@ QPushButton[class="pill"] {{
     padding: {spacing_xs} {spacing_md};
     min-height: {button_height_sm};
     font-size: {font_size_xs};
+}}
+
+/* ── iOS 极简胶囊按钮 ──────────────────────────────────── */
+QPushButton[class="add-btn"] {{
+    background: {color_primary_light};
+    color: {color_text_primary};
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_sm} {spacing_lg};
+    min-height: {button_height_sm};
+    font-weight: {font_weight_semi};
+    font-size: {font_size_sm};
+}}
+
+QPushButton[class="add-btn"]:hover {{
+    background: {color_primary};
+}}
+
+QPushButton[class="add-btn"]:pressed {{
+    background: {color_primary_pressed};
+}}
+
+QPushButton[class="import-btn"] {{
+    background: {color_highlight};
+    color: {color_text_on_highlight};
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_sm} {spacing_lg};
+    min-height: {button_height_sm};
+    font-weight: {font_weight_semi};
+    font-size: {font_size_sm};
+}}
+
+QPushButton[class="import-btn"]:hover {{
+    background: {color_highlight_hover};
+}}
+
+QPushButton[class="import-btn"]:pressed {{
+    background: {color_primary_pressed};
 }}
 
 QPushButton[class="toggle-btn"] {{
@@ -365,9 +426,9 @@ QPlainTextEdit:disabled, QTextEdit:disabled, QLineEdit:disabled {{
 
 /* ── 列表 ──────────────────────────────────────────────── */
 QListWidget {{
-    background: {color_bg_card};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
+    background: transparent;
+    border: none;
+    border-radius: {radius_ios};
     padding: {spacing_xs};
     font-family: {font_family};
     font-size: {font_size_base};
@@ -376,8 +437,8 @@ QListWidget {{
 }}
 
 QListWidget::item {{
-    padding: {spacing_sm} {spacing_md};
-    border-radius: {radius_sm};
+    padding: {spacing_md} {spacing_lg};
+    border-radius: {radius_md};
 }}
 
 QListWidget::item:hover {{
@@ -385,8 +446,9 @@ QListWidget::item:hover {{
 }}
 
 QListWidget::item:selected {{
-    background: {color_bg_selected};
+    background: {color_primary};
     color: {color_text_primary};
+    font-weight: {font_weight_bold};
 }}
 
 /* ── 分组框 ────────────────────────────────────────────── */
@@ -547,7 +609,12 @@ QStatusBar {{
 }}
 
 /* ── Splitter ──────────────────────────────────────────── */
-QSplitter::handle {{
+QSplitter::handle:horizontal {{
+    width: 6px;
+    background: {color_border_light};
+}}
+QSplitter::handle:vertical {{
+    height: 6px;
     background: {color_border_light};
 }}
 
@@ -713,20 +780,41 @@ QDialogButtonBox QPushButton {{
 
 /* ── Left Panel ────────────────────────────────────────── */
 QWidget[class="sidebar"] {{
-    background: {color_bg_panel};
-    border-right: 1px solid {color_border_light};
+    background: {color_bg_window};
+    border: none;
 }}
 
 QWidget[class="lang-selector"] {{
     background: {color_secondary_light};
-    border-radius: {radius_md};
-    padding: {spacing_md};
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_xl};
 }}
 
 QWidget[class="assets-panel"] {{
     background: {color_primary_light};
-    border-radius: {radius_md};
-    padding: {spacing_md};
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_xl};
+}}
+
+/* ── ASK 页签 ────────────────────────────────────────────── */
+QGroupBox[class="inner-card"] {{
+    background: transparent;
+    border: none;
+    margin-top: 0;
+    padding: 0;
+    font-weight: {font_weight_normal};
+    font-size: {font_size_base};
+    color: {color_text_primary};
+}}
+
+QGroupBox[class="inner-card"]::title {{
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
 }}
 
 /* ── ASK 页签 ────────────────────────────────────────────── */

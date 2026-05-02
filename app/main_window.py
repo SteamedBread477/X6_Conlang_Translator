@@ -453,8 +453,8 @@ class MainWindow(QMainWindow):
         panel.setProperty("class", "sidebar")
         panel.setObjectName("cls_sidebar")
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(8)
+        layout.setContentsMargins(12, 12, 12, 12)
+        layout.setSpacing(12)
 
         # 语言选择区域（辅色背景）
         lang_selector = QWidget()
@@ -463,8 +463,8 @@ class MainWindow(QMainWindow):
         lang_selector.setObjectName("cls_lang_selector")
 
         lang_layout = QVBoxLayout(lang_selector)
-        lang_layout.setContentsMargins(4, 4, 4, 4)
-        lang_layout.setSpacing(4)
+        lang_layout.setContentsMargins(16, 16, 16, 16)
+        lang_layout.setSpacing(12)
 
         title = QLabel("语言")
         title.setProperty("class", "title")
@@ -482,14 +482,12 @@ class MainWindow(QMainWindow):
 
         btn_row = QHBoxLayout()
         btn_add = QPushButton("+ 新增")
+        btn_add.setProperty("class", "add-btn")
+        btn_add.setObjectName("cls_add_btn")
         btn_add.setToolTip("添加新的自创语言页签")
         btn_add.clicked.connect(self.add_language)
         btn_row.addWidget(btn_add)
         btn_row.addStretch(1)
-
-        sep = QFrame()
-        sep.setFrameShape(QFrame.HLine)
-        sep.setFrameShadow(QFrame.Sunken)
 
         assets_title = QLabel("当前语言资料")
         assets_title.setProperty("class", "title")
@@ -499,6 +497,8 @@ class MainWindow(QMainWindow):
 
 
         assets_box = QGroupBox()
+        assets_box.setProperty("class", "inner-card")
+        assets_box.setObjectName("cls_inner_card")
         assets_form = QFormLayout(assets_box)
         assets_form.setRowWrapPolicy(QFormLayout.DontWrapRows)
         self._status_labels = {
@@ -513,10 +513,8 @@ class MainWindow(QMainWindow):
             assets_form.addRow(lbl)
 
         btn_import = QPushButton("导入资料")
-        btn_import.setProperty("class", "highlight")
-
-        btn_import.setObjectName("cls_highlight")
-
+        btn_import.setProperty("class", "import-btn")
+        btn_import.setObjectName("cls_import_btn")
         btn_import.clicked.connect(self.open_import_dialog)
 
         lang_layout.addWidget(title)
@@ -530,8 +528,8 @@ class MainWindow(QMainWindow):
         assets_panel.setObjectName("cls_assets_panel")
 
         assets_layout = QVBoxLayout(assets_panel)
-        assets_layout.setContentsMargins(4, 4, 4, 4)
-        assets_layout.setSpacing(4)
+        assets_layout.setContentsMargins(16, 16, 16, 16)
+        assets_layout.setSpacing(12)
 
         assets_layout.addStretch(1)
         assets_layout.addWidget(assets_title)
@@ -548,7 +546,11 @@ class MainWindow(QMainWindow):
         panel = QWidget()
         outer = QVBoxLayout(panel)
         outer.setContentsMargins(12, 12, 12, 12)
-        outer.setSpacing(10)
+        outer.setSpacing(0)
+
+        # ── 垂直分割器：上方单句翻译 / 下方批量翻译（可拖拽调整比例）──
+        self._translate_v_splitter = QSplitter(Qt.Vertical)
+        self._translate_v_splitter.setObjectName("cls_translate_v_splitter")
 
         # ── 单句翻译区 ──────────────────────────────────────────────
         single = QGroupBox("单句翻译")
@@ -574,7 +576,7 @@ class MainWindow(QMainWindow):
         src_hdr.addWidget(btn_copy_src)
         io_grid.addLayout(src_hdr, 0, 0)
 
-        # 自创语输出 — 标题行
+        # 自创语输出 — 标题行（标签左，复制+翻译按钮右）
         con_hdr = QHBoxLayout()
         con_hdr.addWidget(QLabel("自创语输出"))
         con_hdr.addStretch(1)
@@ -585,6 +587,14 @@ class MainWindow(QMainWindow):
 
         btn_copy_con.setToolTip("复制自创语翻译结果")
         con_hdr.addWidget(btn_copy_con)
+        self._translate_btn = QPushButton("翻译")
+        self._translate_btn.setProperty("class", "primary-sm")
+
+        self._translate_btn.setObjectName("cls_primary_sm")
+
+        self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
+        self._translate_btn.clicked.connect(self._on_translate_clicked)
+        con_hdr.addWidget(self._translate_btn)
         io_grid.addLayout(con_hdr, 0, 1)
 
         self.source_input = QPlainTextEdit()
@@ -596,19 +606,6 @@ class MainWindow(QMainWindow):
         io_grid.addWidget(self.target_output, 1, 1)
 
         single_layout.addLayout(io_grid)
-
-        # 翻译按钮行
-        btn_row = QHBoxLayout()
-        btn_row.addStretch(1)
-        self._translate_btn = QPushButton("翻译")
-        self._translate_btn.setProperty("class", "primary")
-
-        self._translate_btn.setObjectName("cls_primary")
-        self._translate_btn.setMinimumWidth(88)
-        self._translate_btn.setToolTip("规则翻译（AI 辅助可在「设置→PaperHub 设置」中开启）")
-        self._translate_btn.clicked.connect(self._on_translate_clicked)
-        btn_row.addWidget(self._translate_btn)
-        single_layout.addLayout(btn_row)
 
         # AI 翻译进度行（阶段六新增）
         ai_progress_row = QHBoxLayout()
@@ -630,12 +627,6 @@ class MainWindow(QMainWindow):
         realtime_hdr = QHBoxLayout()
         realtime_hdr.addWidget(QLabel("实时生成过程"))
         realtime_hdr.addStretch(1)
-        btn_clear_realtime = QPushButton("清空")
-        btn_clear_realtime.setProperty("class", "small")
-        btn_clear_realtime.setObjectName("cls_small")
-        btn_clear_realtime.setToolTip("清空实时生成内容")
-        btn_clear_realtime.clicked.connect(self.clear_realtime_generation)
-        realtime_hdr.addWidget(btn_clear_realtime)
         single_layout.addLayout(realtime_hdr)
 
         self._realtime_output = QPlainTextEdit()
@@ -644,7 +635,7 @@ class MainWindow(QMainWindow):
             "流式翻译时，AI 生成的 token 将实时显示在这里…\n"
             "非流式模式下保持为空。"
         )
-        self._realtime_output.setMaximumHeight(100)
+        self._realtime_output.setMinimumHeight(40)
         single_layout.addWidget(self._realtime_output)
 
         # ── TTS 音译 + 国际音标读音 并排 ────────────────────────────
@@ -666,7 +657,7 @@ class MainWindow(QMainWindow):
         self.tts_output = QPlainTextEdit()
         self.tts_output.setReadOnly(True)
         self.tts_output.setPlaceholderText("TTS 友好音译（供语音合成使用）")
-        self.tts_output.setMaximumHeight(90)
+        self.tts_output.setMinimumHeight(40)
         tts_col.addWidget(self.tts_output)
         phonetics_row.addLayout(tts_col, 1)
 
@@ -685,7 +676,7 @@ class MainWindow(QMainWindow):
         self.ipa_output = QPlainTextEdit()
         self.ipa_output.setReadOnly(True)
         self.ipa_output.setPlaceholderText("国际音标（IPA）待生成")
-        self.ipa_output.setMaximumHeight(90)
+        self.ipa_output.setMinimumHeight(40)
         ipa_col.addWidget(self.ipa_output)
         phonetics_row.addLayout(ipa_col, 1)
 
@@ -731,7 +722,7 @@ class MainWindow(QMainWindow):
         if self.source_input is not None:
             self.source_input.textChanged.connect(self._on_source_input_text_changed)
 
-        outer.addWidget(single, 1)
+        self._translate_v_splitter.addWidget(single)
 
         # ── 批量翻译区（可折叠） ────────────────────────────────────
         batch_wrap = QWidget()
@@ -786,7 +777,7 @@ class MainWindow(QMainWindow):
         self.batch_log = QPlainTextEdit()
         self.batch_log.setReadOnly(True)
         self.batch_log.setPlaceholderText("日志：批量翻译进度将显示在这里")
-        self.batch_log.setMaximumHeight(120)
+        self.batch_log.setMinimumHeight(60)
 
         inner.addLayout(btn_row2)
         inner.addWidget(self.batch_path_display)
@@ -800,7 +791,16 @@ class MainWindow(QMainWindow):
         batch_outer.addWidget(self._batch_toggle_btn)
         batch_outer.addWidget(self._batch_body)
 
-        outer.addWidget(batch_wrap, 0)
+        self._translate_v_splitter.addWidget(batch_wrap)
+        self._translate_v_splitter.setStretchFactor(0, 3)  # single: 3/4
+        self._translate_v_splitter.setStretchFactor(1, 1)  # batch: 1/4
+        self._translate_v_splitter.setSizes([500, 150])
+
+        # 让两个子面板可以缩小到最小高度，确保 splitter 可以自由拖拽
+        single.setMinimumHeight(80)
+        batch_wrap.setMinimumHeight(30)
+
+        outer.addWidget(self._translate_v_splitter, 1)
 
         return panel
 
@@ -1690,10 +1690,10 @@ class MainWindow(QMainWindow):
 
     def _status_symbol_for_result(self, status: str) -> str:
         if status == "ok":
-            return "✓"
+            return "●"
         if status == "missing":
             return "○"
-        return "✗"
+        return "◉"
 
     def _language_row_text(self, lang: Dict) -> str:
         parts: List[str] = []
@@ -1767,7 +1767,7 @@ class MainWindow(QMainWindow):
                 lbl = self._status_labels.get(key)
                 if lbl is not None:
                     lbl.setText(
-                        f'<span style="color:{UITheme.STATUS_MISSING_COLOR}; font-weight:600;">○</span>'
+                        f'<span style="color:{UITheme.STATUS_MISSING_COLOR}; font-weight:600; font-size:14px;">○</span>'
                         f"\u2003{self._asset_label_title(key)}"
                     )
                     lbl.setToolTip("")
@@ -1784,7 +1784,7 @@ class MainWindow(QMainWindow):
             result = check_asset(key, path)
             if result.status == "ok":
                 color = UITheme.STATUS_OK_COLOR
-                mark = "✓"
+                mark = "●"
                 tip = str(self.storage.asset_path(lang, key))
             elif result.status == "missing":
                 color = UITheme.STATUS_MISSING_COLOR
@@ -1792,13 +1792,13 @@ class MainWindow(QMainWindow):
                 tip = "尚未加载或文件不存在"
             else:
                 color = UITheme.STATUS_ERROR_COLOR
-                mark = "✗"
+                mark = "◉"
                 tip = result.message or "加载失败"
 
             lbl = self._status_labels.get(key)
             if lbl is not None:
                 lbl.setText(
-                    f'<span style="color:{color}; font-weight:600;">{mark}</span>'
+                    f'<span style="color:{color}; font-weight:600; font-size:14px;">{mark}</span>'
                     f"\u2003{labels_short[key]}"
                 )
                 lbl.setToolTip(tip)

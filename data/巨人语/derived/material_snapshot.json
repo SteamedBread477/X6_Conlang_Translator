@@ -1288,7 +1288,11 @@
     "族": "stam",
     "最厉害": "mest-stark",
     "的": "-s",
-    "制造师": "bygg-mästar"
+    "制造师": "bygg-mästar",
+    "调整": "justerat",
+    "界面": "gräns-sida",
+    "布局": "plan",
+    "外观": "utseende"
   },
   "tts_map": {
     "sul": "sool",
@@ -3250,7 +3254,11 @@
     "stam": "stahm",
     "mest-stark": "mest-stahrk",
     "-s": "s",
-    "bygg-mästar": "bewg-mes-tahr"
+    "bygg-mästar": "bewg-mes-tahr",
+    "justerat": "yoos-TEH-raht",
+    "gräns-sida": "grens-SEE-dah",
+    "plan": "plahn",
+    "utseende": "oot-SEH-en-deh"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5212,7 +5220,11 @@
     "stam": "/stam/",
     "mest-stark": "/mɛst stark/",
     "-s": "/s/",
-    "bygg-mästar": "/bʏg mɛstar/"
+    "bygg-mästar": "/bʏg mɛstar/",
+    "justerat": "/jusˈtɛrat/",
+    "gräns-sida": "/grɛnsˈsida/",
+    "plan": "/plan/",
+    "utseende": "/utˈsɛɛndɛ/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5224,14 +5236,15 @@
     "我是巨人": "mi es grav Människa",
     "我是巨人王的头号粉丝": "mi es grav Människa-kung  huvud-fan",
     "我是 巨人王 的 头号粉丝": "mi es grav Människa-Kung-s huvud fan",
-    "你吃饭了吗": "ti ätat mat ät -ne"
+    "你吃饭了吗": "ti ätat mat ät -ne",
+    "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 830,
-    "mapping_count": 2008,
-    "ipa_count": 2008,
-    "anchor_count": 10
+    "lexicon_count": 834,
+    "mapping_count": 2012,
+    "ipa_count": 2012,
+    "anchor_count": 11
   }
 }
