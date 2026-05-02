@@ -51,16 +51,28 @@ class ThemeTokens:
     color_highlight_hover: str = "#E0EE70"    # 强调色悬停
 
     # 背景色
-    color_bg_window: str = "#FAFAFA"          # 整体窗体背景
+    color_bg_window: str = "#F8F9FA"          # 整体窗体背景（极浅灰，衬托白色工作区）
     color_bg_panel: str = "#F5F2FA"           # 左侧面板背景
     color_bg_card: str = "#FFFFFF"            # 卡片/分组框背景
-    color_bg_input: str = "#FFFFFF"           # 输入框背景
+    color_bg_input: str = "#FFFFFF"           # 输入框背景（默认白色）
+    color_bg_input_jelly: str = "#F4EDFA"     # 输入框紫果冻背景（极浅紫罗兰填充）
     color_bg_hover: str = "#E8DFF5"           # 通用悬停背景
     color_bg_selected: str = "#E8DFF5"        # 选中行背景
     color_bg_status_bar: str = "#E8DFF5"      # 状态栏背景
 
+    # iOS 分段控制器（Tab）色
+    color_tab_selected_bg: str = "#FFFFFF"    # 选中 Tab 背景（纯白+阴影）
+    color_tab_unselected_bg: str = "#EDEDED"  # 未选中 Tab 背景（极淡灰）
+    color_tab_selected_text: str = "#4A4A4A"  # 选中 Tab 文字（深灰+加粗）
+    color_tab_unselected_text: str = "#999999" # 未选中 Tab 文字（浅灰）
+
+    # iOS 绿色按钮色（与导入资料按钮一致）
+    color_green_btn_bg: str = "#F4FF81"       # 绿色按钮背景（=color_highlight 柠檬黄绿）
+    color_green_btn_text: str = "#2D2D2D"     # 绿色按钮文字（=color_text_on_highlight）
+    color_green_btn_hover: str = "#E0EE70"     # 绿色按钮悬停（=color_highlight_hover）
+
     # 文字色
-    color_text_primary: str = "#2D2D2D"       # 主要文字（深炭灰）
+    color_text_primary: str = "#4A4A4A"       # 主要文字（灰度紫调深色）
     color_text_secondary: str = "#666666"     # 辅助文字
     color_text_muted: str = "#999999"          # 次要/提示文字
     color_text_on_primary: str = "#2D2D2D"    # 主色按钮上的文字
@@ -97,6 +109,7 @@ class ThemeTokens:
     radius_lg: str = "12px"                   # 大圆角（面板、对话框）
     radius_xl: str = "16px"                   # 极大圆角（主按钮）
     radius_ios: str = "20px"                  # iOS 极简大圆角（卡片、胶囊按钮）
+    radius_jelly: str = "16px"               # 紫果冻文本框圆角
     radius_pill: str = "9999px"               # 药丸形（标签、徽章）
 
     # ── 阴影 ──────────────────────────────────────────────────
@@ -105,6 +118,7 @@ class ThemeTokens:
     shadow_md: str = "0 2px 8px rgba(0,0,0,0.10)"
     shadow_lg: str = "0 4px 16px rgba(0,0,0,0.14)"
     shadow_focus: str = "0 0 0 3px rgba(179,157,219,0.3)"
+    shadow_ios: str = "0 4px 20px rgba(0,0,0,0.03)"   # iOS 极弱弥散阴影
 
     # ── 间距 ──────────────────────────────────────────────────
     spacing_xs: str = "5px"
@@ -112,6 +126,7 @@ class ThemeTokens:
     spacing_md: str = "10px"
     spacing_lg: str = "16px"
     spacing_xl: str = "20px"
+    spacing_ios: str = "24px"                # iOS 模块间距（呼吸感）
     spacing_xxl: str = "32px"
 
     # ── 尺寸 ──────────────────────────────────────────────────
@@ -173,6 +188,14 @@ def _dark_mode_theme() -> ThemeTokens:
         color_status_error="#EF5350",
         color_status_warning="#EF5350",
         color_status_info="#42A5F5",
+        color_bg_input_jelly="#2A2040",
+        color_tab_selected_bg="#2A2A3C",
+        color_tab_unselected_bg="#1E1E2E",
+        color_tab_selected_text="#E0E0E0",
+        color_tab_unselected_text="#777777",
+        color_green_btn_bg="#F4FF81",
+        color_green_btn_text="#2D2D2D",
+        color_green_btn_hover="#E0EE70",
     )
 
 
@@ -254,8 +277,8 @@ QLabel[class="status-error"] {{
 /* ── 按钮 ──────────────────────────────────────────────── */
 QPushButton {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
+    border: none;
+    border-radius: {radius_pill};
     padding: {spacing_sm} {spacing_lg};
     min-height: {button_height_md};
     font-family: {font_family};
@@ -265,7 +288,6 @@ QPushButton {{
 
 QPushButton:hover {{
     background: {color_bg_hover};
-    border-color: {color_border_focus};
 }}
 
 QPushButton:pressed {{
@@ -275,14 +297,13 @@ QPushButton:pressed {{
 QPushButton:disabled {{
     background: {color_bg_hover};
     color: {color_text_muted};
-    border-color: {color_border_light};
 }}
 
 QPushButton[class="primary"] {{
     background: {color_primary};
     color: {color_text_on_primary};
-    border: 1px solid {color_primary_hover};
-    border-radius: {radius_xl};
+    border: none;
+    border-radius: {radius_pill};
     font-weight: {font_weight_semi};
     min-height: {button_height_lg};
 }}
@@ -299,13 +320,13 @@ QPushButton[class="primary"]:pressed {{
 QPushButton[class="primary-sm"] {{
     background: {color_primary};
     color: {color_text_on_primary};
-    border: 1px solid {color_primary_hover};
+    border: none;
     min-height: {button_height_sm};
     max-height: {button_height_sm};
     padding: {spacing_xs} {spacing_md};
     font-size: {font_size_sm};
     font-weight: {font_weight_semi};
-    border-radius: {radius_sm};
+    border-radius: {radius_pill};
 }}
 
 QPushButton[class="primary-sm"]:hover {{
@@ -319,8 +340,8 @@ QPushButton[class="primary-sm"]:pressed {{
 QPushButton[class="highlight"] {{
     background: {color_highlight};
     color: {color_text_on_highlight};
-    border: 1px solid {color_highlight_hover};
-    border-radius: {radius_xl};
+    border: none;
+    border-radius: {radius_pill};
     font-weight: {font_weight_semi};
 }}
 
@@ -331,16 +352,28 @@ QPushButton[class="highlight"]:hover {{
 QPushButton[class="secondary"] {{
     background: {color_secondary_light};
     color: {color_text_primary};
-    border: 1px solid {color_secondary};
-    border-radius: {radius_md};
+    border: none;
+    border-radius: {radius_pill};
 }}
 
 QPushButton[class="small"] {{
     min-height: {button_height_sm};
-    max-height: {button_height_sm};
-    padding: {spacing_xs} {spacing_md};
+    padding: {spacing_sm} {spacing_lg};
     font-size: {font_size_sm};
-    border-radius: {radius_sm};
+    border: none;
+    border-radius: {radius_pill};
+    background: {color_green_btn_bg};
+    color: {color_green_btn_text};
+}}
+
+QPushButton[class="small"]:hover {{
+    background: {color_green_btn_hover};
+    color: {color_text_on_primary};
+}}
+
+QPushButton[class="small"]:pressed {{
+    background: {color_primary_pressed};
+    color: {color_text_on_primary};
 }}
 
 QPushButton[class="pill"] {{
@@ -389,12 +422,34 @@ QPushButton[class="import-btn"]:pressed {{
     background: {color_primary_pressed};
 }}
 
+/* ── iOS 浅绿色胶囊按钮（批量翻译操作）── */
+QPushButton[class="green-btn"] {{
+    background: {color_green_btn_bg};
+    color: {color_green_btn_text};
+    border: none;
+    border-radius: {radius_pill};
+    padding: {spacing_sm} {spacing_lg};
+    min-height: {button_height_sm};
+    font-weight: {font_weight_semi};
+    font-size: {font_size_sm};
+}}
+
+QPushButton[class="green-btn"]:hover {{
+    background: {color_green_btn_hover};
+    color: {color_text_on_primary};
+}}
+
+QPushButton[class="green-btn"]:pressed {{
+    background: {color_primary_pressed};
+    color: {color_text_on_primary};
+}}
+
 QPushButton[class="toggle-btn"] {{
     text-align: left;
     padding: {spacing_sm} {spacing_lg};
     background: {color_bg_hover};
-    border: 1px solid {color_border_light};
-    border-radius: {radius_sm};
+    border: none;
+    border-radius: {radius_ios};
     font-weight: {font_weight_semi};
 }}
 
@@ -404,10 +459,10 @@ QPushButton[class="toggle-btn"]:hover {{
 
 /* ── 输入框 ────────────────────────────────────────────── */
 QPlainTextEdit, QTextEdit, QLineEdit {{
-    background: {color_bg_input};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
-    padding: {spacing_sm} {spacing_md};
+    background: {color_bg_input_jelly};
+    border: none;
+    border-radius: {radius_jelly};
+    padding: {spacing_xl};
     font-family: {font_family};
     font-size: {font_size_base};
     color: {color_text_primary};
@@ -416,7 +471,7 @@ QPlainTextEdit, QTextEdit, QLineEdit {{
 }}
 
 QPlainTextEdit:focus, QTextEdit:focus, QLineEdit:focus {{
-    border-color: {color_border_focus};
+    background: {color_bg_input_jelly};
 }}
 
 QPlainTextEdit:disabled, QTextEdit:disabled, QLineEdit:disabled {{
@@ -454,7 +509,7 @@ QListWidget::item:selected {{
 /* ── 分组框 ────────────────────────────────────────────── */
 QGroupBox {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_lg};
     margin-top: {spacing_xxl};
     padding: {spacing_xl} {spacing_lg} {spacing_lg} {spacing_lg};
@@ -474,7 +529,7 @@ QGroupBox::title {{
 /* ── 表格 ──────────────────────────────────────────────── */
 QTableWidget {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_md};
     gridline-color: {color_border_light};
     font-family: {font_family};
@@ -505,7 +560,7 @@ QHeaderView::section {{
 /* ── 进度条 ────────────────────────────────────────────── */
 QProgressBar {{
     background: {color_bg_hover};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_pill};
     height: 24px;
     text-align: center;
@@ -562,7 +617,7 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
 /* ── 菜单 ──────────────────────────────────────────────── */
 QMenuBar {{
     background: {color_bg_panel};
-    border-bottom: 1px solid {color_border_light};
+    border: none;
     font-size: {font_size_base};
     color: {color_text_primary};
     padding: {spacing_xs};
@@ -579,7 +634,7 @@ QMenuBar::item:hover, QMenuBar::item:selected {{
 
 QMenu {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_md};
     padding: {spacing_xs};
 }}
@@ -602,7 +657,7 @@ QMenu::separator {{
 /* ── 状态栏 ────────────────────────────────────────────── */
 QStatusBar {{
     background: {color_bg_status_bar};
-    border-top: 1px solid {color_border_light};
+    border: none;
     font-size: {font_size_sm};
     color: {color_text_secondary};
     padding: {spacing_xs} {spacing_md};
@@ -638,7 +693,7 @@ QFrame[frameShape="5"] /* VLine */ {{
 /* ── 下拉框 ────────────────────────────────────────────── */
 QComboBox {{
     background: {color_bg_input};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_md};
     padding: {spacing_sm} {spacing_md};
     min-height: {button_height_md};
@@ -648,7 +703,7 @@ QComboBox {{
 }}
 
 QComboBox:hover {{
-    border-color: {color_border_focus};
+    background: {color_bg_hover};
 }}
 
 QComboBox::drop-down {{
@@ -658,14 +713,14 @@ QComboBox::drop-down {{
 
 QComboBox QAbstractItemView {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     selection-background-color: {color_bg_selected};
 }}
 
 /* ── SpinBox ────────────────────────────────────────────── */
 QSpinBox, QDoubleSpinBox {{
     background: {color_bg_input};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_md};
     padding: {spacing_sm} {spacing_md};
     min-height: {button_height_md};
@@ -675,7 +730,7 @@ QSpinBox, QDoubleSpinBox {{
 }}
 
 QSpinBox:focus, QDoubleSpinBox:focus {{
-    border-color: {color_border_focus};
+    background: {color_bg_input_jelly};
 }}
 
 /* ── CheckBox ────────────────────────────────────────────── */
@@ -734,22 +789,28 @@ QScrollArea {{
     border: none;
 }}
 
-/* ── TabWidget（预留） ─────────────────────────────────── */
+/* ── TabWidget（iOS 分段控制器） ─────────────────────────── */
 QTabWidget::pane {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
-    padding: {spacing_xs};
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_ios};
+}}
+
+QTabBar {{
+    background: {color_tab_unselected_bg};
+    border: none;
+    border-radius: {radius_ios};
+    padding: 3px;
 }}
 
 QTabBar::tab {{
-    background: {color_bg_panel};
-    border: 1px solid {color_border};
-    border-bottom: none;
-    border-radius: {radius_sm} {radius_sm} {radius_none} {radius_none};
-    padding: {spacing_sm} {spacing_md};
+    background: transparent;
+    border: none;
+    border-radius: {radius_ios};
+    padding: {spacing_sm} {spacing_xl};
     font-size: {font_size_base};
-    color: {color_text_secondary};
+    color: {color_tab_unselected_text};
     min-width: 150px;
 }}
 
@@ -758,15 +819,15 @@ QTabBar::tab:hover {{
 }}
 
 QTabBar::tab:selected {{
-    background: {color_bg_card};
-    color: {color_text_primary};
+    background: {color_tab_selected_bg};
+    color: {color_tab_selected_text};
     font-weight: {font_weight_bold};
 }}
 
 /* ── ToolTip ────────────────────────────────────────────── */
 QToolTip {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_sm};
     padding: {spacing_xs} {spacing_sm};
     font-size: {font_size_sm};
@@ -798,6 +859,13 @@ QWidget[class="assets-panel"] {{
     padding: {spacing_xl};
 }}
 
+/* ── Right Workspace (iOS 去边框容器) ──────────────────── */
+QTabWidget[class="right-tabs"] {{
+    background: {color_bg_card};
+    border: none;
+    border-radius: {radius_ios};
+}}
+
 /* ── ASK 页签 ────────────────────────────────────────────── */
 QGroupBox[class="inner-card"] {{
     background: transparent;
@@ -819,32 +887,32 @@ QGroupBox[class="inner-card"]::title {{
 
 /* ── ASK 页签 ────────────────────────────────────────────── */
 QTextEdit[class="chat-display"] {{
-    background: {color_bg_card};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
-    padding: {spacing_md};
+    background: {color_bg_input_jelly};
+    border: none;
+    border-radius: {radius_jelly};
+    padding: {spacing_xl};
     font-size: {font_size_base};
 }}
 
 QTextEdit[class="chat-display"]:focus {{
-    border-color: {color_border_focus};
+    background: {color_bg_input_jelly};
 }}
 
 #cls_ask_input {{
-    background: {color_bg_input};
-    border: 1px solid {color_border};
-    border-radius: {radius_md};
+    background: {color_bg_input_jelly};
+    border: none;
+    border-radius: {radius_jelly};
     font-size: {font_size_base};
-    padding: {spacing_sm};
+    padding: {spacing_xl};
 }}
 
 #cls_ask_input:focus {{
-    border-color: {color_border_focus};
+    background: {color_bg_input_jelly};
 }}
 
 #cls_ask_pending_table {{
     background: {color_bg_card};
-    border: 1px solid {color_border};
+    border: none;
     border-radius: {radius_md};
     gridline-color: {color_border_light};
     font-size: {font_size_sm};

@@ -429,6 +429,7 @@ class MainWindow(QMainWindow):
 
         # 右侧区域使用 QTabWidget 分为「翻译」和「ASK」两个页签
         self._right_tabs = QTabWidget()
+        self._right_tabs.setProperty("class", "right-tabs")
         self._right_tabs.setObjectName("cls_right_tabs")
         # 每个 Tab 按文字自然宽度显示（min-width 由 QSS 保证足够空间）
         self._right_tabs.tabBar().setExpanding(False)
@@ -487,7 +488,6 @@ class MainWindow(QMainWindow):
         btn_add.setToolTip("添加新的自创语言页签")
         btn_add.clicked.connect(self.add_language)
         btn_row.addWidget(btn_add)
-        btn_row.addStretch(1)
 
         assets_title = QLabel("当前语言资料")
         assets_title.setProperty("class", "title")
@@ -545,8 +545,8 @@ class MainWindow(QMainWindow):
     def _build_right_panel(self) -> QWidget:
         panel = QWidget()
         outer = QVBoxLayout(panel)
-        outer.setContentsMargins(12, 12, 12, 12)
-        outer.setSpacing(0)
+        outer.setContentsMargins(24, 24, 24, 24)
+        outer.setSpacing(24)
 
         # ── 垂直分割器：上方单句翻译 / 下方批量翻译（可拖拽调整比例）──
         self._translate_v_splitter = QSplitter(Qt.Vertical)
@@ -555,13 +555,13 @@ class MainWindow(QMainWindow):
         # ── 单句翻译区 ──────────────────────────────────────────────
         single = QGroupBox("单句翻译")
         single_layout = QVBoxLayout(single)
-        single_layout.setSpacing(6)
+        single_layout.setSpacing(24)
 
         # 输入 / 输出 并排区域
         io_grid = QGridLayout()
         io_grid.setColumnStretch(0, 1)
         io_grid.setColumnStretch(1, 1)
-        io_grid.setSpacing(4)
+        io_grid.setSpacing(16)
 
         # 中文输入 — 标题行
         src_hdr = QHBoxLayout()
@@ -640,11 +640,11 @@ class MainWindow(QMainWindow):
 
         # ── TTS 音译 + 国际音标读音 并排 ────────────────────────────
         phonetics_row = QHBoxLayout()
-        phonetics_row.setSpacing(6)
+        phonetics_row.setSpacing(16)
 
         # 左：TTS 音译
         tts_col = QVBoxLayout()
-        tts_col.setSpacing(3)
+        tts_col.setSpacing(8)
         tts_hdr = QHBoxLayout()
         tts_hdr.addWidget(QLabel("TTS 音译"))
         tts_hdr.addStretch(1)
@@ -663,7 +663,7 @@ class MainWindow(QMainWindow):
 
         # 右：国际音标读音
         ipa_col = QVBoxLayout()
-        ipa_col.setSpacing(3)
+        ipa_col.setSpacing(8)
         ipa_hdr = QHBoxLayout()
         ipa_hdr.addWidget(QLabel("国际音标读音"))
         ipa_hdr.addStretch(1)
@@ -728,7 +728,7 @@ class MainWindow(QMainWindow):
         batch_wrap = QWidget()
         batch_outer = QVBoxLayout(batch_wrap)
         batch_outer.setContentsMargins(0, 0, 0, 0)
-        batch_outer.setSpacing(4)
+        batch_outer.setSpacing(16)
 
         self._batch_toggle_btn = QPushButton("批量翻译  ▶")
         self._batch_toggle_btn.setProperty("class", "toggle-btn")
@@ -738,15 +738,19 @@ class MainWindow(QMainWindow):
 
         self._batch_body = QWidget()
         batch_layout = QVBoxLayout(self._batch_body)
-        batch_layout.setSpacing(8)
+        batch_layout.setSpacing(24)
 
         batch_box = QGroupBox("批量翻译")
         inner = QVBoxLayout(batch_box)
 
         btn_row2 = QHBoxLayout()
         btn_pick = QPushButton("选择 Excel")
+        btn_pick.setProperty("class", "green-btn")
+        btn_pick.setObjectName("cls_green_btn")
         btn_pick.clicked.connect(self._pick_excel)
         self._btn_batch_start = QPushButton("开始翻译")
+        self._btn_batch_start.setProperty("class", "green-btn")
+        self._btn_batch_start.setObjectName("cls_green_btn")
         self._btn_batch_start.clicked.connect(self._on_batch_start)
         self._btn_batch_pause = QPushButton("暂停")
         self._btn_batch_pause.clicked.connect(self._on_batch_pause_resume)
@@ -755,6 +759,8 @@ class MainWindow(QMainWindow):
         self._btn_batch_cancel.clicked.connect(self._on_batch_cancel)
         self._btn_batch_cancel.setVisible(False)
         btn_export = QPushButton("导出文件")
+        btn_export.setProperty("class", "green-btn")
+        btn_export.setObjectName("cls_green_btn")
         btn_export.clicked.connect(self._on_batch_export)
         btn_row2.addWidget(btn_pick)
         btn_row2.addWidget(self._btn_batch_start)
@@ -811,8 +817,8 @@ class MainWindow(QMainWindow):
         page = QWidget()
         page.setObjectName("cls_ask_page")
         page_layout = QVBoxLayout(page)
-        page_layout.setContentsMargins(12, 12, 12, 12)
-        page_layout.setSpacing(0)
+        page_layout.setContentsMargins(24, 24, 24, 24)
+        page_layout.setSpacing(24)
 
         # ── 垂直分割器：上(对话) → 中(待审核) → 下(提问) ────────
         v_splitter = QSplitter(Qt.Vertical)
@@ -822,7 +828,7 @@ class MainWindow(QMainWindow):
         chat_wrap = QWidget()
         chat_layout = QVBoxLayout(chat_wrap)
         chat_layout.setContentsMargins(0, 0, 0, 0)
-        chat_layout.setSpacing(4)
+        chat_layout.setSpacing(16)
 
         chat_hdr = QHBoxLayout()
         chat_hdr.addWidget(QLabel("对话历史"))
@@ -864,7 +870,7 @@ class MainWindow(QMainWindow):
         pending_wrap = QWidget()
         pending_layout = QVBoxLayout(pending_wrap)
         pending_layout.setContentsMargins(0, 0, 0, 0)
-        pending_layout.setSpacing(4)
+        pending_layout.setSpacing(16)
 
         pending_hdr = QHBoxLayout()
         pending_hdr.addWidget(QLabel("待审核候选词"))
@@ -924,18 +930,18 @@ class MainWindow(QMainWindow):
         input_wrap = QWidget()
         input_layout = QVBoxLayout(input_wrap)
         input_layout.setContentsMargins(0, 0, 0, 0)
-        input_layout.setSpacing(4)
+        input_layout.setSpacing(16)
 
         # 快捷提问模板按钮行（动态构建）
         template_row = QHBoxLayout()
-        template_row.setSpacing(4)
+        template_row.setSpacing(8)
         self._ask_template_row = template_row
         input_layout.addLayout(template_row)
         self._rebuild_template_buttons()
 
         # 输入框 + 发送按钮
         input_row = QHBoxLayout()
-        input_row.setSpacing(6)
+        input_row.setSpacing(16)
 
         self._ask_input = QPlainTextEdit()
         self._ask_input.setPlaceholderText("输入你的问题，按发送或 Ctrl+Enter 提交…")
@@ -1424,14 +1430,14 @@ class MainWindow(QMainWindow):
         btn_confirm = QPushButton("✓")
         btn_confirm.setProperty("class", "primary")
         btn_confirm.setObjectName("cls_primary")
-        btn_confirm.setFixedSize(28, 24)
+        btn_confirm.setFixedSize(36, 28)
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
         btn_discard = QPushButton("✗")
         btn_discard.setProperty("class", "small")
         btn_discard.setObjectName("cls_small")
-        btn_discard.setFixedSize(28, 24)
+        btn_discard.setFixedSize(36, 28)
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 
@@ -1603,14 +1609,14 @@ class MainWindow(QMainWindow):
         btn_confirm = QPushButton("✓")
         btn_confirm.setProperty("class", "primary")
         btn_confirm.setObjectName("cls_primary")
-        btn_confirm.setFixedSize(28, 24)
+        btn_confirm.setFixedSize(36, 28)
         btn_confirm.setToolTip("确认导入此词")
         btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
 
         btn_discard = QPushButton("✗")
         btn_discard.setProperty("class", "small")
         btn_discard.setObjectName("cls_small")
-        btn_discard.setFixedSize(28, 24)
+        btn_discard.setFixedSize(36, 28)
         btn_discard.setToolTip("丢弃此词")
         btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
 
