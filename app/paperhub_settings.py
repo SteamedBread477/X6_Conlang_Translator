@@ -10,7 +10,7 @@ PaperHub AI 配置存取模块。
   "paperhub_model": "qwen3-max",
   "paperhub_strategy": "unmatched_only",
   "paperhub_reasoning_enabled": false,
-  "paperhub_temperature": 0.7,
+  "paperhub_temperature": 0.1,
   "paperhub_max_tokens": 1200,
   "paperhub_timeout": 90,
   "paperhub_stream": true
@@ -32,7 +32,7 @@ from typing import Any, Dict
 from app.app_paths import get_app_dir
 
 DEFAULT_PAPERHUB_SETTINGS: Dict[str, Any] = {
-    "paperhub_enabled": False,
+    "paperhub_enabled": True,
     "paperhub_api_key": "",
     "paperhub_base_url": "https://tc-paperhub.diezhi.net/v1",
     "paperhub_model": "qwen3-max",
