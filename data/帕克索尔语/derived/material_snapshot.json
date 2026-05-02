@@ -45,7 +45,11 @@
     "max poten": "mahks POH-ten",
     "mekinforjor": "meh-keen-FOR-yor",
     "kavon": "kah-VON",
-    "zeltra": "ZEL-trah"
+    "zeltra": "ZEL-trah",
+    "grandmar": "grandmar",
+    "lilíli": "lee-LEE-lee",
+    "babaó": "bah-bah-OH",
+    "mjamja": "MYAHM-yah"
   },
   "ipa_map": {
     "kh-": "/x/",
@@ -77,7 +81,11 @@
     "max poten": "/maks 'po.ten/",
     "mekinforjor": "/me.kin'for.jor/",
     "kavon": "/kaˈvon/",
-    "zeltra": "/ˈzel.tra/"
+    "zeltra": "/ˈzel.tra/",
+    "grandmar": "/ˈgrand.mar/",
+    "lilíli": "/liˈliː.li/",
+    "babaó": "/ba.baˈo/",
+    "mjamja": "/ˈmjam.ja/"
   },
   "anchors": {
     "灵魂": "sul",
@@ -88,14 +96,15 @@
     "痛苦": "drak",
     "风": "vint",
     "我喜欢今天的太阳": "mi mova nol de sol",
-    "我 是 巨人族 最厉害 的 机器制造师": "mi es gigantul max poten de mekinforjor"
+    "我 是 巨人族 最厉害 的 机器制造师": "mi es gigantul max poten de mekinforjor",
+    "灵魂大潮": "sul de grandmar"
   },
   "summary": {
     "phoneme_row_count": 0,
     "grammar_rule_count": 0,
     "lexicon_count": 0,
-    "mapping_count": 30,
-    "ipa_count": 30,
-    "anchor_count": 9
+    "mapping_count": 34,
+    "ipa_count": 34,
+    "anchor_count": 10
   }
 }

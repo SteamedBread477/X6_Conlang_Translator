@@ -1295,7 +1295,8 @@
     "外观": "utseende",
     "想": "vil",
     "就": "se",
-    "发疯购物": "vild-köp-sjuk"
+    "发疯购物": "vild-köp-sjuk",
+    "游戏、竞技、较量": "spel"
   },
   "tts_map": {
     "sul": "sool",
@@ -3262,7 +3263,8 @@
     "gräns-sida": "grens-SEE-dah",
     "plan": "plahn",
     "utseende": "oot-SEH-en-deh",
-    "vild-köp-sjuk": "vild-koep-shook"
+    "vild-köp-sjuk": "vild-koep-shook",
+    "spel": "spel"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5229,7 +5231,8 @@
     "gräns-sida": "/grɛnsˈsida/",
     "plan": "/plan/",
     "utseende": "/utˈsɛɛndɛ/",
-    "vild-köp-sjuk": "/vɪld kœp ʃʊk/"
+    "vild-köp-sjuk": "/vɪld kœp ʃʊk/",
+    "spel": "/spɛl/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5244,14 +5247,15 @@
     "你吃饭了吗": "ti ätat mat ät -ne",
     "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar",
     "调整了界面的布局和外观": "justerat gräns-sida-s plan Dö utseende",
-    "我 想 吃饭 了": "mi vil ätat mat ät"
+    "我 想 吃饭 了": "mi vil ätat mat ät",
+    "就是非常想发疯购物": "se es mycket vil vild-köp-sjuk"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 837,
-    "mapping_count": 2013,
-    "ipa_count": 2013,
-    "anchor_count": 13
+    "lexicon_count": 838,
+    "mapping_count": 2014,
+    "ipa_count": 2014,
+    "anchor_count": 14
   }
 }

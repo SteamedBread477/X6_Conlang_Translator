@@ -456,5 +456,24 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0026",
+    "timestamp": "2026-05-03T00:48:23",
+    "source": "灵魂大潮",
+    "conlang": "sul de grandmar",
+    "phonetic": "sul de grandmar",
+    "unmatched_words": [
+      "灵魂大潮"
+    ],
+    "source_language": "中文",
+    "target_language": "帕克索尔语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

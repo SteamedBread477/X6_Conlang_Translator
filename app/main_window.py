@@ -948,9 +948,11 @@ class MainWindow(QMainWindow):
             self._ask_pending_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
         self._ask_pending_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Fixed)
         self._ask_pending_table.setColumnWidth(5, 80)
-        self._ask_pending_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self._ask_pending_table.setSelectionBehavior(QTableWidget.SelectItems)
         self._ask_pending_table.setSelectionMode(QTableWidget.ExtendedSelection)
         self._ask_pending_table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self._ask_pending_table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._ask_pending_table.customContextMenuRequested.connect(self._ask_on_table_context_menu)
         pending_layout.addWidget(self._ask_pending_table, 1)
 
         self._ask_pending_panel = pending_wrap
@@ -1115,10 +1117,9 @@ class MainWindow(QMainWindow):
         self._ask_ai_pending += piece
 
         if self._ask_ai_just_started:
-            # 首次收到 chunk：插入 AI 标签
-            color_ai = theme_manager.token("color_primary")
+            # 首次收到 chunk：插入 QVQ 标签
             self._ask_chat_display.append(
-                f'<p style="margin:4px 0;"><b style="color:{color_ai};">AI：</b>'
+                f'<p style="margin:4px 0;"><b style="color:#5A4EAF;">QVQ：</b>'
             )
             self._ask_ai_just_started = False
 
@@ -1427,6 +1428,23 @@ class MainWindow(QMainWindow):
         self._ask_clear_pending_table()
         self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个候选词。")
 
+    def _ask_on_table_context_menu(self, pos) -> None:
+        """待审核表格右键菜单：复制选中单元格内容。"""
+        from PyQt5.QtWidgets import QMenu
+        from PyQt5.QtGui import QClipboard
+        from PyQt5.QtWidgets import QApplication as QApp
+        item = self._ask_pending_table.itemAt(pos)
+        if item is None:
+            return
+        menu = QMenu(self._ask_pending_table)
+        copy_action = menu.addAction("复制")
+        if menu.exec_(self._ask_pending_table.viewport().mapToGlobal(pos)) == copy_action:
+            # 复制当前选中单元格的文本
+            selected = self._ask_pending_table.selectedItems()
+            if selected:
+                texts = [s.text() for s in selected]
+                QApp.clipboard().setText("\n".join(texts))
+
     def _ask_clear_pending_table(self) -> None:
         """清空待审核表格并隐藏批量操作按钮。"""
         if self._ask_pending_table is not None:
@@ -1450,11 +1468,10 @@ class MainWindow(QMainWindow):
             return
         row = self._ask_pending_table.rowCount()
         self._ask_pending_table.insertRow(row)
-        self._ask_pending_table.setItem(row, 0, QTableWidgetItem(conlang))
-        self._ask_pending_table.setItem(row, 1, QTableWidgetItem(ipa))
-        self._ask_pending_table.setItem(row, 2, QTableWidgetItem(tts))
-        self._ask_pending_table.setItem(row, 3, QTableWidgetItem(meaning))
-        self._ask_pending_table.setItem(row, 4, QTableWidgetItem(tags))
+        for col, text in enumerate([conlang, ipa, tts, meaning, tags]):
+            item = QTableWidgetItem(text)
+            item.setToolTip(text)
+            self._ask_pending_table.setItem(row, col, item)
 
         # 操作列：✓确认 + ✗丢弃 按钮
         op_widget = QWidget()
@@ -1676,8 +1693,15 @@ class MainWindow(QMainWindow):
         """向对话历史区追加一条消息。"""
         if self._ask_chat_display is None:
             return
-        label = "你" if role == "user" else "AI"
-        color_token = theme_manager.token("color_primary") if role == "ai" else theme_manager.token("color_text_primary")
+        if role == "user":
+            label = "你"
+            color_token = theme_manager.token("color_text_primary")
+        elif role == "ai":
+            label = "QVQ"
+            color_token = "#5A4EAF"
+        else:
+            label = "系统"
+            color_token = theme_manager.token("color_text_secondary")
         self._ask_chat_display.append(
             f'<p style="margin:4px 0;"><b style="color:{color_token};">{label}：</b>{content}</p>'
         )
