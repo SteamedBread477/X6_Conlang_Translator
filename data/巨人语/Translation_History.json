@@ -400,5 +400,24 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0023",
+    "timestamp": "2026-05-02T16:24:29",
+    "source": "我 想 吃饭 了",
+    "conlang": "mi vil ätat mat ät",
+    "phonetic": "mi vil ätat mat ät",
+    "unmatched_words": [
+      "想"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

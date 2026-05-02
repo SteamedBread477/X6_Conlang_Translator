@@ -34,64 +34,64 @@ class ThemeTokens:
     """所有可配置的设计 token，语义命名，与具体皮肤解耦。"""
 
     # ── 颜色 ──────────────────────────────────────────────────
-    # 主色系
-    color_primary: str = "#B39DDB"           # 主色（紫罗兰）
-    color_primary_hover: str = "#9B84D0"     # 主色悬停
-    color_primary_pressed: str = "#8A72C4"   # 主色按下
-    color_primary_light: str = "#E8DFF5"     # 主色浅色（用于面板背景）
+    # 主色系（紫）
+    color_primary: str = "#9B94F2"           # 主色（马卡龙紫）
+    color_primary_hover: str = "#9188F1"     # 主色悬停（深紫）
+    color_primary_pressed: str = "#7D75E8"   # 主色按下（更深紫）
+    color_primary_light: str = "#CDC7F5"     # 主色浅色（浅紫，面板/选中态）
     color_primary_text: str = "#FFFFFF"       # 主色上的文字颜色
 
-    # 辅色系
-    color_secondary: str = "#BFF629"          # 辅色（青柠绿）
-    color_secondary_hover: str = "#A8E020"    # 辅色悬停
-    color_secondary_light: str = "#F0FBD0"    # 辅色浅色（语言选择区背景）
+    # 辅色系（功能绿）
+    color_secondary: str = "#DBF880"          # 辅色（功能绿）
+    color_secondary_hover: str = "#B8E560"    # 辅色悬停（深绿）
+    color_secondary_light: str = "#F0FBD0"    # 辅色浅色（极浅绿，语言选择区背景）
 
-    # 强调色
-    color_highlight: str = "#F4FF81"          # 强调色（导入按钮、复制标签）
-    color_highlight_hover: str = "#E0EE70"    # 强调色悬停
+    # 强调色（=功能绿，统一为绿色系）
+    color_highlight: str = "#DBF880"          # 强调色（导入按钮、功能操作）
+    color_highlight_hover: str = "#B8E560"    # 强调色悬停
 
-    # 背景色
-    color_bg_window: str = "#F8F9FA"          # 整体窗体背景（极浅灰，衬托白色工作区）
-    color_bg_panel: str = "#F5F2FA"           # 左侧面板背景
-    color_bg_card: str = "#FFFFFF"            # 卡片/分组框背景
+    # 背景色（紫调灰系）
+    color_bg_window: str = "#F0EAFA"          # 整体窗体背景（浅紫灰，衬托白色工作区）
+    color_bg_panel: str = "#F0EAFA"           # 左侧面板背景（同窗体底色）
+    color_bg_card: str = "#FFFFFF"            # 卡片/分组框背景（纯白，叠在浅紫底上产生立体感）
     color_bg_input: str = "#FFFFFF"           # 输入框背景（默认白色）
     color_bg_input_jelly: str = "#F4EDFA"     # 输入框紫果冻背景（极浅紫罗兰填充）
-    color_bg_hover: str = "#E8DFF5"           # 通用悬停背景
-    color_bg_selected: str = "#E8DFF5"        # 选中行背景
-    color_bg_status_bar: str = "#E8DFF5"      # 状态栏背景
+    color_bg_hover: str = "#CDC7F5"           # 通用悬停背景（=浅紫）
+    color_bg_selected: str = "#CDC7F5"        # 选中行背景（=浅紫）
+    color_bg_status_bar: str = "#CDC7F5"      # 状态栏背景（=浅紫）
 
     # iOS 分段控制器（Tab）色
     color_tab_selected_bg: str = "#FFFFFF"    # 选中 Tab 背景（纯白+阴影）
     color_tab_unselected_bg: str = "#EDEDED"  # 未选中 Tab 背景（极淡灰）
-    color_tab_selected_text: str = "#4A4A4A"  # 选中 Tab 文字（深灰+加粗）
-    color_tab_unselected_text: str = "#999999" # 未选中 Tab 文字（浅灰）
+    color_tab_selected_text: str = "#3D3A4E"  # 选中 Tab 文字（紫灰深色+加粗）
+    color_tab_unselected_text: str = "#9A97AE" # 未选中 Tab 文字（紫灰浅色）
 
-    # iOS 绿色按钮色（与导入资料按钮一致）
-    color_green_btn_bg: str = "#F4FF81"       # 绿色按钮背景（=color_highlight 柠檬黄绿）
-    color_green_btn_text: str = "#2D2D2D"     # 绿色按钮文字（=color_text_on_highlight）
-    color_green_btn_hover: str = "#E0EE70"     # 绿色按钮悬停（=color_highlight_hover）
+    # 绿色按钮色（功能操作）
+    color_green_btn_bg: str = "#DBF880"       # 绿色按钮背景（=功能绿）
+    color_green_btn_text: str = "#3D3A4E"     # 绿色按钮文字（紫灰深色）
+    color_green_btn_hover: str = "#B8E560"    # 绿色按钮悬停（深绿）
 
-    # 文字色
-    color_text_primary: str = "#4A4A4A"       # 主要文字（灰度紫调深色）
-    color_text_secondary: str = "#666666"     # 辅助文字
-    color_text_muted: str = "#999999"          # 次要/提示文字
-    color_text_on_primary: str = "#2D2D2D"    # 主色按钮上的文字
-    color_text_on_highlight: str = "#2D2D2D"  # 强调色上的文字
+    # 文字色（紫灰调）
+    color_text_primary: str = "#3D3A4E"       # 主要文字（紫灰调深色）
+    color_text_secondary: str = "#6B6880"     # 辅助文字（紫灰调中灰）
+    color_text_muted: str = "#9A97AE"          # 次要/提示文字（紫灰调浅灰）
+    color_text_on_primary: str = "#FFFFFF"    # 主色按钮上的文字（白）
+    color_text_on_highlight: str = "#3D3A4E"  # 强调色上的文字（紫灰深色）
 
-    # 边框色
-    color_border: str = "#E0DDD8"             # 通用边框
-    color_border_focus: str = "#B39DDB"       # 聚焦边框（=主色）
-    color_border_light: str = "#E8DFF5"       # 轻边框（分隔线）
+    # 边框色（紫灰调）
+    color_border: str = "#D8D5E5"             # 通用边框（紫灰调）
+    color_border_focus: str = "#9B94F2"       # 聚焦边框（=主紫）
+    color_border_light: str = "#CDC7F5"       # 轻边框（=浅紫，分隔线）
 
     # 状态色
     color_status_ok: str = "#2e7d32"          # ✓ 成功状态
     color_status_missing: str = "#757575"     # ○ 缺失状态
-    color_status_error: str = "#c62828"       # ✗ 错误状态
+    color_status_error: str = "#c62828"       # ✗ 锗误状态
     color_status_warning: str = "#cc0000"     # 警告
     color_status_info: str = "#0066cc"        # 信息链接
 
     # ── 字体 ──────────────────────────────────────────────────
-    font_family: str = "Segoe UI, Microsoft YaHei, sans-serif"
+    font_family: str = "Quicksand, HarmonyOS Sans SC, Microsoft YaHei UI, Segoe UI, sans-serif"
     font_size_xs: str = "13px"                # 极小（辅助标注）
     font_size_sm: str = "14px"                # 小（统计、提示）
     font_size_base: str = "15px"              # 基础（正文）
@@ -108,16 +108,20 @@ class ThemeTokens:
     radius_md: str = "8px"                    # 中圆角（卡片、输入框）
     radius_lg: str = "12px"                   # 大圆角（面板、对话框）
     radius_xl: str = "16px"                   # 极大圆角（主按钮）
-    radius_ios: str = "20px"                  # iOS 极简大圆角（卡片、胶囊按钮）
-    radius_jelly: str = "16px"               # 紫果冻文本框圆角
-    radius_pill: str = "9999px"               # 药丸形（标签、徽章）
+    radius_card: str = "24px"                 # 马卡龙大卡片圆角
+    radius_card_lg: str = "32px"              # 超大卡片/面板圆角
+    radius_ios: str = "24px"                  # iOS 极简大圆角（卡片、胶囊按钮，升级到24px）
+    radius_jelly: str = "20px"                # 紫果冻文本框圆角（升级到20px）
+    radius_pill: str = "17px"                  # 药丸形/胶囊按钮（= button_height_sm/2，PyQt5 不支持9999px）
+    radius_bar: str = "12px"                  # 进度条圆角（= progress bar height/2）
+    radius_scroll: str = "4px"               # 滚动条圆角（= scrollbar width/2）
 
     # ── 阴影 ──────────────────────────────────────────────────
     shadow_none: str = "none"
     shadow_sm: str = "0 1px 2px rgba(0,0,0,0.06)"
     shadow_md: str = "0 2px 8px rgba(0,0,0,0.10)"
     shadow_lg: str = "0 4px 16px rgba(0,0,0,0.14)"
-    shadow_focus: str = "0 0 0 3px rgba(179,157,219,0.3)"
+    shadow_focus: str = "0 0 0 3px rgba(155,148,242,0.3)"
     shadow_ios: str = "0 4px 20px rgba(0,0,0,0.03)"   # iOS 极弱弥散阴影
 
     # ── 间距 ──────────────────────────────────────────────────
@@ -156,46 +160,54 @@ def _macaron_purple_theme() -> ThemeTokens:
 
 
 def _dark_mode_theme() -> ThemeTokens:
-    """暗色主题（预留，后续可完善）。"""
+    """暗色主题：紫色和绿色保持原色，白色系变为深紫灰。"""
     return ThemeTokens(
-        color_primary="#7E57C2",
-        color_primary_hover="#9575CD",
-        color_primary_pressed="#6A3E9E",
-        color_primary_light="#2A2040",
+        # 紫色系 — 保持原色
+        color_primary="#9B94F2",
+        color_primary_hover="#9188F1",
+        color_primary_pressed="#7D75E8",
+        color_primary_light="#3A3550",
         color_primary_text="#FFFFFF",
-        color_secondary="#BFF629",
-        color_secondary_hover="#A8E020",
+        # 绿色系 — 保持原色
+        color_secondary="#DBF880",
+        color_secondary_hover="#B8E560",
         color_secondary_light="#1A2A1A",
-        color_highlight="#F4FF81",
-        color_highlight_hover="#E0EE70",
-        color_bg_window="#1E1E2E",
-        color_bg_panel="#252536",
-        color_bg_card="#2A2A3C",
-        color_bg_input="#33334A",
-        color_bg_hover="#353550",
-        color_bg_selected="#3A3560",
-        color_bg_status_bar="#252536",
-        color_text_primary="#E0E0E0",
-        color_text_secondary="#AAAAAA",
-        color_text_muted="#777777",
+        color_highlight="#DBF880",
+        color_highlight_hover="#B8E560",
+        # 白色系 → 深紫灰
+        color_bg_window="#1A1528",
+        color_bg_panel="#1A1528",
+        color_bg_card="#2A2440",
+        color_bg_input="#2A2440",
+        color_bg_input_jelly="#252040",
+        color_bg_hover="#3A3550",
+        color_bg_selected="#3A3550",
+        color_bg_status_bar="#2A2440",
+        # Tab — 深紫灰
+        color_tab_selected_bg="#2A2440",
+        color_tab_unselected_bg="#1A1528",
+        color_tab_selected_text="#E8E4F2",
+        color_tab_unselected_text="#7A7694",
+        # 绿色按钮 — 保持原色
+        color_green_btn_bg="#DBF880",
+        color_green_btn_text="#3D3A4E",
+        color_green_btn_hover="#B8E560",
+        # 文字 — 浅紫灰
+        color_text_primary="#E8E4F2",
+        color_text_secondary="#B0ACCA",
+        color_text_muted="#7A7694",
         color_text_on_primary="#FFFFFF",
-        color_text_on_highlight="#2D2D2D",
-        color_border="#404060",
-        color_border_focus="#7E57C2",
-        color_border_light="#353550",
+        color_text_on_highlight="#3D3A4E",
+        # 边框 — 深紫灰
+        color_border="#3A3550",
+        color_border_focus="#9B94F2",
+        color_border_light="#3A3550",
+        # 状态色
         color_status_ok="#4CAF50",
         color_status_missing="#9E9E9E",
         color_status_error="#EF5350",
         color_status_warning="#EF5350",
         color_status_info="#42A5F5",
-        color_bg_input_jelly="#2A2040",
-        color_tab_selected_bg="#2A2A3C",
-        color_tab_unselected_bg="#1E1E2E",
-        color_tab_selected_text="#E0E0E0",
-        color_tab_unselected_text="#777777",
-        color_green_btn_bg="#F4FF81",
-        color_green_btn_text="#2D2D2D",
-        color_green_btn_hover="#E0EE70",
     )
 
 
@@ -316,14 +328,13 @@ QPushButton[class="primary"]:pressed {{
     background: {color_primary_pressed};
 }}
 
-/* ── 小号主色按钮（主色配色 + small 尺寸）── */
+/* ── 小号主色按钮（主色配色 + small 尺寸，与复制按钮尺寸一致）── */
 QPushButton[class="primary-sm"] {{
     background: {color_primary};
     color: {color_text_on_primary};
     border: none;
     min-height: {button_height_sm};
-    max-height: {button_height_sm};
-    padding: {spacing_xs} {spacing_md};
+    padding: {spacing_sm} {spacing_lg};
     font-size: {font_size_sm};
     font-weight: {font_weight_semi};
     border-radius: {radius_pill};
@@ -510,7 +521,7 @@ QListWidget::item:selected {{
 QGroupBox {{
     background: {color_bg_card};
     border: none;
-    border-radius: {radius_lg};
+    border-radius: {radius_card};
     margin-top: {spacing_xxl};
     padding: {spacing_xl} {spacing_lg} {spacing_lg} {spacing_lg};
     font-weight: {font_weight_bold};
@@ -559,9 +570,9 @@ QHeaderView::section {{
 
 /* ── 进度条 ────────────────────────────────────────────── */
 QProgressBar {{
-    background: {color_bg_hover};
+    background: {color_primary_light};
     border: none;
-    border-radius: {radius_pill};
+    border-radius: {radius_bar};
     height: 24px;
     text-align: center;
     font-size: {font_size_xs};
@@ -570,7 +581,7 @@ QProgressBar {{
 
 QProgressBar::chunk {{
     background: {color_primary};
-    border-radius: {radius_pill};
+    border-radius: {radius_bar};
 }}
 
 /* ── 滚动条 ────────────────────────────────────────────── */
@@ -583,10 +594,10 @@ QScrollBar:vertical {{
 QScrollBar::handle:vertical {{
     background: {color_border};
     min-height: 30px;
-    border-radius: {radius_pill};
+    border-radius: {radius_scroll};
 }}
 
-QScrollBar::handle:vertical:hover {{
+QScrollBar:handle:vertical:hover {{
     background: {color_text_muted};
 }}
 
@@ -603,14 +614,14 @@ QScrollBar:horizontal {{
 QScrollBar::handle:horizontal {{
     background: {color_border};
     min-width: 30px;
-    border-radius: {radius_pill};
+    border-radius: {radius_scroll};
 }}
 
-QScrollBar::handle:horizontal:hover {{
+QScrollBar:handle:horizontal:hover {{
     background: {color_text_muted};
 }}
 
-QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
+QScrollBar:add-line:horizontal, QScrollBar::sub-line:horizontal {{
     width: 0px;
 }}
 
@@ -769,7 +780,7 @@ QRadioButton {{
 QRadioButton::indicator {{
     width: 22px;
     height: 22px;
-    border-radius: {radius_pill};
+    border-radius: {radius_md};
     border: 2px solid {color_border};
     background: {color_bg_input};
 }}
@@ -793,7 +804,7 @@ QScrollArea {{
 QTabWidget::pane {{
     background: {color_bg_card};
     border: none;
-    border-radius: {radius_ios};
+    border-radius: {radius_card};
     padding: {spacing_ios};
 }}
 
@@ -848,14 +859,14 @@ QWidget[class="sidebar"] {{
 QWidget[class="lang-selector"] {{
     background: {color_secondary_light};
     border: none;
-    border-radius: {radius_ios};
+    border-radius: {radius_card_lg};
     padding: {spacing_xl};
 }}
 
 QWidget[class="assets-panel"] {{
     background: {color_primary_light};
     border: none;
-    border-radius: {radius_ios};
+    border-radius: {radius_card_lg};
     padding: {spacing_xl};
 }}
 
@@ -863,7 +874,7 @@ QWidget[class="assets-panel"] {{
 QTabWidget[class="right-tabs"] {{
     background: {color_bg_card};
     border: none;
-    border-radius: {radius_ios};
+    border-radius: {radius_card_lg};
 }}
 
 /* ── ASK 页签 ────────────────────────────────────────────── */

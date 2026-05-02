@@ -1292,7 +1292,8 @@
     "调整": "justerat",
     "界面": "gräns-sida",
     "布局": "plan",
-    "外观": "utseende"
+    "外观": "utseende",
+    "想": "vil"
   },
   "tts_map": {
     "sul": "sool",
@@ -5237,14 +5238,15 @@
     "我是巨人王的头号粉丝": "mi es grav Människa-kung  huvud-fan",
     "我是 巨人王 的 头号粉丝": "mi es grav Människa-Kung-s huvud fan",
     "你吃饭了吗": "ti ätat mat ät -ne",
-    "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar"
+    "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar",
+    "调整了界面的布局和外观": "justerat gräns-sida-s plan Dö utseende"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 834,
+    "lexicon_count": 835,
     "mapping_count": 2012,
     "ipa_count": 2012,
-    "anchor_count": 11
+    "anchor_count": 12
   }
 }

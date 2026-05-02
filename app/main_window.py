@@ -9,7 +9,7 @@ from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path
 from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
 from PyQt5.QtCore import QThread, Qt, pyqtSignal
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QColor, QIcon
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QFormLayout,
     QFrame,
+    QGraphicsDropShadowEffect,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -431,6 +432,11 @@ class MainWindow(QMainWindow):
         self._right_tabs = QTabWidget()
         self._right_tabs.setProperty("class", "right-tabs")
         self._right_tabs.setObjectName("cls_right_tabs")
+        _right_shadow = QGraphicsDropShadowEffect()
+        _right_shadow.setBlurRadius(20)
+        _right_shadow.setOffset(0, 4)
+        _right_shadow.setColor(QColor(0, 0, 0, 20))
+        self._right_tabs.setGraphicsEffect(_right_shadow)
         # 每个 Tab 按文字自然宽度显示（min-width 由 QSS 保证足够空间）
         self._right_tabs.tabBar().setExpanding(False)
         self._right_tabs.tabBar().setUsesScrollButtons(False)
@@ -454,14 +460,19 @@ class MainWindow(QMainWindow):
         panel.setProperty("class", "sidebar")
         panel.setObjectName("cls_sidebar")
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(12, 12, 12, 12)
-        layout.setSpacing(12)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(20)
 
         # 语言选择区域（辅色背景）
         lang_selector = QWidget()
         lang_selector.setProperty("class", "lang-selector")
 
         lang_selector.setObjectName("cls_lang_selector")
+        _lang_shadow = QGraphicsDropShadowEffect()
+        _lang_shadow.setBlurRadius(20)
+        _lang_shadow.setOffset(0, 4)
+        _lang_shadow.setColor(QColor(0, 0, 0, 20))
+        lang_selector.setGraphicsEffect(_lang_shadow)
 
         lang_layout = QVBoxLayout(lang_selector)
         lang_layout.setContentsMargins(16, 16, 16, 16)
@@ -526,6 +537,11 @@ class MainWindow(QMainWindow):
         assets_panel.setProperty("class", "assets-panel")
 
         assets_panel.setObjectName("cls_assets_panel")
+        _assets_shadow = QGraphicsDropShadowEffect()
+        _assets_shadow.setBlurRadius(20)
+        _assets_shadow.setOffset(0, 4)
+        _assets_shadow.setColor(QColor(0, 0, 0, 20))
+        assets_panel.setGraphicsEffect(_assets_shadow)
 
         assets_layout = QVBoxLayout(assets_panel)
         assets_layout.setContentsMargins(16, 16, 16, 16)
