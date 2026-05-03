@@ -59,8 +59,8 @@ class NewWordsReportDialog(QDialog):
         layout.addWidget(header)
 
         # ── 表格 ──────────────────────────────────────────────────
-        self._table = QTableWidget(len(new_words), 4)
-        self._table.setHorizontalHeaderLabels(["中文", "自创语", "TTS拼写", "构词逻辑"])
+        self._table = QTableWidget(len(new_words), 5)
+        self._table.setHorizontalHeaderLabels(["中文", "词性", "自创语", "TTS拼写", "构词逻辑"])
         self._table.horizontalHeader().setStretchLastSection(True)
         self._table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self._table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -68,9 +68,10 @@ class NewWordsReportDialog(QDialog):
 
         for row_idx, nw in enumerate(new_words):
             self._table.setItem(row_idx, 0, QTableWidgetItem(nw.chinese))
-            self._table.setItem(row_idx, 1, QTableWidgetItem(nw.conlang))
-            self._table.setItem(row_idx, 2, QTableWidgetItem(nw.tts))
-            self._table.setItem(row_idx, 3, QTableWidgetItem(nw.logic))
+            self._table.setItem(row_idx, 1, QTableWidgetItem(nw.pos))
+            self._table.setItem(row_idx, 2, QTableWidgetItem(nw.conlang))
+            self._table.setItem(row_idx, 3, QTableWidgetItem(nw.tts))
+            self._table.setItem(row_idx, 4, QTableWidgetItem(nw.logic))
 
         layout.addWidget(self._table)
 
@@ -122,10 +123,10 @@ class NewWordsReportDialog(QDialog):
         try:
             with open(output_path, "w", encoding="utf-8-sig", newline="") as fh:
                 writer = csv.writer(fh)
-                writer.writerow(["中文", "自创语", "TTS拼写", "构词逻辑", "AI模型"])
+                writer.writerow(["中文", "词性", "自创语", "TTS拼写", "构词逻辑", "AI模型"])
                 for nw in self._new_words:
                     writer.writerow([
-                        nw.chinese, nw.conlang, nw.tts, nw.logic, self._ai_model,
+                        nw.chinese, nw.pos, nw.conlang, nw.tts, nw.logic, self._ai_model,
                     ])
             msg = "词汇表已导出到：" + "\n" + output_path
             QMessageBox.information(self, "导出成功", msg)

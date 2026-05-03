@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
+    QComboBox,
     QDialog,
     QDialogButtonBox,
     QFormLayout,
@@ -28,6 +29,23 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+
+# 词性选项列表（缩写 + 全称）
+POS_OPTIONS: List[str] = [
+    "",               # 不标注
+    ".v/动词",
+    ".n/名词",
+    ".a/形容词",
+    ".d/副词",
+    ".r/代词",
+    ".p/介词",
+    ".c/连词",
+    ".m/数词",
+    ".q/量词",
+    ".u/助词",
+    ".i/感叹词",
+]
 
 
 class AddWordDialog(QDialog):
@@ -45,8 +63,8 @@ class AddWordDialog(QDialog):
         self.master_library_path = master_library_path
         self.mapping_rules_path = mapping_rules_path
 
-        # 每条: (中文词, conlang_edit, tts_edit)
-        self._entries: List[Tuple[str, QLineEdit, QLineEdit]] = []
+        # 每条: (中文词, conlang_edit, tts_edit, pos_combo)
+        self._entries: List[Tuple[str, QLineEdit, QLineEdit, QComboBox]] = []
 
         self.setWindowTitle("将未匹配词汇添加到词库")
         self.setMinimumWidth(580)
@@ -78,6 +96,8 @@ class AddWordDialog(QDialog):
         header_row.addWidget(QLabel("自创语翻译"), 1)
         header_row.addSpacing(8)
         header_row.addWidget(QLabel("TTS 拼写（留空同翻译）"), 1)
+        header_row.addSpacing(8)
+        header_row.addWidget(QLabel("词性"), 1)
         form.addRow("词汇：", _layout_to_widget(header_row))
 
         self._entries = []
@@ -87,15 +107,22 @@ class AddWordDialog(QDialog):
             tts_edit = QLineEdit()
             tts_edit.setPlaceholderText("TTS 拼写（留空同翻译）")
 
+            pos_combo = QComboBox()
+            pos_combo.addItems(POS_OPTIONS)
+            pos_combo.setCurrentIndex(0)  # 默认不标注
+            pos_combo.setFixedWidth(120)
+
             row_widget = QWidget()
             row_layout = QHBoxLayout(row_widget)
             row_layout.setContentsMargins(0, 0, 0, 0)
             row_layout.addWidget(conlang_edit, 1)
             row_layout.addSpacing(8)
             row_layout.addWidget(tts_edit, 1)
+            row_layout.addSpacing(8)
+            row_layout.addWidget(pos_combo)
 
             form.addRow(f"{word}：", row_widget)
-            self._entries.append((word, conlang_edit, tts_edit))
+            self._entries.append((word, conlang_edit, tts_edit, pos_combo))
 
         scroll.setWidget(container)
         layout.addWidget(scroll, 1)
@@ -108,13 +135,16 @@ class AddWordDialog(QDialog):
 
     # ------------------------------------------------------------------
     def _on_save(self) -> None:
-        # (中文, 自创语, TTS) 三元组，只收集填了自创语的行
+        # (中文+词性, 自创语, TTS) 三元组，只收集填了自创语的行
         to_add: List[Tuple[str, str, str]] = []
-        for source_word, conlang_edit, tts_edit in self._entries:
+        for source_word, conlang_edit, tts_edit, pos_combo in self._entries:
             conlang = conlang_edit.text().strip()
             tts = tts_edit.text().strip() or conlang
+            pos = pos_combo.currentText().strip()
             if conlang:
-                to_add.append((source_word, conlang, tts))
+                # 拼接词性到中文词 key（如 "那个(.n/指示代词)"）
+                zh_key = source_word + f"({pos})" if pos else source_word
+                to_add.append((zh_key, conlang, tts))
 
         if not to_add:
             QMessageBox.information(self, "提示", "没有填写任何词汇，已取消。")

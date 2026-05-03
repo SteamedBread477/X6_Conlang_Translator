@@ -152,6 +152,8 @@ class BatchTranslateWorker(QThread):
             tts_map = {}
         tts_map = {str(k): str(v) for k, v in tts_map.items() if str(k).strip()}
 
+        pos_lexicon = self._bundle.get("lexicon_pos") or {}
+
         self.log_message.emit(f"开始批量翻译，共 {total} 行，模式：{self._settings.mode}")
 
         for idx, row in enumerate(self._rows):
@@ -200,7 +202,7 @@ class BatchTranslateWorker(QThread):
             # ── 规则翻译 ──────────────────────────────────────────
             rule_result: Optional[RuleTranslationResult] = None
             try:
-                rule_result = translate_multiline_rule(chinese_text, lexicon, tts_map)
+                rule_result = translate_multiline_rule(chinese_text, lexicon, tts_map, pos_lexicon)
             except Exception as exc:
                 result.error = f"规则翻译失败：{exc}"
                 result.mode_used = "rule_error"

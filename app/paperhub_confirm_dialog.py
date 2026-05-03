@@ -113,9 +113,9 @@ class PaperHubConfirmDialog(QDialog):
             nw_grp = QGroupBox("AI 为新词建议")
             nw_layout = QVBoxLayout(nw_grp)
 
-            # 表格：中文 | 自创语 | TTS 拼写 | 构词逻辑
-            table = QTableWidget(len(new_words), 4)
-            table.setHorizontalHeaderLabels(["中文", "自创语", "TTS 拼写", "构词逻辑"])
+            # 表格：中文 | 词性 | 自创语 | TTS 拼写 | 构词逻辑
+            table = QTableWidget(len(new_words), 5)
+            table.setHorizontalHeaderLabels(["中文", "词性", "自创语", "TTS 拼写", "构词逻辑"])
             table.horizontalHeader().setStretchLastSection(True)
             table.setAlternatingRowColors(True)
 
@@ -124,6 +124,7 @@ class PaperHubConfirmDialog(QDialog):
                 edits: Dict[str, QLineEdit] = {}
                 for col_idx, (attr, placeholder) in enumerate([
                     ("chinese", "中文原词"),
+                    ("pos", "词性（如 .v/动词）"),
                     ("conlang", "自创语"),
                     ("tts", "TTS友好拼写"),
                     ("logic", "构词逻辑说明"),
@@ -185,6 +186,7 @@ class PaperHubConfirmDialog(QDialog):
                 ipa="",  # IPA 不在编辑表格中
                 tts=edits["tts"].text().strip(),
                 logic=edits["logic"].text().strip(),
+                pos=edits["pos"].text().strip(),
             )
             if nw.chinese and nw.conlang:
                 result.append(nw)

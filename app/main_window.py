@@ -2367,6 +2367,7 @@ class MainWindow(QMainWindow):
             str(k): str(v) for k, v in raw_tts.items()
             if isinstance(k, str) and k.strip()
         }
+        pos_lexicon = bundle.get("lexicon_pos") or {}
 
         # ── 翻译开始：清空所有输出区域（防止残留上次内容）────────────
         if self.target_output is not None:
@@ -2377,7 +2378,7 @@ class MainWindow(QMainWindow):
         self.clear_ipa_output()
 
         # ── 始终执行规则翻译（提供匹配统计）────────────────────────
-        rule_result = translate_multiline_rule(text, lexicon, tts_map)
+        rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
         self._last_rule_result = rule_result
 
         # ── 判断是否需要 PaperHub AI ────────────────────────────────
