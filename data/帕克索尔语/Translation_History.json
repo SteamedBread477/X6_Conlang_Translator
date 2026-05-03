@@ -1,479 +1,106 @@
-[
-  {
-    "id": "TH_0001",
-    "timestamp": "2026-05-01T17:16:20",
-    "source": "灵魂",
-    "conlang": "sul",
-    "phonetic": "sul",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0002",
-    "timestamp": "2026-05-01T17:16:37",
-    "source": "灵魂，我的灵魂",
-    "conlang": "sul，mi【的】sul",
-    "phonetic": "sul，mi【的】sul",
-    "unmatched_words": [
-      "的"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0003",
-    "timestamp": "2026-05-01T17:17:30",
-    "source": "灵魂，我的灵魂",
-    "conlang": "sul, mi de sul",
-    "phonetic": "sul, mi de sul",
-    "unmatched_words": [
-      "的"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0004",
-    "timestamp": "2026-05-01T17:18:04",
-    "source": "灵魂啊",
-    "conlang": "sul ha",
-    "phonetic": "sul ha",
-    "unmatched_words": [
-      "啊"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0005",
-    "timestamp": "2026-05-01T17:23:33",
-    "source": "远道而来的客人，你好",
-    "conlang": "【远道而来】de【客人】，Sul hel",
-    "phonetic": "【远道而来】de【客人】，Sul hel",
-    "unmatched_words": [
-      "远道而来",
-      "客人"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_fallback",
-    "emotion": {
-      "label": "positive",
-      "intensity": 0.2,
-      "tts_pitch_hint": "high",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0006",
-    "timestamp": "2026-05-01T17:24:24",
-    "source": "远道而来的客人，你好",
-    "conlang": "Sul va",
-    "phonetic": "Sul va",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0007",
-    "timestamp": "2026-05-01T17:24:28",
-    "source": "远道而来的客人，你好",
-    "conlang": "Sul h? mi",
-    "phonetic": "Sul h? mi",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0008",
-    "timestamp": "2026-05-01T17:34:47",
-    "source": "远道而来的客人，你好",
-    "conlang": "ti",
-    "phonetic": "ti",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0009",
-    "timestamp": "2026-05-01T17:34:56",
-    "source": "远道而来的客人，你好",
-    "conlang": "drak",
-    "phonetic": "drak",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0010",
-    "timestamp": "2026-05-01T17:35:23",
-    "source": "魂隙",
-    "conlang": "sulkra",
-    "phonetic": "sulkra",
-    "unmatched_words": [
-      "魂隙"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0011",
-    "timestamp": "2026-05-01T17:36:02",
-    "source": "魂隙",
-    "conlang": "sulkra",
-    "phonetic": "sulkra",
-    "unmatched_words": [
-      "魂"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0012",
-    "timestamp": "2026-05-01T17:36:10",
-    "source": "魂隙",
-    "conlang": "sulkra",
-    "phonetic": "sulkra",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0013",
-    "timestamp": "2026-05-01T17:36:52",
-    "source": "痛苦",
-    "conlang": "agon",
-    "phonetic": "agon",
-    "unmatched_words": [
-      "痛苦"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "negative",
-      "intensity": 0.2,
-      "tts_pitch_hint": "low",
-      "tts_rate_hint": "slow"
-    }
-  },
-  {
-    "id": "TH_0014",
-    "timestamp": "2026-05-01T17:36:57",
-    "source": "痛苦",
-    "conlang": "sul",
-    "phonetic": "sul",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0015",
-    "timestamp": "2026-05-01T17:37:01",
-    "source": "痛苦",
-    "conlang": "agon",
-    "phonetic": "agon",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "negative",
-      "intensity": 0.2,
-      "tts_pitch_hint": "low",
-      "tts_rate_hint": "slow"
-    }
-  },
-  {
-    "id": "TH_0016",
-    "timestamp": "2026-05-01T17:37:13",
-    "source": "痛苦",
-    "conlang": "Sul hel",
-    "phonetic": "Sul hel",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "positive",
-      "intensity": 0.2,
-      "tts_pitch_hint": "high",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0017",
-    "timestamp": "2026-05-01T17:37:54",
-    "source": "痛苦",
-    "conlang": "sulkra",
-    "phonetic": "sulkra",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0018",
-    "timestamp": "2026-05-01T17:38:07",
-    "source": "痛苦",
-    "conlang": "drak",
-    "phonetic": "drak",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0019",
-    "timestamp": "2026-05-01T21:40:53",
-    "source": "风",
-    "conlang": "vint",
-    "phonetic": "vint",
-    "unmatched_words": [
-      "风"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0020",
-    "timestamp": "2026-05-01T21:41:11",
-    "source": "风",
-    "conlang": "vint",
-    "phonetic": "vint",
-    "unmatched_words": [],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "rule",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0021",
-    "timestamp": "2026-05-01T21:41:27",
-    "source": "我喜欢今天的太阳",
-    "conlang": "mi mova nol de sol",
-    "phonetic": "mee MOH-vah nohl deh sohl",
-    "unmatched_words": [
-      "喜欢今天",
-      "太阳"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0022",
-    "timestamp": "2026-05-01T21:42:09",
-    "source": "我喜欢今天的太阳",
-    "conlang": "mi mova nol de sol",
-    "phonetic": "mee MOH-vah nohl deh sohl",
-    "unmatched_words": [
-      "我喜欢今天的太阳"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0023",
-    "timestamp": "2026-05-01T21:42:24",
-    "source": "我喜欢今天的太阳",
-    "conlang": "mi mova nol de sol",
-    "phonetic": "mee MOH-vah nohl deh sohl",
-    "unmatched_words": [
-      "我喜欢今天的太阳"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0024",
-    "timestamp": "2026-05-01T21:42:34",
-    "source": "我喜欢今天的太阳",
-    "conlang": "mi mova nol de sol",
-    "phonetic": "mee MOH-vah nohl deh sohl",
-    "unmatched_words": [
-      "我喜欢今天的太阳"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0025",
-    "timestamp": "2026-05-02T01:41:47",
-    "source": "我 是 巨人族 最厉害 的 机器制造师",
-    "conlang": "mi es gigantul max poten de mekinforjor",
-    "phonetic": "mee ess gee-GAHN-tool mahks POH-ten deh meh-keen-FOR-yor",
-    "unmatched_words": [
-      "我",
-      "是",
-      "巨人族",
-      "最厉害",
-      "的",
-      "机器制造师"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
-  },
-  {
-    "id": "TH_0026",
-    "timestamp": "2026-05-03T00:48:23",
-    "source": "灵魂大潮",
-    "conlang": "sul de grandmar",
-    "phonetic": "sul de grandmar",
-    "unmatched_words": [
-      "灵魂大潮"
-    ],
-    "source_language": "中文",
-    "target_language": "帕克索尔语",
-    "translation_mode": "ai_assisted",
-    "emotion": {
-      "label": "neutral",
-      "intensity": 0.5,
-      "tts_pitch_hint": "normal",
-      "tts_rate_hint": "normal"
-    }
+{
+  "anchors": {
+    "灵魂": "sul",
+    "埋骨地": "gomä",
+    "龙": "drak",
+    "引导": "zaka",
+    "回家": "zakil",
+    "声音": "skal",
+    "看见": "höka",
+    "感知": "höka",
+    "生命": "lif",
+    "死亡": "död",
+    "爱": "mova",
+    "家庭": "fam",
+    "氏族": "fam",
+    "朋友": "ven",
+    "敌人": "fien",
+    "时间": "tid",
+    "神圣": "hel",
+    "仪式": "rit",
+    "承诺": "löva",
+    "契约": "löv-sel",
+    "歌": "sang",
+    "咏唱": "sanga",
+    "水": "vat",
+    "火": "eld",
+    "石": "sten",
+    "树": "trä",
+    "木": "trä",
+    "我": "mi",
+    "你": "ti",
+    "他": "hon",
+    "她": "hon",
+    "它": "hon",
+    "祂": "hon",
+    "我们": "miz",
+    "你们": "tiz",
+    "他们": "honz",
+    "这": "se",
+    "那": "so",
+    "谁": "Kul",
+    "什么": "Kas",
+    "哪里": "Kör",
+    "为什么": "Kval",
+    "怎么": "Khün",
+    "哪个": "Kel",
+    "自己": "ön",
+    "某": "nun",
+    "在": "ro",
+    "到": "tul",
+    "从": "vlön",
+    "和": "dö",
+    "上": "vör",
+    "下": "nön",
+    "左": "vans",
+    "右": "rüs",
+    "前": "foz",
+    "后": "böka",
+    "必须": "zekva",
+    "如果": "öm",
+    "也许": "setva",
+    "不": "na",
+    "非": "na",
+    "是": "es",
+    "有": "ha",
+    "没有": "na ha",
+    "活着": "lifa",
+    "死去": "döda",
+    "发声": "skala",
+    "观测者": "höker",
+    "引导者": "zaker",
+    "爱人": "mover",
+    "家族": "famil",
+    "友谊": "venskap",
+    "敌意": "fienskap",
+    "龙吟": "drakskal",
+    "冥界": "sulgom",
+    "祖先": "fozank",
+    "圣地": "helgom",
+    "造物": "skapsel",
+    "爱(名词)": "moving",
+    "古老的": "fjali",
+    "新的": "nuli",
+    "深的": "djuni",
+    "灵魂的": "suli",
+    "龙一般的": "draklik",
+    "曾经爱过": "mova-foznol",
+    "正在爱": "mova-nol",
+    "将会爱": "mova-böknol",
+    "曾经引导": "zaka-foznol",
+    "正在引导": "zaka-nol",
+    "将会引导": "zaka-böknol",
+    "曾经看见": "höka-foznol",
+    "正在看见": "höka-nol",
+    "将会看见": "höka-böknol",
+    "你好": "Sul hel",
+    "再见": "Zakil hel",
+    "魂啊": "Sul va",
+    "我的魂": "Sul hö mi",
+    "引渡灵魂": "Sul zaka",
+    "祖先的爱": "Fozank mova",
+    "感谢": "Fozank mova",
+    "不爱": "na mova",
+    "不活": "na lif"
   }
-]
+}

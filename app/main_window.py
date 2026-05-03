@@ -1266,7 +1266,7 @@ class MainWindow(QMainWindow):
         if self._ask_ai_just_started:
             # 首次收到 chunk：插入 DUD 标签
             self._ask_chat_display.append(
-                f'<p style="margin:4px 0;"><b style="color:#2b2b2b;">DUD：</b>'
+                f'<p style="margin:4px 0;"><b style="color:#6B6880;">DUD：</b>'
             )
             self._ask_ai_just_started = False
 
@@ -1848,7 +1848,7 @@ class MainWindow(QMainWindow):
             color_token = theme_manager.token("color_text_primary")
         elif role == "ai":
             label = "DUD"
-            color_token = "#2b2b2b"
+            color_token = "#6B6880"
         else:
             label = "系统"
             color_token = theme_manager.token("color_text_secondary")
