@@ -3,7 +3,7 @@
 > 项目全称：Nikki Conlang Forge（无限暖暖自创语翻译器）
 > 技术栈：Python 3.9 + PyQt5 + OpenAI SDK + Pandas + OpenPyXL
 > 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
-> 文档更新日期：2026-05-01
+> 文档更新日期：2026-05-03
 
 ---
 
@@ -314,6 +314,7 @@ Nikki Conlang Forge 诞生于一个具体需求：为游戏《无限暖暖》中
 | `test_stage9.py` | 阶段十一 | 旧测试文件，已被后续 pytest 覆盖 |
 | `build_debug.spec` | 阶段十一 | debug 构建配置冗余 |
 | `app/ask_mode.py` | 阶段十二 | 独立模块未被导入，ASK功能已内嵌于 main_window.py |
+| `data/languages/`（空目录） | 阶段十二补丁 | 无代码引用，语言数据存于 `data/<语言名>/` 下，待删除 |
 
 ---
 
@@ -343,15 +344,69 @@ Nikki Conlang Forge 诞生于一个具体需求：为游戏《无限暖暖》中
 
 ---
 
-## 当前已知问题
+### 阶段十二补丁 — 语言图标 & UI 微调（✅ 已完成）
 
-1. **Translation_ID 不一致**：Excel 导出用 `TH_{idx+1:04d}`（位置序号），`append_translation_record` 用 `TH_{n:04d}`（基于已有记录数）
-2. **NewWordsReportDialog._add_to_lexicon 标志未被消费**：按钮设置标志但 ExportResultDialog 不获取
-3. **paperhub_confirm_dialog.py CRLF 行尾**：全文 `\r\n` 行尾，应统一为 LF
-4. **_whitepaper_full max_chars=3000**：批量翻译 AI 调用时可能截断长白皮书（帕克索尔语完整白皮书 ~2000 行）
-5. **os.startfile Windows-specific**：ExportResultDialog 的"打开文件夹/打开文件"按钮仅 Windows 可用
-6. **线程安全**：`_paused`/`_cancelled` bool 标志无互斥锁保护
-7. **数据格式兼容性**：帕克索尔语用户资料文件使用学术嵌套格式，与应用解析器期望的扁平格式不兼容（详见阶段十一后维护段）
+**时间**：2026-05-02 ~ 2026-05-03
+
+#### 语言图标功能
+
+- **`LangIconPickerDialog`**（`app/main_window.py` L276-348）：图标选择弹窗，列出 `assets/lang_icons/` 下所有图片供用户选择
+  - 6列网格布局 + hover 紫色边框高亮
+  - 「清除图标」按钮恢复默认
+- **右键菜单**：语言列表右键新增「选择图标」选项，调用 `_pick_language_icon()`
+- **`_refresh_list_item_for_language()`**：刷新列表条目的文字 + 图标
+- **`icon` 字段持久化**：`storage.py` `_normalize_language_records` 增加 `lang.setdefault("icon", "")`，图标路径保存到 `data/config.json`
+- **`app_paths.py`**：新增 `get_lang_icons_dir()` 返回 `assets/lang_icons/` 目录路径
+- **`ICON_MAP` 扩展**：新增 `copy.png` 和 `translate.png` 条目（实际文件尚未放入 `assets/icons/`）
+
+#### 列表显示简化
+
+- **`_language_row_text()`**：从原来含 4 个状态圆点的 RichText 简化为纯名称文本 `lang.get('name', '未命名')`
+- **`QFont.Bold`**：所有列表条目设置 bold 字体
+- **`iconSize(QSize(24, 24))`**：语言列表启用图标显示
+- **未选中/悬停态紫灰色**：`ui_theme.py` 中 `QListWidget` 未选中项文字改为 `#9A97AE` + bold
+
+#### UI 对齐与布局修复
+
+- **快捷提问标签垂直对齐**：「快捷提问：」标签 `setFixedHeight(34)` + `setStyleSheet("padding-top:0;")`，与 pill 按钮 `min-height:34px` 垂直居中对齐
+- **输入框可伸缩**：`_ask_input` 从 `setMaximumHeight(80)` 改为 `setMinimumHeight(60)`，随窗口缩放/分割器拖拽自由伸缩
+- **状态标签 RichText**：`font-family:'Noto Sans SC'` + `font-weight:600; font-size:14px` 硬编码格式（绕过主题系统，待迁移）
+
+---
+
+## 当前已知问题（代码审查 2026-05-03）
+
+### 🔴 逻辑问题 / Bug
+
+1. **`_bootstrap_language` 和 `create_language_record` 缺少 `icon` 字段**：返回的 dict 无 `"icon"` 键，首次创建语言时 `icon` 字段缺失，`_normalize_language_records` 下次加载才补上，导致数据不一致
+2. **`UITheme.STATUS_*_COLOR` 类属性与 `property` 冲突**：`ui_theme.py` 先定义 3 个 `property`（lambda 动态取 theme_manager token），后又定义同名类属性字符串（`"#2e7d32"` / `"#757575"` / `"#c62828"`），后定义覆盖前定义，实际运行时返回硬编码字符串而非动态 token 值。暗色主题下状态标签颜色不会自动跟随切换
+3. **`app_config.json`（项目根）未被 `.gitignore` 覆盖**：含 `paperhub_api_key`，但 gitignore 只覆盖 `data/app_config.json` 和 `data/ai_settings.json`（后者已不存在），根目录配置文件可能被提交到仓库
+4. **`icon-cell` 按钮内联样式用 `[class='icon-cell']` 属性选择器**：PyQt5 对此类选择器支持不稳定，项目专门做了 `#cls_xxx` ID 备用机制，但 `LangIconPickerDialog` 仅用了 `[class='icon-cell']`，hover/边框效果可能在某些版本下不生效
+
+### 🟡 代码屎山 / 设计问题
+
+5. **状态标签硬编码 `font-family:'Noto Sans SC'` 和 `font-size:14px`**：`main_window.py` L1973/2004 状态圆点 RichText 内嵌字体族和字号，完全绕过主题系统，用户切换字体族后这些标签不会跟着变
+6. **`LangIconPickerDialog` 硬编码颜色 `#9B94F2` 和 `#F4EDFA`**：hover 样式用硬编码色而非 `theme_manager.token()`，暗色主题下颜色不合适
+7. **`_language_row_text` 方法过于简化**：仅返回 `lang.get('name', '未命名')` 一行 get，封装价值极低（但保留为未来恢复复杂格式的占位也可接受）
+8. **`UITheme` 兼容层设计矛盾**：既有 `property` 又有同名类属性，还有全 `None` 的 `FONT_FAMILY` / `BASE_FONT_POINT_SIZE` / `ICON_THEME_PREFIX` / `BUTTON_ACCENT_BG` / `AI_STATUS_PREFIX` 等未使用类属性。建议要么彻底迁移到 `theme_manager`，要么删除整个兼容层
+
+### 🟠 冗余 / 废弃资产
+
+9. **`data/languages/` 空目录**：目录存在但完全为空，代码中无任何引用（语言数据存于 `data/<语言名>/` 下）
+10. **`ICON_MAP` 中 `copy.png` 和 `translate.png` 不存在**：`app_paths.py` 定义了映射但 `assets/icons/` 目录只有 `confirm.png` 和 `discard.png`，代码中也无调用处
+11. **`.gitignore` 缺少根目录 `app_config.json`**：只覆盖 `data/app_config.json` 和 `data/ai_settings.json`，后者已不存在
+12. **`UITheme` 中 5 个未使用类属性**：`FONT_FAMILY` / `BASE_FONT_POINT_SIZE` / `ICON_THEME_PREFIX` / `BUTTON_ACCENT_BG` / `AI_STATUS_PREFIX` 全为 `None`，无代码引用
+13. **`_legacy_app_state` 迁移路径**：`storage.py` 保留 `app_state.json` → `config.json` 迁移逻辑约 40 行，但项目中已不存在 `app_state.json`，所有数据已迁移完毕
+
+### 旧已知问题（保留）
+
+14. **Translation_ID 不一致**：Excel 导出用 `TH_{idx+1:04d}`（位置序号），`append_translation_record` 用 `TH_{n:04d}`（基于已有记录数）
+15. **NewWordsReportDialog._add_to_lexicon 标志未被消费**：按钮设置标志但 ExportResultDialog 不获取
+16. **paperhub_confirm_dialog.py CRLF 行尾**：全文 `\r\n` 行尾，应统一为 LF
+17. **_whitepaper_full max_chars=3000**：批量翻译 AI 调用时可能截断长白皮书
+18. **os.startfile Windows-specific**：ExportResultDialog 的"打开文件夹/打开文件"按钮仅 Windows 可用
+19. **线程安全**：`_paused`/`_cancelled` bool 标志无互斥锁保护
+20. **数据格式兼容性**：帕克索尔语用户资料文件使用学术嵌套格式，与应用解析器期望的扁平格式不兼容
 
 ---
 
@@ -599,8 +654,8 @@ GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
 - app/ui_theme.py
 - app/main_window.py
 
-当前已完成阶段0到12（含4K DPI适配 + 构建修复 + 语言大师问答页签）。
-规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译 + 导出增强 + 主题 Token 系统 + 语言大师问答已完成。
-已知问题：7项（详见 DEVLOG.md 已知问题段）。
+当前已完成阶段0到12（含4K DPI适配 + 构建修复 + 语言大师问答页签 + 语言图标 + UI微调补丁）。
+规则翻译 + PaperHub AI 翻译 + SSML 语音标签 + 批量翻译 + 导出增强 + 主题 Token 系统 + 语言大师问答 + 语言图标选择已完成。
+已知问题：20项（4项逻辑Bug + 4项设计问题 + 5项冗余资产 + 7项旧问题，详见 DEVLOG.md 已知问题段）。
 现在继续做：……（写你当前的需求）
 ```
