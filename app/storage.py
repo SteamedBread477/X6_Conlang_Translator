@@ -159,6 +159,7 @@ class JsonStorage:
 
             lang.setdefault("name", "语言")
             lang.setdefault("notes", "")
+            lang.setdefault("icon", "")
 
     def _bootstrap_language(self, name: str) -> Dict[str, Any]:
         folder = self.ensure_unique_folder_name(name)

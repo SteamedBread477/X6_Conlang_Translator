@@ -594,10 +594,14 @@ QListWidget {{
 QListWidget::item {{
     padding: {spacing_md} {spacing_lg};
     border-radius: {radius_md};
+    color: {color_tab_unselected_text};
+    font-weight: {font_weight_bold};
 }}
 
 QListWidget::item:hover {{
     background: {color_bg_hover};
+    color: {color_tab_unselected_text};
+    font-weight: {font_weight_bold};
 }}
 
 QListWidget::item:selected {{

@@ -76,6 +76,18 @@ def get_icons_dir() -> Path:
     return icons_dir
 
 
+def get_lang_icons_dir() -> Path:
+    """返回 assets/lang_icons 目录路径，并确保目录存在。
+
+    位置: get_assets_dir() / "lang_icons"
+    用户可将语言图标（PNG/JPG 等）放入此目录，
+    程序会列出所有图片供用户在语言列表中选择。
+    """
+    lang_icons_dir = get_assets_dir() / "lang_icons"
+    lang_icons_dir.mkdir(parents=True, exist_ok=True)
+    return lang_icons_dir
+
+
 def get_icon_path(icon_key: str) -> Path:
     """根据 ICON_MAP 的 key 返回对应图标文件的完整路径。
 

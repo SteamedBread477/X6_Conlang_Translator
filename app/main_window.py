@@ -5,11 +5,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path, get_icon_path
+from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path, get_icon_path, get_lang_icons_dir
 from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
-from PyQt5.QtCore import QThread, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5.QtCore import QThread, Qt, QSize, pyqtSignal
+from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -267,6 +267,101 @@ class _TokenCircleWidget(QWidget):
         painter.drawText(self.rect(), Qt.AlignCenter, pct_text)
 
         painter.end()
+
+
+# ---------------------------------------------------------------------------
+# 语言图标选择对话框
+# ---------------------------------------------------------------------------
+
+class LangIconPickerDialog(QDialog):
+    """语言图标选择对话框 — 列出 assets/lang_icons/ 下所有图片供用户选择。"""
+
+    ICON_SIZE = 48  # 对话框内图标显示尺寸（px）
+
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self.setWindowTitle("选择语言图标")
+        self.setMinimumWidth(360)
+        self._selected: str = ""
+
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+
+        grid = QGridLayout()
+        grid.setSpacing(8)
+
+        icons_dir = get_lang_icons_dir()
+        exts = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg", ".webp"}
+        files = sorted(
+            f for f in icons_dir.iterdir()
+            if f.is_file() and f.suffix.lower() in exts
+        )
+
+        if not files:
+            hint = QLabel("lang_icons 目录下没有图标图片。\n请将 PNG/JPG 等图片放入 assets/lang_icons/ 目录。")
+            hint.setAlignment(Qt.AlignCenter)
+            hint.setStyleSheet("color: #9A97AE; font-size: 14px;")
+            layout.addWidget(hint)
+        else:
+            col = 0
+            row = 0
+            max_cols = 6
+            for f in files:
+                pixmap = QPixmap(str(f))
+                if pixmap.isNull():
+                    continue
+                scaled = pixmap.scaled(
+                    self.ICON_SIZE, self.ICON_SIZE,
+                    Qt.KeepAspectRatio, Qt.SmoothTransformation,
+                )
+                btn = QPushButton()
+                btn.setIcon(QIcon(scaled))
+                btn.setIconSize(QSize(self.ICON_SIZE, self.ICON_SIZE))
+                btn.setFixedSize(self.ICON_SIZE + 8, self.ICON_SIZE + 8)
+                btn.setToolTip(f.name)
+                btn.setProperty("class", "icon-cell")
+                btn.setObjectName("cls_icon_cell")
+                btn.setStyleSheet(
+                    "QPushButton[class='icon-cell'] {"
+                    "  border: 2px solid transparent; border-radius: 6px; background: transparent;"
+                    "}"
+                    "QPushButton[class='icon-cell']:hover {"
+                    "  border: 2px solid #9B94F2; background: #F4EDFA; border-radius: 6px;"
+                    "}"
+                )
+                btn.clicked.connect(lambda checked, name=f.name: self._pick(name))
+                grid.addWidget(btn, row, col)
+                col += 1
+                if col >= max_cols:
+                    col = 0
+                    row += 1
+            layout.addLayout(grid)
+
+        btn_row = QHBoxLayout()
+        btn_row.addStretch(1)
+        clear_btn = QPushButton("清除图标")
+        clear_btn.setProperty("class", "pill")
+        clear_btn.setObjectName("cls_pill")
+        clear_btn.clicked.connect(self._clear)
+        btn_row.addWidget(clear_btn)
+        cancel_btn = QPushButton("取消")
+        cancel_btn.setProperty("class", "pill")
+        cancel_btn.setObjectName("cls_pill")
+        cancel_btn.clicked.connect(self.reject)
+        btn_row.addWidget(cancel_btn)
+        layout.addLayout(btn_row)
+
+    def _pick(self, name: str) -> None:
+        self._selected = name
+        self.accept()
+
+    def _clear(self) -> None:
+        self._selected = ""
+        self.accept()
+
+    def selected_icon(self) -> str:
+        """返回选中的文件名（相对于 lang_icons 目录），空字符串表示清除。"""
+        return self._selected
 
 
 # ---------------------------------------------------------------------------
@@ -1235,7 +1330,8 @@ class MainWindow(QMainWindow):
         label = QLabel("快捷提问：")
         label.setProperty("class", "section-title")
         label.setObjectName("cls_section_title")
-        self._ask_template_row.addWidget(label)
+        label.setAlignment(Qt.AlignVCenter)
+        self._ask_template_row.addWidget(label, 0, Qt.AlignVCenter)
 
         for tpl in self._ask_templates:
             btn = QPushButton(tpl["name"])
@@ -1244,7 +1340,7 @@ class MainWindow(QMainWindow):
             btn.setToolTip(tpl["prompt"])
             btn.clicked.connect(self._ask_on_template_clicked)
             self._ask_template_btns.append(btn)
-            self._ask_template_row.addWidget(btn)
+            self._ask_template_row.addWidget(btn, 0, Qt.AlignVCenter)
 
         # 管理模板按钮
         manage_btn = QPushButton("管理模板…")
@@ -1252,7 +1348,7 @@ class MainWindow(QMainWindow):
         manage_btn.setObjectName("cls_pill")
         manage_btn.clicked.connect(self._ask_manage_templates)
         self._ask_template_btns.append(manage_btn)
-        self._ask_template_row.addWidget(manage_btn)
+        self._ask_template_row.addWidget(manage_btn, 0, Qt.AlignVCenter)
 
         self._ask_template_row.addStretch(1)
 
@@ -1746,10 +1842,22 @@ class MainWindow(QMainWindow):
 
         assert self.language_list is not None
         self.language_list.clear()
+        self.language_list.setIconSize(QSize(24, 24))
+        bold_font = QFont()
+        bold_font.setBold(True)
+        icons_dir = get_lang_icons_dir()
         for lang in languages:
             item = QListWidgetItem(self._language_row_text(lang))
             item.setData(Qt.UserRole, lang["id"])
+            item.setFont(bold_font)
             self._set_language_tooltip(item, lang)
+            # 加载语言图标
+            icon_name = lang.get("icon", "")
+            if icon_name:
+                icon_path = icons_dir / icon_name
+                pix = QPixmap(str(icon_path))
+                if not pix.isNull():
+                    item.setIcon(QIcon(pix.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
             self.language_list.addItem(item)
         self.language_list.setCurrentRow(0)
         self._refresh_asset_status()
@@ -1763,12 +1871,38 @@ class MainWindow(QMainWindow):
         return "◉"
 
     def _language_row_text(self, lang: Dict) -> str:
-        parts: List[str] = []
-        for key in FILE_KEYS:
-            path = self.storage.asset_path(lang, key)
-            result = check_asset(key, path)
-            parts.append(self._status_symbol_for_result(result.status))
-        return f"{lang.get('name', '未命名')}  {''.join(parts)}"
+        return lang.get('name', '未命名')
+
+    def _refresh_list_item_for_language(self, lang: Dict) -> None:
+        """刷新左侧语言列表中指定语言的条目（文字 + 图标）。"""
+        assert self.language_list is not None
+        lang_id = lang.get("id", "")
+        for i in range(self.language_list.count()):
+            item = self.language_list.item(i)
+            if item and item.data(Qt.UserRole) == lang_id:
+                item.setText(self._language_row_text(lang))
+                self._set_language_tooltip(item, lang)
+                # 更新图标
+                icon_name = lang.get("icon", "")
+                icons_dir = get_lang_icons_dir()
+                if icon_name:
+                    icon_path = icons_dir / icon_name
+                    pix = QPixmap(str(icon_path))
+                    if not pix.isNull():
+                        item.setIcon(QIcon(pix.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
+                    else:
+                        item.setIcon(QIcon())
+                else:
+                    item.setIcon(QIcon())
+                break
+
+    def _pick_language_icon(self, lang: Dict) -> None:
+        """打开图标选择对话框，为语言设置图标。"""
+        dlg = LangIconPickerDialog(self)
+        if dlg.exec_() == QDialog.Accepted:
+            lang["icon"] = dlg.selected_icon()
+            self._save_state()
+            self._refresh_list_item_for_language(lang)
 
     def _set_language_tooltip(self, item: QListWidgetItem, lang: Dict) -> None:
         """Set tooltip on a language list item from the notes field.
@@ -1834,7 +1968,7 @@ class MainWindow(QMainWindow):
                 lbl = self._status_labels.get(key)
                 if lbl is not None:
                     lbl.setText(
-                        f'<span style="color:{UITheme.STATUS_MISSING_COLOR}; font-weight:600; font-size:14px;">○</span>'
+                        f'<span style="font-family:\'Noto Sans SC\'; color:{UITheme.STATUS_MISSING_COLOR}; font-weight:600; font-size:14px;">○</span>'
                         f"\u2003{self._asset_label_title(key)}"
                     )
                     lbl.setToolTip("")
@@ -1865,7 +1999,7 @@ class MainWindow(QMainWindow):
             lbl = self._status_labels.get(key)
             if lbl is not None:
                 lbl.setText(
-                    f'<span style="color:{color}; font-weight:600; font-size:14px;">{mark}</span>'
+                    f'<span style="font-family:\'Noto Sans SC\'; color:{color}; font-weight:600; font-size:14px;">{mark}</span>'
                     f"\u2003{labels_short[key]}"
                 )
                 lbl.setToolTip(tip)
@@ -2049,6 +2183,7 @@ class MainWindow(QMainWindow):
 
         menu = QMenu(self)
         act_rename = menu.addAction("重命名")
+        act_icon = menu.addAction("选择图标")
         act_delete = menu.addAction("删除…")
         menu.addSeparator()
         act_export = menu.addAction("导出语言包…")
@@ -2058,6 +2193,8 @@ class MainWindow(QMainWindow):
         chosen = menu.exec_(global_pos)
         if chosen == act_rename:
             self.rename_current_language()
+        elif chosen == act_icon:
+            self._pick_language_icon(lang)
         elif chosen == act_delete:
             self._delete_language_confirmed(lang)
         elif chosen == act_export:
