@@ -1875,28 +1875,7 @@ class MainWindow(QMainWindow):
     def _language_row_text(self, lang: Dict) -> str:
         return lang.get('name', '未命名')
 
-    def _refresh_list_item_for_language(self, lang: Dict) -> None:
-        """刷新左侧语言列表中指定语言的条目（文字 + 图标）。"""
-        assert self.language_list is not None
-        lang_id = lang.get("id", "")
-        for i in range(self.language_list.count()):
-            item = self.language_list.item(i)
-            if item and item.data(Qt.UserRole) == lang_id:
-                item.setText(self._language_row_text(lang))
-                self._set_language_tooltip(item, lang)
-                # 更新图标
-                icon_name = lang.get("icon", "")
-                icons_dir = get_lang_icons_dir()
-                if icon_name:
-                    icon_path = icons_dir / icon_name
-                    pix = QPixmap(str(icon_path))
-                    if not pix.isNull():
-                        item.setIcon(QIcon(pix.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
-                    else:
-                        item.setIcon(QIcon())
-                else:
-                    item.setIcon(QIcon())
-                break
+    
 
     def _pick_language_icon(self, lang: Dict) -> None:
         """打开图标选择对话框，为语言设置图标。"""
@@ -1904,7 +1883,7 @@ class MainWindow(QMainWindow):
         if dlg.exec_() == QDialog.Accepted:
             lang["icon"] = dlg.selected_icon()
             self._save_state()
-            self._refresh_list_item_for_language(lang)
+            self._refresh_list_item_for_language(lang["id"])
 
     def _set_language_tooltip(self, item: QListWidgetItem, lang: Dict) -> None:
         """Set tooltip on a language list item from the notes field.
@@ -1916,6 +1895,7 @@ class MainWindow(QMainWindow):
             item.setToolTip("")
 
     def _refresh_list_item_for_language(self, lang_id: str) -> None:
+        """刷新左侧语言列表中指定语言的条目（文字 + 图标 + tooltip）。"""
         assert self.language_list is not None
         for i in range(self.language_list.count()):
             item = self.language_list.item(i)
@@ -1924,6 +1904,18 @@ class MainWindow(QMainWindow):
                 if lang:
                     item.setText(self._language_row_text(lang))
                     self._set_language_tooltip(item, lang)
+                    # 更新图标
+                    icon_name = lang.get("icon", "")
+                    icons_dir = get_lang_icons_dir()
+                    if icon_name:
+                        icon_path = icons_dir / icon_name
+                        pix = QPixmap(str(icon_path))
+                        if not pix.isNull():
+                            item.setIcon(QIcon(pix.scaled(24, 24, Qt.KeepAspectRatio, Qt.SmoothTransformation)))
+                        else:
+                            item.setIcon(QIcon())
+                    else:
+                        item.setIcon(QIcon())
                 break
 
     def _ensure_material_bundle(self, lang: Dict) -> None:
