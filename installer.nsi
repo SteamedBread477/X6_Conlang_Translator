@@ -89,6 +89,10 @@ Section "!主程序" SecMain
 
     SetOutPath "$INSTDIR"
 
+    ; 用户预设配置（含词作模版 ask_templates、字体偏好 font_settings 等；
+    ; 敏感字段 paperhub_api_key / paperhub_enabled 已在打包时清除）
+    File "dist\Nikki Conlang Forge\app_config.json"
+
     ; ── 写入卸载信息到注册表 ────────────────────────────────────
     WriteUninstaller "$INSTDIR\uninstall.exe"
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "DisplayName" "${APP_NAME}"

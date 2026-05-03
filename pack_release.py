@@ -172,14 +172,49 @@ def copy_data() -> None:
 
 
 def cleanup() -> None:
-    """删除不应分发的文件。"""
-    print("[4/5] 清理不应分发的文件")
+    """清理不应分发的敏感数据，保留用户自定义配置（如 ask_templates、font_settings）。"""
+    print("[4/5] 清理不应分发的敏感数据")
 
-    # 确保不存在 app_config.json（含 API Key，首次运行自动创建）
+    # app_config.json 中含 API Key 等敏感字段，但也含用户自定义的
+    # ask_templates（词作模版）和 font_settings 等非敏感数据。
+    # 做法：先将项目根目录的 app_config.json 复制到 dist → 再清除敏感字段 → 保留其余。
+
+    # 先从项目根目录复制最新的 app_config.json（含词作模版等用户数据）
+    src_app_config = PROJECT_ROOT / "app_config.json"
     app_config = DIST_DIR / "app_config.json"
-    if app_config.exists():
-        app_config.unlink()
-        print("  已删除 app_config.json（含 API Key，不应分发）")
+    if src_app_config.is_file():
+        shutil.copy2(src_app_config, app_config)
+        print("  已从项目根目录复制 app_config.json（含词作模版等用户数据）")
+
+    SENSITIVE_KEYS = {
+        "paperhub_api_key",       # API Key，绝对不能分发
+        "paperhub_enabled",       # 是否启用，用户首次运行应手动开启
+    }
+
+    if app_config.is_file():
+        try:
+            with app_config.open("r", encoding="utf-8") as fh:
+                cfg = json.load(fh)
+            if isinstance(cfg, dict):
+                removed = [k for k in SENSITIVE_KEYS if k in cfg]
+                for k in removed:
+                    cfg.pop(k, None)
+                # 如果清除后还有内容（如 ask_templates / font_settings），写回
+                if cfg:
+                    with app_config.open("w", encoding="utf-8") as fh:
+                        json.dump(cfg, fh, ensure_ascii=False, indent=2)
+                    print(f"  已从 app_config.json 中移除敏感字段: {removed}")
+                    kept = [k for k in cfg if k not in SENSITIVE_KEYS]
+                    print(f"  已保留用户自定义字段: {kept}")
+                else:
+                    app_config.unlink()
+                    print("  app_config.json 仅含敏感字段，已整体删除")
+            else:
+                app_config.unlink()
+                print("  app_config.json 格式异常，已删除")
+        except (json.JSONDecodeError, OSError) as exc:
+            print(f"  app_config.json 处理失败: {exc}，已删除")
+            app_config.unlink(missing_ok=True)
 
     # 删除 dist 根目录下的残留（如果存在）
     dist_root = PROJECT_ROOT / "dist"
@@ -235,7 +270,16 @@ def print_summary() -> None:
 
     # app_config.json 不应存在
     app_config = DIST_DIR / "app_config.json"
-    print(f"  app_config.json: {'存在（警告！应删除）' if app_config.exists() else '不存在（正确）'}")
+    if app_config.exists():
+        try:
+            with app_config.open("r", encoding="utf-8") as fh:
+                cfg = json.load(fh)
+            non_sensitive = [k for k in cfg if k not in {"paperhub_api_key", "paperhub_enabled"}]
+            print(f"  app_config.json: 存在（含 {non_sensitive}，敏感字段已清除）")
+        except Exception:
+            print("  app_config.json: 存在（无法读取内容）")
+    else:
+        print("  app_config.json: 不存在（首次运行将自动创建）")
 
     # 总大小
     total_size = sum(f.stat().st_size for f in DIST_DIR.rglob("*") if f.is_file()) / (1024 * 1024)
