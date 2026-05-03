@@ -9,7 +9,8 @@ from app.app_paths import get_data_dir, get_icon_source_path, get_icon_ico_path,
 from app.paperhub_settings import DEFAULT_ASK_TEMPLATES, load_ask_templates, save_ask_templates
 
 from PyQt5.QtCore import QThread, Qt, QSize, pyqtSignal
-from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
+from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QColor, QFont, QFontMetrics, QIcon, QPainter, QPixmap
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -35,6 +36,9 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSplitter,
+    QStyledItemDelegate,
+    QStyle,
+    QStyleOptionViewItem,
     QTabWidget,
     QTableWidget,
     QTableWidgetItem,
@@ -365,6 +369,53 @@ class LangIconPickerDialog(QDialog):
 
 
 # ---------------------------------------------------------------------------
+# 语言列表 Delegate —— 选中态背景不污染图标原色
+# ---------------------------------------------------------------------------
+
+class LanguageListDelegate(QStyledItemDelegate):
+    """选中态时整行绘制深紫色背景，然后单独重绘图标（原色）和白色文字，
+    确保图标像素不受紫色背景染色影响。"""
+
+    def paint(self, painter: QPainter, option, index) -> None:
+        if option.state & QStyle.State_Selected:
+            # 判断是否有图标，决定文字区域偏移
+            icon = index.data(Qt.DecorationRole)
+            has_icon = icon and not icon.isNull()
+            icon_width = option.rect.height() if has_icon else 0
+
+            # 整行绘制深紫色背景
+            painter.save()
+            painter.setRenderHint(QPainter.Antialiasing)
+            painter.setBrush(QColor("#9B94F2"))
+            painter.setPen(Qt.NoPen)
+            painter.drawRoundedRect(option.rect, 8, 8)
+            painter.restore()
+
+            # 在紫色背景上重绘图标（原色）
+            if has_icon:
+                icon_rect = QRect(option.rect.x() + 2, option.rect.y() + 2,
+                                  icon_width - 4, icon_width - 4)
+                icon.paint(painter, icon_rect)
+
+            # 在紫色背景上绘制白色加粗文字
+            text_rect = QRect(option.rect.x() + icon_width, option.rect.y(),
+                              option.rect.width() - icon_width, option.rect.height())
+            text = index.data(Qt.DisplayRole)
+            if text:
+                bold_font = QFont(option.font)
+                bold_font.setBold(True)
+                painter.save()
+                painter.setFont(bold_font)
+                painter.setPen(QColor("#FFFFFF"))
+                fm = QFontMetrics(bold_font)
+                elided = fm.elidedText(text, Qt.ElideRight, text_rect.width() - 16)
+                painter.drawText(text_rect.adjusted(8, 0, -8, 0),
+                                Qt.AlignVCenter | Qt.AlignLeft, elided)
+                painter.restore()
+        else:
+            super().paint(painter, option, index)
+
+
 # 主窗口
 # ---------------------------------------------------------------------------
 
@@ -578,6 +629,7 @@ class MainWindow(QMainWindow):
 
 
         self.language_list = QListWidget()
+        self.language_list.setItemDelegate(LanguageListDelegate(self.language_list))
         self.language_list.setSelectionMode(QListWidget.SingleSelection)
         self.language_list.setContextMenuPolicy(Qt.CustomContextMenu)
         self.language_list.customContextMenuRequested.connect(self._on_language_list_context_menu)
