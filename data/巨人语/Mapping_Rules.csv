@@ -1,2020 +1,235 @@
-﻿自创语词汇,IPA音标,TTS友好拼写
-sul,/sul/,sool
-gomä,/homä/,goh-mah
-drak,/drak/,drak
-zaka,/ðaka/,thah-kah
-zakil,/ðakil/,thah-keel
-skal,/skal/,skal
-höka,/xøka/,kheu-kah
-lif,/lif/,lif
-död,/død/,dud
-mova,/mova/,moh-vah
-fam,/fam/,fam
-ven,/ven/,ven
-fien,/fien/,fee-en
-hel,/hel/,hel
-rit,/rit/,rit
-löva,/løva/,luh-vah
-sanga,/saŋa/,sahn-gah
-vat,/vat/,vat
-eld,/eld/,eld
-sten,/sten/,sten
-trä,/træ/,trae
-mi,/mi/,mi
-ti,/ti/,ti
-hon,/hon/,hon
-miz,/mið/,meeth
-tiz,/tið/,teeth
-honz,/honð/,honth
-se,/se/,se
-so,/so/,so
-Kul,/kul/,kul
-Kas,/kas/,kas
-Kör,/kør/,kur
-Kval,/kval/,kval
-Khün,/xyn/,khuen
-Kel,/kel/,kel
-ön,/øn/,un
-nun,/nun/,nun
-ro,/ro/,ro
-tul,/tul/,tul
-vlön,/vløn/,vleun
-dö,/dø/,duh
-vör,/vør/,vur
-nön,/nøn/,nun
-vans,/vans/,vans
-rüs,/rys/,rus
-foz,/foz/,fohz
-böka,/bøka/,buh-kah
-zekva,/ðekva/,thek-vah
-öm,/øm/,um
-setva,/setva/,set-vah
-na,/na/,na
-es,/es/,es
+自创语词汇,IPA音标,TTS友好拼写
+anim,/ˈa.nim/,AH-neem
+spiritus,/ˈspi.ri.tus/,SPI-ri-tus
+vit,/viːt/,veet
+mort,/mɔrt/,mohrt
+renasc,/reˈnaːsk/,reh-NAHSK
+esse,/ˈes.se/,ES-seh
+temp,/temp/,temp
+aetern,/aeˈtern/,ai-TERN
+praeter,/ˈprae.ter/,PRI-tehr
+nunc,/nunk/,noonk
+futur,/fuˈtur/,foo-TOOR
+hodi,/ˈho.di/,HOH-dee
+cras,/kras/,krahs
+heri,/ˈhe.ri/,HEH-ree
+mane,/ˈma.ne/,MAH-neh
+meridi,/meˈri.di/,meh-RI-dee
+vesper,/ˈwes.per/,WES-pehr
+nox,/noks/,noks
+lucis,/ˈlu.kis/,LOO-kis
+tenebr,/ˈte.ne.br/,TEH-neh-br
+ign,/iŋn/,ing
+aqu,/akʷ/,ah-kw
+terr,/ter/,tehr
+aer,/a.er/,ai-ehr
+cael,/ka.el/,KAI-el
+tellus,/ˈtel.lus/,TEL-lus
+mar,/mar/,mahr
+fluv,/fluː/,floo
+lacus,/ˈla.kus/,LAH-kus
+mont,/mont/,mohnt
+silv,/silwa/,SIL-wah
+petr,/ˈpe.tr/,PEH-tr
+metall,/meˈtal/,meh-TAHL
+lign,/liɲ/,leeng
+ego,/ˈe.go/,EH-goh
+tu,/tuː/,too
+il,/il/,eel
+nos,/noːs/,nohs
+vos,/woːs/,wohs
+ilz,/ilz/,eelz
+hic,/hik/,hik
+quis,/kʷis/,kwis
+quid,/kʷid/,kwid
+ubi,/ˈu.bi/,OO-bee
+cur,/kur/,koor
+quomod,/kʷoˈmoːd/,kwoh-MOHD
+sui,/su.i/,soo-ee
+omnes,/ˈom.nes/,OM-nes
+aliquis,/aˈli.kʷis/,ah-LI-kwis
+nemo,/ˈne.mo/,NEH-moh
+magn,/maŋn/,mahgn
+parv,/parw/,pahrw
+alt,/alt/,aht
+humil,/ˈhu.mil/,HOO-mil
+long,/loːŋ/,lohng
+brev,/brev/,brehv
+lat,/lat/,laht
+angust,/aŋˈɡus/,ang-GOOST
+grav,/ɡraw/,grahv
+lev,/leːw/,layv
+dur,/dur/,door
+molli,/ˈmol.li/,MOL-lee
+calid,/ˈka.lid/,KAH-lid
+frigid,/ˈfri.dʒid/,FRI-jid
+nov,/now/,nohv
+vet,/weːt/,wayt
+bon,/boːn/,bohn
+mal,/mal/,mahl
+formos,/forˈmoːs/,for-MOHS
+turp,/turp/,toorp
+fort,/fort/,fohrt
+infirm,/inˈfir.m/,in-FIRM
+sapient,/saˈpi.ent/,sah-PI-ent
+stult,/stult/,stoolt
+audax,/auˈdaks/,ow-DAKS
+timid,/ˈti.mid/,TI-mid
+laet,/la.et/,lah-ET
+trist,/trist/,trist
+irat,/iˈrat/,i-RAHT
+tranquil,/tranˈkʷi.l/,trahn-KWIL
+plus,/plus/,ploos
+minus,/ˈmi.nus/,MI-nus
+optim,/opˈti.m/,op-TIM
+pessim,/pesˈsi.m/,pes-SIM
+ambul,/amˈbu.l/,am-BOO-l
+curr,/kur/,koor
+salt,/salt/,saht
+scand,/skand/,skahnd
+nat,/naːt/,naht
+vol,/wol/,wohl
+sed,/sed/,sed
+stat,/staːt/,staht
+iac,/jak/,yak
+vid,/wid/,weed
+aud,/aud/,owd
+olfact,/olˈfakt/,ol-FAKT
+gust,/ɡust/,goost
+tang,/taŋɡ/,tahng
+dic,/dik/,deek
+clam,/klam/,klahm
+cant,/kant/,kahnt
+plor,/plor/,plor
+rid,/rid/,reed
+ed,/ed/,ed
+bib,/bib/,bib
+spir,/spir/,speer
+dorm,/dorm/,dorm
+vigil,/ˈwi.ɡil/,WEE-gil
+cogit,/ˈko.ɡit/,KOH-git
+sci,/skiː/,skee
+disc,/disk/,disk
+doc,/dok/,dok
+am,/am/,ahm
+odi,/oːdi/,OH-dee
+vol,/wol/,wohl
+neces,/neˈkes/,neh-KES
+pot,/pot/,poht
+deb,/deb/,deb
+don,/don/,dohn
+cap,/kap/,kahp
+fac,/fak/,fahk
+aedific,/aeˈdi.fik/,ai-DI-fik
+destru,/deˈstru/,deh-STROO
+aper,/aˈper/,ah-PEHR
+claud,/klawd/,klowd
+intr,/intr/,intr
+ex,/eks/,eks
+ven,/wen/,wen
+eo,/e.o/,eh-oh
+man,/man/,mahn
+mut,/mut/,moot
+initi,/iˈni.ti/,i-NEE-tee
+fin,/fin/,fin
+adiuv,/aˈdi.uw/,ah-DI-oo
+noc,/nok/,nohk
+proteg,/proˈteɡ/,proh-TEHG
+bell,/bel/,bel
+vinc,/wink/,wingk
+defeat,/de.feˈat/,deh-feh-AHT
+hab,/hab/,hahb
+ten,/ten/,ten
+est,/est/,est
 ha,/ha/,hah
-gut,/gut/,goot
-dålig,/dɔːliɡ/,daw-lik
-stor,/stʊr/,stoor
-liten,/liːtɛn/,lee-ten
-nuli,/nuli/,noo-lee
-fjali,/fjali/,fya-lee
-skön,/ɕœn/,shun
-ful,/ful/,ful
-glad,/ɡlɑːd/,glahd
-sorglig,/sɔrɡliɡ/,sor-lik
-tyst,/tʏst/,tust
-högt,/høːkt/,hukt
-varm,/varm/,varm
-kall,/kal/,kal
-ljus,/jʉːs/,yus
-mörk,/mœrk/,murk
-stark,/stark/,stark
-svag,/svɑːɡ/,svahg
-snell,/snɛl/,snel
-sakta,/sakta/,sak-tah
-djuni,/jʉːni/,yoo-nee
-grund,/ɡrɵnd/,grund
-hög,/høːɡ/,hug
-låg,/lɔːɡ/,lawg
-lång,/lɔŋ/,lawng
-kort,/kʊrt/,kurt
-äta,/ɛːta/,ay-tah
-dricka,/drɪkːa/,drik-ah
-sova,/suːva/,soo-vah
-gå,/ɡoː/,gaw
-springa,/sprɪŋːa/,spreeng-ah
-sitta,/sɪtːa/,sit-ah
-stå,/stoː/,staw
-ligga,/lɪɡːa/,lig-ah
-prata,/prɑːta/,prah-tah
-lyssna,/lʏsːna/,lus-nah
-tänka,/tɛŋka/,teng-kah
-känna,/ɕɛnːa/,shen-nah
-röra,/røːra/,ruh-rah
-lukta,/lɵkta/,luk-tah
-smaka,/smɑːka/,smah-kah
-ge,/jeː/,yay
-ta,/tɑː/,tah
-göra,/jøːra/,yur-ah
-bygga,/bʏɡːa/,bug-ah
-förstöra,/fœʂʈøːra/,fur-stur-ah
-börja,/bœrja/,bur-yah
-sluta,/slʉːta/,sloo-tah
-söka,/søːka/,suh-kah
-finna,/fɪnːa/,fin-nah
-förlora,/fœrluːra/,fur-loo-rah
-hjälpa,/jɛlːpa/,yel-pah
-skada,/skɑːda/,skah-dah
-skydda,/ɕʏdːa/,shud-dah
-läka,/lɛːka/,lay-kah
-lära,/lɛːra/,lay-rah
-undervisa,/ɵndɛrviːsa/,un-der-vee-sah
-komma ihåg,/kɔma ihoːɡ/,kom-ah ee-hawg
-glömma,/jlœmːa/,lyum-mah
-tro,/truː/,troo
-tvivla,/tvɪːvla/,tvee-vlah
-hoppas,/hɔpːas/,hop-pahs
-räda,/rɛːda/,ray-dah
-modig,/muːdɪɡ/,moo-dik
-arga,/arɡa/,ar-gah
-lugn,/lɵɡn/,lugn
-hungrig,/hɵŋrɪɡ/,hung-rik
-törstig,/tœʂtɪɡ/,tur-stik
-trött,/trœt/,trut
-vakna,/vakna/,vak-nah
-sjuk,/ɧʉːk/,shuk
-frisk,/frɪsk/,frisk
-födas,/føːdas/,fuh-dahs
-växa,/vɛksa/,vek-sah
-åldras,/ɔldras/,awl-drahs
-andas,/andɑs/,an-dahs
-slå,/slɔː/,slaw
-öga,/øːɡa/,uh-gah
-öra,/øːra/,uh-rah
-näsa,/nɛːsa/,nay-sah
-mun,/mʉːn/,mun
-hand,/hand/,hand
-fot,/fuːt/,foot
-huvud,/hʉːvɵd/,hoo-vud
-hjärta,/jɛrta/,yair-tah
-blod,/bluːd/,blood
-kött,/ɕœt/,shut
-ben,/beːn/,bayn
-hud,/hʉːd/,hud
-hår,/hoːr/,hor
-kläder,/klɛːdɛr/,klay-der
-hus,/hʉːs/,hus
-dörr,/dœr/,dur
-fönster,/fœnstɛr/,fun-ster
-säng,/sɛŋ/,seng
-bord,/buːrd/,boord
-stol,/stuːl/,stool
-väg,/vɛːɡ/,vayg
-bro,/bruː/,broo
-berg,/bærj/,barj
-flod,/fluːd/,flood
-hav,/hɑːv/,hahv
-himmel,/hɪmːɛl/,him-el
-sol,/suːl/,sool
-måne,/mɔːnɛ/,maw-neh
-stjärna,/ɕtjɛrːna/,shyair-nah
-moln,/mʊln/,muln
-vind,/vɪnd/,vind
-regn,/rɛɡn/,regn
-snö,/snøː/,snuh
-åska,/ɔsːka/,aws-kah
-blixt,/blɪkst/,blikst
-idag,/iːdɑːɡ/,ee-dahg
-imorgon,/iːmɔrɡuːn/,ee-mor-goon
-igår,/iːɡoːr/,ee-gawr
-nu,/nuː/,nuu
-sedan,/seːdan/,say-dan
-innan,/ɪnːan/,in-nan
-efter,/ɛftɛr/,ef-ter
-morgon,/mɔrɡuːn/,mor-goon
-middag,/mɪdːaɡ/,mid-dahg
-kväll,/ɕvɛl/,shvel
-natt,/nat/,nat
-vår,/voːr/,vawr
-sommar,/sɔmːar/,som-mar
-höst,/hœst/,hust
-vinter,/vɪntɛr/,vin-ter
-år,/oːr/,awr
-månad,/mɔːnad/,maw-nad
-vecka,/vɛkːa/,vek-kah
-dag,/dɑːɡ/,dahg
-timme,/tɪmːɛ/,tim-eh
-minut,/mɪnʉːt/,min-ut
-sekund,/sɛkɵnd/,sek-und
-evigt,/eːviɡt/,ay-vikt
-aldrig,/alːdrɪɡ/,al-drik
-alltid,/alːtiːd/,al-teed
-ofta,/ʊfta/,uf-tah
-ibland,/iːblan/,ee-blan
-sällan,/sɛlːan/,sel-lan
-en gång,/ɛn ɡɔŋ/,en gawng
-många gånger,/mɔŋːa ɡɔŋːɛr/,mawn-gah gawn-ger
-tillsammans,/tɪlsamːans/,til-sam-ans
-ensam,/ɛnsam/,en-sam
-nära,/nɛːra/,nay-rah
-långt borta,/lɔŋt buɾta/,lawngt bor-tah
-här,/hɛːr/,hair
-där,/dɛːr/,dair
-inuti,/iːnɵti/,ee-nuh-tee
-utanför,/ʉːtanføːr/,oo-tan-fur
-mitten,/mɪtːɛn/,mit-en
-kant,/kant/,kant
-ovan,/uːvan/,oo-van
-under,/ɵndɛr/,un-der
-framför,/framføːr/,fram-fur
-bakom,/bɑːkʊm/,bah-kum
-bredvid,/breːdviːd/,brayd-veed
-mellan,/mɛlːan/,mel-lan
-genom,/jeːnʊm/,yay-num
-runt,/rɵnt/,runt
-om,/uːm/,um
-eftersom,/ɛftɛʂuːm/,ef-ter-sum
-så,/soː/,saw
-men,/meːn/,mayn
-eller,/ɛlːɛr/,el-ler
-dock,/dʊk/,duk
-därför,/dɛrˈføːr/,dar-fur
-fastän,/fɑːstɛn/,fas-tan
-trots,/trʊts/,truts
-såvida inte,/soːviːda ˈɪntɛ/,saw-vee-dah in-teh
-tills,/tɪls/,tils
-när,/nɛːr/,nair
-medan,/meːdan/,may-dan
-hur,/hʉːr/,hur
-hur mycket,/hʉːr myːkɛ/,hur my-keh
-tillräckligt,/tɪlːrɛkːliɡt/,til-rek-lik
-mycket,/myːkɛt/,my-keh
-lite,/liːtɛ/,lee-teh
-helt,/hɛlt/,helt
-nästan,/nɛsːtan/,nes-tan
-verkligen,/værːkliɡɛn/,var-kli-gen
-möjligen,/mœjliɡɛn/,muh-li-gen
-säkert,/sɛːkɛrt/,say-kert
-osäker,/ʊsɛːkɛr/,u-say-ker
-rätt,/rɛt/,ret
-fel,/fɛl/,fel
-enkelt,/ɛŋklɛt/,eng-klet
-svårt,/svɔrt/,svawrt
-viktigt,/vɪkːtiɡt/,vik-tikt
-oviktigt,/ʊvɪkːtiɡt/,u-vik-tikt
-nödvändigt,/nøːdvɛnːdiɡt/,nuh-dven-dikt
-valfritt,/valfriːt/,val-freet
-vanligt,/vanːliɡt/,van-lik
-särskilt,/sɛrskɪlt/,sar-skilt
-unik,/ʉːniːk/,oo-neek
-samma,/samːa/,sam-ah
-olika,/uːliːka/,oo-lee-kah
-liknande,/liːknandɛ/,leek-nan-deh
-motsatt,/muːtsat/,muts-at
-första,/fœʂʈa/,fur-stah
-sista,/sɪsːta/,sis-tah
-nästa,/nɛsːta/,nes-tah
-föregående,/fœrɛɡoːɛndɛ/,fur-eh-gaw-end-eh
-huvudsaklig,/hʉːvdˌsɑːkliɡ/,huvd-sahk-lik
-mindre viktig,/mɪnːdrɛ vɪkːtiɡ/,min-dreh vik-tik
-offentlig,/ʊfɛntliɡ/,u-fent-lik
-privat,/prɪvaːt/,pri-vaht
-säker,/sɛːkɛr/,say-ker
-farlig,/farliɡ/,far-lik
-ren,/rɛːn/,rayn
-smutsig,/smɵtsiɡ/,smuts-ik
-färsk,/færʃ/,fersh
-rutten,/rɵtːɛn/,rut-en
-hård,/hoːrd/,hawrd
-mjuk,/mjʉːk/,myuk
-slät,/slɛːt/,slayt
-grovt,/ɡruːvt/,groovt
-sött,/sœt/,sut
-surt,/sɵrt/,sur-t
-bittert,/bɪtːɛrt/,bit-ert
-salt,/salt/,salt
-starkt,/starːkt/,starkt
-doftande,/dʊftandɛ/,duft-an-deh
-illa luktande,/ɪlːa lɵktandɛ/,il-ah luk-tan-deh
-godt,/ɡuːt/,good
-odugligt,/ʊdɵɡliːkt/,u-du-lik
-användbart,/anvɛndbɑːrt/,an-vent-bawrt
-oanvändbart,/ʊanvɛndbɑːrt/,u-an-vent-bawrt
-arbetande,/arbɛtandɛ/,ar-beh-tan-deh
-vilande,/viːlandɛ/,vee-lan-deh
-aktiv,/aktiːv/,ak-teev
-passiv,/pasːiːv/,pas-eev
-öppen,/øːpɛn/,uh-pen
-stängd,/stɛŋd/,stengd
-hel,/heːl/,hayl
-bruten,/brɵːtɛn/,brut-en
-tom,/tuːm/,toom
-full,/fɵl/,ful
-lätt,/lɛt/,let
-tung,/tɵŋ/,tung
-billigt,/bɪlːiɡt/,bil-ikt
-dyrt,/dyːrt/,dyurt
-gratis,/ɡratɪs/,grah-tis
-betalt,/beːtalːt/,bay-talt
-äkta,/ɛkːta/,ek-tah
-falskt,/falːskt/,falskt
-naturligt,/natʉːrliɡt/,na-tur-lik
-konstgjort,/kʊnstjʊːrt/,kunst-yurt
-modernt,/muːdɛrnt/,moo-dern-t
-forntida,/fɔrnːtiːda/,for-nee-dah
-framtida,/framtiːda/,fram-tee-dah
-nutida,/nuːtiːda/,nu-tee-dah
-lokalt,/luːkalt/,loo-kalt
-utländskt,/ʉːtlɛnːskt/,oo-tlen-skt
-bekant,/bɛkant/,beh-kant
-obekant,/ʊbɛkant/,u-beh-kant
-välkommen,/vɛlkɔmːɛn/,vel-kom-en
-ovälkommen,/ʊvɛlkɔmːen/,u-vel-kom-en
-vänlig,/vɛnːliɡ/,ven-lik
-fiendtlig,/fiːɛndtliɡ/,feen-dt-lik
-neutral,/nɵtral/,nu-tral
-positiv,/puːziːtiːv/,poo-zee-teev
-negativ,/neɡatiːv/,neh-ga-teev
-optimistisk,/ʊptɪmɪsːtɪsk/,up-ti-mis-tisk
-pessimistisk,/pɛsɪmɪsːtɪsk/,pes-i-mis-tisk
-realistisk,/reːalistɪsk/,ray-a-lis-tisk
-idealisk,/iːdeːalɪsk/,ee-day-a-lisk
-praktisk,/prakːtɪsk/,prak-tisk
-teoretisk,/teːʊreːtɪsk/,tay-u-ray-tisk
-konkret,/kʊŋkrɛːt/,kun-krayt
-abstrakt,/apstrakːt/,ap-strakt
-enkla,/ɛŋkla/,eng-kla
-komplexa,/kʊmplɛksa/,kum-plek-sah
-tydlig,/tyːdliɡ/,tyu-dlik
-oklar,/ʊklaːr/,u-klawr
-exakt,/ɛɡzakːt/,eg-zakt
-ungefärlig,/ɵŋɛfɛːrliɡ/,un-eh-fayr-lik
-precis,/preːsiːs/,pray-sees
-grov,/ɡruːv/,groov
-detaljerad,/dɛtaljeːrad/,deh-tal-yay-rad
-omfattande,/ʊmfatːandɛ/,um-fat-an-deh
-begränsad,/bɛɡrɛnsaːd/,beh-grens-awd
-oändlig,/ʊːɛndliɡ/,oo-end-lik
-tillfällig,/tɪlːɛːɡliɡ/,til-lay-klik
-permanent,/pɛrmanɛnt/,per-ma-nent
-provisorisk,/pruːviːzuːrɪsk/,proo-vee-zur-isk
-formell,/fʊrmɛlː/,fur-mel
-informell,/ɪnfʊrmɛlː/,in-fur-mel
-seriös,/seːriøːs/,say-ree-us
-humoristisk,/hɵmʊrɪsːtɪsk/,hu-mu-ris-tisk
-intressant,/ɪntrɛsːant/,in-tres-ant
-tråkigt,/trɔːkiɡt/,traw-kikt
-spännande,/spɛnːandɛ/,spen-an-deh
-tråkig,/trɔːkiɡ/,traw-kik
-vacker,/vakːɛr/,vak-er
-ful,/ful/,ful
-tilltalande,/tɪltalandɛ/,til-ta-lan-deh
-avstötande,/avstøːtandɛ/,av-stuh-tan-deh
-bekväm,/bɛkːvɛm/,bek-vem
-obekväm,/ʊbɛkːvɛm/,u-bek-vem
-trevlig,/treːvliɡ/,tray-vlik
-otrevlig,/ʊtreːvliɡ/,u-tray-vlik
-avslappnad,/avslapːnad/,av-slap-nad
-stressad,/strɛsːad/,stres-ad
-ångestfylld,/ɔŋːɛstfyld/,awn-gest-fuld
-lugn,/lɵɡn/,lugn
-upprörd,/ɵprøːrd/,up-rurd
-arg,/arːɡ/,arg
-besviken,/bɛsviːkɛn/,beh-svee-ken
-nöjd,/nœjd/,nuyd
-nyfiken,/nyːfiːkɛn/,nyu-fee-ken
-likgiltig,/lɪkjiːltiɡ/,lik-yilt-ik
-entusiastisk,/ɛntʉːziːastɪsk/,en-too-zee-as-tisk
-kall,/kal/,kal
-varm,/varm/,varm
-snäll,/snɛl/,snel
-grym,/ɡryːm/,grum
-ärlig,/ɛːrliɡ/,ayr-lik
-hycklande,/hʏkːlandɛ/,huk-lan-deh
-lojal,/luːjal/,loo-yal
-förrädisk,/fœrːɛːdɪsk/,fur-ray-dis-k
-pålitlig,/poːliːtliɡ/,paw-leet-lik
-opålitlig,/ʊpoːliːtliɡ/,u-paw-leet-lik
-ansvarsfull,/anːsvɛrsfɵl/,an-svers-full
-ansvarslös,/anːsvɛrsluːs/,an-svers-loos
-mogen,/muːɡɛn/,moo-gen
-barnslig,/bɑːɳslɪɡ/,barn-slik
-vis,/viːs/,vees
-dum,/dɵm/,dum
-smart,/smart/,smart
-trögtänkt,/trøːɡtɛŋkt/,trug-tankt
-snabbtänkt,/snabːtɛŋkt/,snab-tankt
-långsam,/lɔŋːsam/,lawng-sam
-effektiv,/ɛfɛkːtiːv/,eh-fek-teev
-ineffektiv,/ɪnɛfɛkːtiːv/,in-eh-fek-teev
-framgångsrik,/framɡɔŋsriːk/,fram-gawns-reek
-misslyckad,/mɪsːlykːad/,mis-lyuk-ad
-lycklig,/lykːliɡ/,luk-lik
-olycklig,/ʊlykːliɡ/,u-luk-lik
-lycklig,/lykːliɡ/,luk-lik
-smärtsam,/smæːrtsam/,smair-tsam
-fredlig,/freːdliɡ/,frayd-lik
-krigisk,/kriːɡɪsk/,kree-gisk
-våldsam,/vuːldsam/,vuld-sam
-mild,/mɪld/,mild
-intensiv,/ɪntɛnːsiːv/,in-ten-seev
-svag,/svɑːɡ/,svahg
-uppenbar,/ɵpːɛnbɑːr/,up-en-bawr
-dold,/duːld/,duld
-hemlig,/hɛmːliɡ/,hem-lik
-öppen,/øːpɛn/,uh-pen
-transparent,/tranzparɛnt/,trans-pa-rent
-dimmig,/dɪmːiɡ/,dim-ik
-klar,/klɑːr/,klawr
-grumlig,/ɡrɵmliɡ/,grum-lik
-ren,/rɛːn/,rayn
-förorenad,/føːrʊreːnad/,fur-u-ray-nad
-hälsosam,/hɛlːsuːsam/,hels-oo-sam
-skadlig,/skɑːdliɡ/,skahd-lik
-gynnsam,/jʏnːsam/,yun-sam
-ogynnsam,/ʊjʏnːsam/,u-yun-sam
-positiv,/puːziːtiːv/,poo-zee-teev
-negativ,/neɡatiːv/,neh-ga-teev
-konstruktiv,/kʊnstroktiːv/,kun-struk-teev
-destruktiv,/dɛstrɵktiːv/,des-truk-teev
-kreativ,/kreːatiːv/,kray-a-teev
-rutinmässig,/ruːtiːnmɛsːiɡ/,roo-teen-mes-ik
-innovativ,/ɪnʊvaːtiːv/,in-u-va-teev
-traditionell,/tradiːsjuːnɛl/,tra-dee-syu-nel
-revolutionär,/reːvʊluːsjuːnɛːr/,ray-vu-loo-syu-nayr
-konservativ,/kɔnsɛrvaːtiːv/,kon-ser-va-teev
-progressiv,/prʊɡrɛsːiːv/,pro-gres-eev
-fri,/friː/,free
-begränsad,/bɛɡrɛnsaːd/,beh-grens-awd
-oberoende,/ʊbɛruːɛndɛ/,u-beh-roo-end-eh
-beroende,/bɛruːɛndɛ/,beh-roo-end-eh
-självständig,/ɧɛlvstɛnːdiɡ/,shelv-sten-dik
-kontrollerad,/kɔntrʊleːrad/,kon-tru-lay-rad
-kaotisk,/kaʊ̯ˈtiːsk/,kaw-tisk
-ordnad,/ʊrːdnad/,urn-dnad
-strukturerad,/stryktʊreːrad/,struk-tu-ray-rad
-slumpmässig,/slɵmpmɛsːiɡ/,slump-mes-ik
-systematisk,/sʏsteːmatɪsk/,sus-tay-ma-tisk
-tillfälligt,/tɪlfɛlːiɡt/,til-fel-ikt
-nödvändigt,/nøːdvɛnːdiɡt/,nuh-dven-dikt
-möjligt,/mœjliːkt/,muh-lik
-omöjligt,/ʊmœjliːkt/,u-muh-lik
-säkert,/sɛːkɛrt/,say-kert
-osäkert,/ʊsɛːkɛrt/,u-say-kert
-sannolik,/sanːuːliːk/,san-ool-lik
-absolut,/apːsʊluːt/,ap-su-loot
-relativ,/reːlatiːv/,ray-la-teev
-subjektiv,/sɵbjɛkːtiːv/,sub-yek-teev
-objektiv,/ʊbjɛkːtiːv/,u-byek-teev
-personlig,/pɛrːsʊnliɡ/,per-sun-lik
-kollektiv,/kʊlɛkːtiːv/,ku-lek-teev
-individuell,/ɪndɪvɪdʉːɛl/,in-di-vi-doo-el
-social,/suːsjaːl/,soo-syal
-kulturell,/kɵltɵreːl/,kul-tu-rel
-ekonomisk,/eːkʊnuːmɪsk/,ay-ku-noo-misk
-politisk,/puːliːtɪsk/,poo-lee-tisk
-religiös,/reːliːjiøːs/,ray-lee-yus
-spirituell,/spɪrɪtʉːɛl/,spir-i-too-el
-filosofisk,/fɪluːsuːfɪsk/,fi-loo-soo-fisk
-vetenskaplig,/veːtɛnɕɑːpliɡ/,vay-ten-shawp-lik
-artistisk,/arːtɪsːtɪsk/,ar-tis-tisk
-musikalisk,/mɵsɪkaːlɪsk/,mu-si-kaw-lisk
-poetisk,/puːeːtɪsk/,poo-ay-tisk
-litterär,/lɪtɛrɛːr/,li-te-rayr
-historisk,/hɪstuːrɪsk/,his-tur-isk
-geografisk,/jeːʊɡrɑːfɪsk/,yay-u-graw-fisk
-matematisk,/matɛmaːtɪsk/,ma-te-maw-tisk
-logisk,/luːɡɪsk/,loo-gisk
-emotionell,/eːmuːsjuːnɛl/,ay-moo-syu-nel
-rationell,/ratsiuːnɛl/,ra-tsyu-nel
-irrationell,/ɪratsiuːnɛl/,i-ra-tsyu-nel
-empirisk,/ɛmpɪrɪsk/,em-pi-risk
-teoretisk,/teːʊreːtɪsk/,tay-u-ray-tisk
-praktisk,/prakːtɪsk/,prak-tisk
-abstrakt,/apstrakːt/,ap-strakt
-konkret,/kʊŋkrɛːt/,kun-krayt
-symbolisk,/sʏmbuːlɪsk/,sum-bu-lisk
-metaforisk,/metafuːrɪsk/,me-ta-fur-isk
-literal,/lɪtɛraːl/,li-te-rawl
-figurativ,/fɪɡʉːratiːv/,fi-goo-ra-teev
-analitisk,/analiːtɪsk/,a-na-leet-isk
-syntetisk,/sʏnteːtɪsk/,sun-tay-tisk
-deduktiv,/deːdɵktiːv/,day-dukt-eev
-induktiv,/ɪndɵktiːv/,in-dukt-eev
-intuitiv,/ɪntɵɪtiːv/,in-too-i-teev
-reflekterande,/rɛflɛktɛrandɛ/,reh-flek-teh-ran-deh
-reaktiv,/reakːtiːv/,ray-ak-teev
-proaktiv,/pruːaktiːv/,proo-ak-teev
-defensiv,/defɛnːsiːv/,deh-fen-seev
-offensiv,/ʊfɛnːsiːv/,u-fen-seev
-passiv,/pasːiːv/,pas-eev
-aktiv,/aktiːv/,ak-teev
-dynamisk,/dynaːmɪsk/,du-na-misk
-statisk,/staːtɪsk/,staw-tisk
-flexibel,/flɛksɪbɛl/,flek-si-bel
-rigid,/riːjiːd/,ree-jeed
-anpassningsbar,/anpasːnɪŋsbɑːr/,an-pas-nings-bawr
-oböjlig,/ʊbøːliɡ/,u-buy-lik
-resilient,/rezɪliɛnt/,reh-zil-ient
-sårbar,/soːrbar/,sawr-bar
-stark,/stark/,stark
-svag,/svɑːɡ/,svahg
-motståndskraftig,/muːtstɔnːdskrafːtiɡ/,mut-stawn-ds-kraf-tik
-känslig,/ɕɛnːsiːliɡ/,shen-see-lik
-robust,/rʊbɵsːt/,ru-bust
-fragil,/fraːʒiːl/,fra-zheel
-hållbar,/hɔlːbar/,hawl-bar
-ohållbar,/ʊhɔlːbar/,u-hawl-bar
-miljövänlig,/mɪljuːvɛnːliɡ/,mil-yu-ven-lik
-skadlig för miljön,/skɑːdliɡ fœr mɪljuːn/,skahd-lik fur mil-yun
-ekologisk,/eːkʊluːɡɪsk/,ay-ku-loo-gisk
-icke-ekologisk,/ɪkːeː eːkʊluːɡɪsk/,ik-ay ay-ku-loo-gisk
-organisk,/ʊrɡaniːsk/,ur-ga-neesk
-icke-organisk,/ɪkːeː ʊrɡaniːsk/,ik-ay ur-ga-neesk
-biologisk,/biːʊluːɡɪsk/,bee-u-loo-gisk
-syntetisk,/sʏnteːtɪsk/,sun-tay-tisk
-naturlig,/natʉːrliɡ/,na-tur-lik
-artificiell,/arːtɪfɪsɪɛl/,ar-ti-fi-si-el
-autentisk,/ʊtɛnːtɪsk/,u-ten-tisk
-imitation,/ɪmɪtaːsjuːn/,i-mi-taw-syun
-original,/ʊriːɡiːnal/,u-ree-gee-nal
-kopia,/kuːpiːa/,koo-pee-ah
-unikt,/ʉːniːkt/,oo-neekt
-massproducerat,/masprɔdʊseːrat/,mas-pro-du-say-rat
-handgjort,/handjʊːrt/,hand-yurt
-maskinellt,/maskɪnɛlːt/,mas-ki-nelt
-digital,/dɪdʒɪtaːl/,di-ji-tawl
-analog,/analuːɡ/,a-na-log
-virtuell,/vɪrːtʉːɛl/,vir-too-el
-fysisk,/fʏːsɪsk/,fyu-sisk
-immateriell,/ɪmamateːriɛl/,i-ma-ma-tay-ri-el
-materiell,/mateːriɛl/,ma-tay-ri-el
-tangible,/tændʒɪbɛl/,tan-ji-bel
-intangible,/ɪntændʒɪbɛl/,in-tan-ji-bel
-synlig,/syːnliɡ/,syn-lik
-osynlig,/ʊsyːnliɡ/,u-syn-lik
-hörbar,/høːrbar/,hur-bar
-tyst,/tʏst/,tust
-osynlig,/ʊsyːnliɡ/,u-syn-lik
-uppenbar,/ɵpːɛnbɑːr/,up-en-bawr
-dold,/duːld/,duld
-hemlig,/hɛmːliɡ/,hem-lik
-känd,/ɕɛnːd/,shend
-okänd,/ʊɕɛnːd/,u-shend
-berömd,/bɛrøːmd/,beh-rumd
-obekant,/ʊbɛkant/,u-beh-kant
-inflytelserik,/ɪnflyːtɛlsɛriːk/,in-flyu-tel-se-reek
-obetydlig,/ʊbeːtyːdliɡ/,u-bay-tyud-lik
-betydelsefull,/bɛtyːdɛlsɛfɵl/,bay-tyu-del-se-full
-meningslös,/meːnɪŋsløːs/,may-ning-slus
-viktig,/vɪkːtiɡ/,vik-tik
-oviktig,/ʊvɪkːtiɡ/,u-vik-tik
-avgörande,/avjøːrandɛ/,a-vyur-an-deh
-trivial,/trɪviːal/,tri-vee-al
-väsentlig,/vɛːsɛntlɪɡ/,vay-sent-lik
-icke-väsentlig,/ɪkːeː vɛːsɛntlɪɡ/,ik-ay vay-sent-lik
-central,/sɛntraːl/,sen-trawl
-perifer,/pɛriːfɛr/,pe-ree-fer
-huvudsaklig,/hʉːvdˌsɑːkliɡ/,huvd-sahk-lik
-bisaklig,/biːsakliɡ/,bee-sak-lik
-primär,/priːmɛːr/,pree-mayr
-sekundär,/sɛkɵnːdɛːr/,se-kun-dayr
-tertiär,/tɛrːsɪɛːr/,ter-si-ayr
-grundläggande,/ɡrɵndlɛɡːandɛ/,grund-le-gan-deh
-avancerad,/avanseːrad/,a-van-say-rad
-elementär,/ɛlɛmɛnːtɛːr/,e-le-men-tayr
-komplex,/kʊmplɛks/,kum-pleks
-enkel,/ɛŋkɛl/,eng-kel
-simpel,/sɪmpl/,sim-pel
-sophisticerad,/sʊfɪstɪseːrad/,su-fis-ti-say-rad
-primitiv,/prɪmɪtiːv/,pri-mi-teev
-modern,/muːdɛrn/,moo-dern
-antik,/anːtiːk/,an-teek
-klassisk,/klasɪsk/,klas-isk
-kontemporär,/kɔntɛmpʊrɛːr/,kon-tem-pu-rayr
-futuristisk,/fɵtɵrɪsːtɪsk/,fu-tu-ris-tisk
-retro,/reːtruː/,ray-troo
-vintage,/vɪntɪdʒ/,vin-tij
-ny,/nyː/,nyu
-gammal,/ɡamːal/,gam-al
-ålderdomlig,/oːldɛrduːmlɪɡ/,awl-der-dum-lik
-föråldrad,/fœrɔːldrɑːd/,fur-awl-drawd
-aktuell,/aktʉːɛl/,ak-too-el
-outdaterad,/ʊɵtdaːtɛrad/,u-ut-day-teh-rad
-trendig,/trɛnːdɪɡ/,tren-dik
-mode,/muːdɛ/,moo-deh
-klassisk,/klasɪsk/,klas-isk
-tidlös,/tiːdløːs/,teed-lus
-efterlängtad,/ɛftɛrlɛŋːtad/,ef-ter-len-gtad
-önskad,/øːnskad/,uns-kad
-krävd,/krɛːvd/,krayvd
-efterfrågad,/ɛftɛrfroːɡad/,ef-ter-fraw-gad
-tillgänglig,/tɪlːjɛŋːliɡ/,til-yeng-lik
-otillgänglig,/ʊtɪlːjɛŋːliɡ/,u-til-yeng-lik
-rare,/rɑːrɛ/,raw-reh
-vanlig,/vanːliɡ/,van-lik
-ordinär,/ʊrdiːnɛːr/,ur-di-nayr
-extraordinär,/ɛkstrardiːnɛːr/,eks-trar-di-nayr
-exceptionell,/ɛksɛpːsjuːnɛl/,ek-sep-syu-nel
-fantastisk,/fanːtasːtɪsk/,fan-tas-tisk
-fantasi,/fanːtaːsi/,fan-taw-see
-verklighet,/værːkliːhɛt/,var-klee-het
-dröm,/drøːm/,drum
-mardröm,/marːdrøːm/,mar-drum
-vision,/vɪsiːuːn/,vi-see-oon
-illusion,/ɪlɵsiːuːn/,i-lu-see-oon
-hallucination,/halɵsinaːsjuːn/,ha-lu-si-naw-syun
-perception,/pɛrsɛpːsjuːn/,per-sep-syun
-reality,/riːælɪti/,ree-al-i-tee
-truth,/truːθ/,trooth
-lie,/laɪ/,lai
-deception,/dɪsɛpːʃən/,di-sep-shun
-honesty,/ɒnɪsti/,on-is-tee
-dishonesty,/dɪsɒnɪsti/,dis-on-is-tee
-transparency,/trænsˈpærənsi/,trans-par-en-see
-secrecy,/ˈsiːkrəsi/,see-kruh-see
-openness,/ˈəʊpənnəs/,oh-pen-nes
-closedness,/ˈkləʊzdnes/,klozd-nes
-communication,/kəˌmjuːnɪˈkeɪʃən/,kuh-myoo-ni-kay-shun
-silence,/ˈsaɪləns/,sai-lens
-speech,/spiːtʃ/,speech
-language,/ˈlæŋɡwɪdʒ/,lang-gwij
-dialect,/ˈdaɪəlɛkt/,dai-uh-lekt
-accent,/ˈæksɛnt/,ak-sent
-pronunciation,/prəˌnʌnsiˈeɪʃən/,pruh-nun-see-ay-shun
-grammar,/ˈɡræmər/,gram-er
-syntax,/ˈsɪntæks/,sin-taks
-semantics,/sɪˈmæntɪks/,si-man-tiks
-pragmatics,/præɡˈmætɪks/,prag-man-tiks
-linguistics,/lɪŋˈɡwɪstɪks/,ling-gwis-tiks
-philology,/fɪˈlɒlədʒi/,fi-lol-uh-jee
-etymology,/ˌɛtɪˈmɒlədʒi/,et-i-mol-uh-jee
-morphology,/mɔːˈfɒlədʒi/,mor-fol-uh-jee
-phonology,/fəˈnɒlədʒi/,fuh-nol-uh-jee
-phonetics,/fəˈnɛtɪks/,fuh-net-iks
-orthography,/ɔːˈθɒɡrəfi/,or-thog-ruh-fee
-lexicon,/ˈlɛksɪkən/,lek-si-kun
-vocabulary,/vəˈkæbjʊləri/,vuh-kab-yuh-luh-ree
-dictionary,/ˈdɪkʃənəri/,dik-shuh-nuh-ree
-thesaurus,/θɪˈsɔːrəs/,thi-sawr-us
-encyclopedia,/ɪnˌsaɪkləˈpiːdiə/,in-sai-kluh-pee-dee-uh
-textbook,/ˈtɛkstbʊk/,tekst-book
-manual,/ˈmænjuəl/,man-yoo-ul
-guide,/ɡaɪd/,gaid
-instruction,/ɪnˈstrʌkʃən/,in-struk-shun
-direction,/dɪˈrɛkʃən/,di-rek-shun
-navigation,/ˌnævɪˈɡeɪʃən/,nav-i-gay-shun
-orientation,/ˌɔːriɛnˈteɪʃən/,or-ee-en-tay-shun
-location,/ləʊˈkeɪʃən/,loh-kay-shun
-position,/pəˈzɪʃən/,puh-zish-un
-coordinate,/kəʊˈɔːdɪneɪt/,koh-or-di-nayt
-latitude,/ˈlætɪtjuːd/,lat-i-tood
-longitude,/ˈlɒndʒɪtjuːd/,lon-ji-tood
-altitude,/ˈæltɪtjuːd/,al-ti-tood
-depth,/dɛpθ/,dep-th
-height,/haɪt/,hait
-width,/wɪdθ/,wid-th
-length,/lɛŋθ/,leng-th
-distance,/ˈdɪstəns/,dis-tuhns
-proximity,/prɒkˈsɪmɪti/,prok-sim-i-tee
-remoteness,/rɪˈməʊtnɪs/,ri-moht-nes
-nearness,/ˈnɪənɪs/,neer-nes
-farness,/ˈfɑːnɪs/,fahr-nes
-closeness,/ˈkləʊsnɪs/,klohz-nes
-separation,/ˌsɛpəˈreɪʃən/,sep-uh-ray-shun
-connection,/kəˈnɛkʃən/,kuh-nek-shun
-disconnection,/ˌdɪskəˈnɛkʃən/,dis-kuh-nek-shun
-link,/lɪŋk/,lingk
-bond,/bɒnd/,bond
-relationship,/rɪˈleɪʃənʃɪp/,ri-lay-shun-ship
-association,/əˌsəʊsiˈeɪʃən/,uh-soh-see-ay-shun
-affiliation,/əˌfɪliˈeɪʃən/,uh-fil-ee-ay-shun
-membership,/ˈmɛmbəʃɪp/,mem-buh-ship
-belonging,/bɪˈlɒŋɪŋ/,bi-long-ing
-alienation,/ˌeɪliəˈneɪʃən/,ay-lee-uh-nay-shun
-isolation,/ˌaɪsəˈleɪʃən/,ai-suh-lay-shun
-community,/kəˈmjuːnɪti/,kuh-myoo-ni-tee
-society,/səˈsaɪəti/,suh-sai-uh-tee
-culture,/ˈkʌltʃər/,kul-chur
-civilization,/ˌsɪvəlaɪˈzeɪʃən/,siv-uh-lai-zay-shun
-nation,/ˈneɪʃən/,nay-shun
-state,/steɪt/,stayt
-government,/ˈɡʌvənmənt/,guv-ern-ment
-politics,/ˈpɒlɪtɪks/,pol-i-tiks
-democracy,/dɪˈmɒkrəsi/,di-mok-ruh-see
-dictatorship,/dɪkˈteɪtəʃɪp/,dik-tay-tuh-ship
-monarchy,/ˈmɒnəki/,mon-uh-kee
-republic,/rɪˈpʌblɪk/,ri-pub-lik
-empire,/ˈɛmpaɪər/,em-pai-ur
-kingdom,/ˈkɪŋdəm/,king-dum
-city,/ˈsɪti/,sit-ee
-town,/taʊn/,tawn
-village,/ˈvɪlɪdʒ/,vil-ij
-countryside,/ˈkʌntrisaɪd/,kun-tree-said
-urban,/ˈɜːbən/,ur-bun
-rural,/ˈrʊərəl/,ru-ruhl
-suburban,/səˈbɜːbən/,suh-bur-bun
-metropolitan,/ˌmɛtrəˈpɒlɪtən/,met-ruh-pol-i-tuhn
-cosmopolitan,/ˌkɒzməˈpɒlɪtən/,koz-muh-pol-i-tuhn
-local,/ˈləʊkəl/,loh-kuhl
-global,/ˈɡləʊbəl/,gloh-buhl
-international,/ˌɪntəˈnæʃənəl/,in-tur-nash-uh-nuhl
-national,/ˈnæʃənəl/,nash-uh-nuhl
-regional,/ˈriːdʒənəl/,ree-jun-uhl
-provincial,/prəˈvɪnʃəl/,pruh-vin-shuhl
-worldwide,/ˈwɜːldwaɪd/,wurld-waid
-universal,/ˌjuːnɪˈvɜːsəl/,yoo-ni-vur-suhl
-specific,/spəˈsɪfɪk/,spuh-sif-ik
-general,/ˈdʒɛnərəl/,jen-ruhl
-particular,/pəˈtɪkjʊlər/,puh-tik-yuh-lur
-individual,/ˌɪndɪˈvɪdjʊəl/,in-di-vij-oo-uhl
-collective,/kəˈlɛktɪv/,kuh-lek-tiv
-personal,/ˈpɜːsənəl/,pur-suh-nuhl
-impersonal,/ɪmˈpɜːsənəl/,im-pur-suh-nuhl
-private,/ˈpraɪvɪt/,prai-vit
-public,/ˈpʌblɪk/,pub-lik
-confidential,/ˌkɒnfɪˈdɛnʃəl/,kon-fi-den-shuhl
-classified,/ˈklæsɪfaɪd/,klas-i-faid
-top secret,/ˌtɒp ˈsiːkrɪt/,top see-krit
-secret,/ˈsiːkrɪt/,see-krit
-restricted,/rɪˈstrɪktɪd/,ri-strik-tid
-unrestricted,/ˌʌnrɪˈstrɪktɪd/,un-ri-strik-tid
-open,/ˈəʊpən/,oh-puhn
-closed,/kləʊzd/,klohzd
-accessible,/əkˈsɛsəbəl/,ak-ses-uh-buhl
-inaccessible,/ˌɪnəkˈsɛsəbəl/,in-ak-ses-uh-buhl
-available,/əˈveɪləbəl/,uh-vay-luh-buhl
-unavailable,/ˌʌnəˈveɪləbəl/,un-uh-vay-luh-buhl
-present,/ˈprɛzənt/,prez-uhnt
-absent,/ˈæbsənt/,ab-suhnt
-existent,/ɪɡˈzɪstənt/,ig-zis-tuhnt
-nonexistent,/ˌnɒnɪɡˈzɪstənt/,non-ig-zis-tuhnt
-real,/rɪəl/,ree-uhl
-imaginary,/ɪˈmædʒɪnəri/,i-maj-ih-nuh-ree
-fictional,/ˈfɪkʃənəl/,fik-shuh-nuhl
-factual,/ˈfæktʃʊəl/,fak-choo-uhl
-fictional,/ˈfɪkʃənəl/,fik-shuh-nuhl
-mythical,/ˈmɪθɪkəl/,mith-i-kuhl
-legendary,/ˈlɛdʒəndəri/,lej-uhn-der-ee
-historical,/hɪˈstɒrɪkəl/,his-tor-i-kuhl
-contemporary,/kənˈtɛmpərəri/,kuhn-temp-ruh-ree
-ancient,/ˈeɪnʃənt/,ayn-shuhnt
-prehistoric,/ˌpriːhɪˈstɒrɪk/,pree-his-tor-ik
-archaic,/ɑːˈkeɪɪk/,ahr-kay-ik
-obsolete,/ˌɒbsəˈliːt/,ob-suh-leet
-current,/ˈkʌrənt/,kur-uhnt
-past,/pɑːst/,pahst
-future,/ˈfjuːtʃər/,fyoo-chur
-temporary,/ˈtɛmpərəri/,temp-ruh-ree
-permanent,/ˈpɜːmənənt/,pur-muh-nuhnt
-eternal,/ɪˈtɜːnəl/,i-tur-nuhl
-infinite,/ˈɪnfɪnɪt/,in-fin-it
-finite,/ˈfaɪnaɪt/,fai-nait
-limited,/ˈlɪmɪtɪd/,lim-i-tid
-unlimited,/ʌnˈlɪmɪtɪd/,un-lim-i-tid
-bounded,/ˈbaʊndɪd/,bawn-did
-unbounded,/ʌnˈbaʊndɪd/,un-bawn-did
-constrained,/kənˈstreɪnd/,kuhn-straynd
-unconstrained,/ˌʌnkənˈstreɪnd/,un-kuhn-straynd
-free,/friː/,free
-bound,/baʊnd/,bawnd
-chained,/tʃeɪnd/,chaynd
-liberated,/ˈlɪbəreɪtɪd/,lib-er-ay-tid
-enslaved,/ɪnˈsleɪvd/,en-slayvd
-emancipated,/ɪˈmænsɪpeɪtɪd/,i-man-sip-ay-tid
-independent,/ˌɪndɪˈpɛndənt/,in-di-pen-duhnt
-dependent,/dɪˈpɛndənt/,di-pen-duhnt
-autonomous,/ɔːˈtɒnəməs/,aw-ton-uh-muhs
-heteronomous,/ˌhɛtəˈrɒnəməs/,het-er-on-uh-muhs
-self-governing,/ˌsɛlf ˈɡʌvənɪŋ/,self guv-er-ning
-ruled,/ruːld/,roold
-governed,/ˈɡʌvənd/,guv-ernd
-ungoverned,/ʌnˈɡʌvənd/,un-guv-ernd
-lawless,/ˈlɔːləs/,law-luhs
-orderly,/ˈɔːdəli/,or-der-lee
-chaotic,/keɪˈɒtɪk/,kay-ot-ik
-organized,/ˈɔːɡənaɪzd/,or-guh-naizd
-disorganized,/dɪsˈɔːɡənaɪzd/,dis-or-guh-naizd
-structured,/ˈstrʌktʃərd/,struk-cherd
-unstructured,/ʌnˈstrʌktʃərd/,un-struk-cherd
-systematic,/ˌsɪstəˈmætɪk/,sis-tuh-mat-ik
-random,/ˈrændəm/,ran-duhm
-planned,/plænd/,pland
-spontaneous,/spɒnˈteɪniəs/,spon-tay-nee-uhs
-deliberate,/dɪˈlɪbərɪt/,di-lib-er-it
-accidental,/ˌæksɪˈdɛntəl/,ak-si-den-tuhl
-intentional,/ɪnˈtɛnʃənəl/,in-ten-shuh-nuhl
-unintentional,/ˌʌnɪnˈtɛnʃənəl/,un-in-ten-shuh-nuhl
-purposeful,/ˈpɜːpəsfʊl/,pur-puhs-ful
-aimless,/ˈeɪmlɪs/,aym-luhs
-goal-oriented,/ˌɡəʊl ˈɔːrientɪd/,gohl or-ee-en-tid
-directionless,/dɪˈrɛkʃənlɪs/,di-rek-shuhn-luhs
-focused,/ˈfəʊkəst/,foh-kuhst
-distracted,/dɪˈstræktɪd/,di-strak-tid
-concentrated,/ˈkɒnsntreɪtɪd/,kon-suhn-tray-tid
-scattered,/ˈskætərd/,skat-erd
-coherent,/kəʊˈhɪərənt/,koh-heer-uhnt
-incoherent,/ˌɪnkəʊˈhɪərənt/,in-koh-heer-uhnt
-logical,/ˈlɒdʒɪkəl/,loj-i-kuhl
-illogical,/ɪˈlɒdʒɪkəl/,i-loj-i-kuhl
-rational,/ˈræʃənəl/,rash-uh-nuhl
-irrational,/ɪˈræʃənəl/,i-rash-uh-nuhl
-reasonable,/ˈriːzənəbəl/,ree-zuh-nuh-buhl
-unreasonable,/ʌnˈriːzənəbəl/,un-ree-zuh-nuh-buhl
-sensible,/ˈsɛnsəbəl/,sen-suh-buhl
-nonsensical,/ˌnɒnˈsɛnsɪkəl/,non-sen-si-kuhl
-intelligent,/ɪnˈtɛlɪdʒənt/,in-tel-i-juhnt
-unintelligent,/ˌʌnɪnˈtɛlɪdʒənt/,un-in-tel-i-juhnt
-wise,/waɪz/,wize
-foolish,/ˈfuːlɪʃ/,foo-lish
-clever,/ˈklɛvər/,klev-er
-stupid,/ˈstjuːpɪd/,stew-pid
-smart,/smɑːrt/,smahrt
-dumb,/dʌm/,duhm
-bright,/braɪt/,brait
-dim,/dɪm/,dim
-sharp,/ʃɑːrp/,shahrp
-dull,/dʌl/,duhl
-quick,/kwɪk/,kwick
-slow,/sləʊ/,slo
-fast,/fɑːst/,fahst
-rapid,/ˈræpɪd/,rap-id
-swift,/swɪft/,swift
-gradual,/ˈɡrædʒuəl/,graj-oo-uhl
-sudden,/ˈsʌdən/,sud-uhn
-abrupt,/əˈbrʌpt/,uh-brupt
-immediate,/ɪˈmiːdiət/,i-mee-dee-uh-t
-delayed,/dɪˈleɪd/,di-layd
-postponed,/pəʊsˈpəʊnd/,pohs-pohnd
-advanced,/ədˈvɑːnst/,uhd-vahnst
-early,/ˈɜːli/,ur-lee
-late,/leɪt/,layt
-on time,/ɒn taɪm/,on taim
-punctual,/ˈpʌŋktʃuəl/,punk-choo-uhl
-tardy,/ˈtɑːdi/,tahr-dee
-prompt,/prɒmpt/,promt
-efficient,/ɪˈfɪʃənt/,i-fish-uhnt
-inefficient,/ˌɪnɪˈfɪʃənt/,in-i-fish-uhnt
-effective,/ɪˈfɛktɪv/,i-fek-tiv
-ineffective,/ˌɪnɪˈfɛktɪv/,in-i-fek-tiv
-productive,/prəˈdʌktɪv/,pruh-duk-tiv
-unproductive,/ˌʌnprəˈdʌktɪv/,un-pruh-duk-tiv
-fruitful,/ˈfruːtfʊl/,froot-ful
-barren,/ˈbærən/,bar-uhn
-fertile,/ˈfɜːtaɪl/,fur-tail
-sterile,/ˈstɛraɪl/,stair-il
-rich,/rɪtʃ/,rich
-poor,/pʊər/,puhr
-wealthy,/ˈwɛlθi/,wel-thee
-impoverished,/ɪmˈpɒvərɪʃt/,im-pov-er-isht
-prosperous,/ˈprɒspərəs/,pros-per-uhs
-destitute,/ˈdɛstɪtjuːɪt/,des-ti-too-it
-affluent,/ˈæfluənt/,af-loo-uhnt
-broke,/brəʊk/,brohk
-bankrupt,/ˈbæŋkrʌpt/,bangk-ruhpt
-solvent,/ˈsɒlvənt/,sol-vuhnt
-insolvent,/ɪnˈsɒlvənt/,in-sol-vuhnt
-economical,/ˌiːkəˈnɒmɪkəl/,ee-kuh-nom-i-kuhl
-extravagant,/ɪkˈstrævəɡənt/,ik-strav-uh-guhnt
-frugal,/ˈfruːɡəl/,froo-guhl
-wasteful,/ˈweɪstfʊl/,wayst-ful
-thrifty,/ˈθrɪfti/,thrift-ee
-spendthrift,/ˈspɛndθrɪft/,spend-thrift
-cheap,/tʃiːp/,cheep
-expensive,/ɪkˈspɛnsɪv/,ik-spen-siv
-costly,/ˈkɒstli/,kost-lee
-inexpensive,/ˌɪnɪkˈspɛnsɪv/,in-ik-spen-siv
-affordable,/əˈfɔːdəbəl/,uh-for-duh-buhl
-priceless,/ˈpraɪslɪs/,prais-luhs
-worthless,/ˈwɜːθlɪs/,wurth-luhs
-valuable,/ˈvæljuəbəl/,val-yoo-uh-buhl
-invaluable,/ɪnˈvæljuəbəl/,in-val-yoo-uh-buhl
-precious,/ˈprɛʃəs/,presh-uhs
-common,/ˈkɒmən/,kom-uhn
-rare,/rɛər/,rair
-scarce,/skɛər/,skair
-abundant,/əˈbʌndənt/,uh-bun-duhnt
-plentiful,/ˈplɛntɪfʊl/,plen-ti-ful
-ample,/ˈæmpəl/,amp-uhl
-sufficient,/səˈfɪʃənt/,suh-fish-uhnt
-insufficient,/ˌɪnsəˈfɪʃənt/,in-suh-fish-uhnt
-adequate,/ˈædɪkwɪt/,ad-i-kwit
-inadequate,/ˌɪnˈædɪkwɪt/,in-ad-i-kwit
-enough,/ɪˈnʌf/,i-nuf
-not enough,/nɒt ɪˈnʌf/,not i-nuf
-plenty,/ˈplɛnti/,plen-tee
-shortage,/ˈʃɔːtɪdʒ/,shawr-tij
-deficit,/ˈdɛfɪsɪt/,def-i-sit
-surplus,/ˈsɜːpləs/,sur-pluhs
-excess,/ˈɛksɛs/,ek-ses
-overflow,/ˈəʊvəfləʊ/,oh-ver-floh
-scarcity,/ˈskɛəsɪti/,skair-si-tee
-famine,/ˈfæmɪn/,fam-in
-feast,/fiːst/,feest
-banquet,/ˈbæŋkwɪt/,bangk-wit
-meal,/miːl/,meel
-breakfast,/ˈbrɛkfəst/,brek-fuhst
-lunch,/lʌntʃ/,lunch
-dinner,/ˈdɪnər/,din-er
-supper,/ˈsʌpər/,sup-er
-snack,/snæk/,snak
-appetizer,/ˈæpɪtaɪzər/,ap-i-tai-zur
-dessert,/dɪˈzɜːrt/,di-zurt
-beverage,/ˈbɛvərɪdʒ/,bev-er-ij
-drink,/drɪŋk/,dringk
-water,/ˈwɔːtər/,waw-ter
-juice,/dʒuːs/,joos
-soda,/ˈsəʊdə/,soh-duh
-coffee,/ˈkɒfi/,kof-ee
-tea,/tiː/,tee
-alcohol,/ˈælkəhɒl/,al-kuh-hol
-wine,/waɪn/,wain
-beer,/bɪər/,beer
-spirit,/ˈspɪrɪt/,spir-it
-liquor,/ˈlɪkər/,lik-er
-food,/fuːd/,food
-nutrition,/njuːˈtrɪʃən/,nyoo-trish-uhn
-diet,/ˈdaɪət/,dai-uht
-vegetarian,/ˌvɛdʒɪˈtɛəriən/,vej-i-tair-ee-uhn
-vegan,/ˈviːɡən/,vee-guhn
-carnivore,/ˈkɑːnɪvɔːr/,kahr-ni-vawr
-herbivore,/ˈhɜːbɪvɔːr/,hur-bi-vawr
-omnivore,/ˈɒmnɪvɔːr/,om-ni-vawr
-raw,/rɔː/,raw
-cooked,/kʊkt/,kukt
-baked,/beɪkt/,baykt
-fried,/fraɪd/,fraid
-grilled,/ɡrɪld/,grild
-roasted,/ˈrəʊstɪd/,roh-stid
-boiled,/ˈbɔɪld/,boild
-steamed,/stiːmd/,steemd
-microwaved,/ˈmaɪkrəweɪvd/,mai-kruh-wayvd
-frozen,/ˈfrəʊzn/,froh-zuhn
-chilled,/tʃɪld/,child
-hot,/hɒt/,hot
-cold,/kəʊld/,kohld
-warm,/wɔːrm/,wawrm
-cool,/kuːl/,kool
-room temperature,/ruːm ˈtɛmpərɪtʃər/,room tem-per-i-cher
-fresh,/frɛʃ/,fresh
-stale,/steɪl/,stayl
-rotten,/ˈrɒtən/,rot-uhn
-spoiled,/spɔɪld/,spoid
-expired,/ɪkˈspaɪərd/,ik-spai-erd
-edible,/ˈɛdɪbəl/,ed-i-buhl
-inedible,/ɪnˈɛdɪbəl/,in-ed-i-buhl
-toxic,/ˈtɒksɪk/,tok-sik
-poisonous,/ˈpɔɪzənəs/,poi-zuh-nuhs
-safe,/seɪf/,sayf
-dangerous,/ˈdeɪndʒərəs/,dayn-jer-uhs
-harmful,/ˈhɑːrmfʊl/,hahrm-ful
-beneficial,/ˌbɛnɪˈfɪʃəl/,ben-i-fish-uhl
-healthy,/ˈhɛlθi/,hel-thee
-unhealthy,/ʌnˈhɛlθi/,un-hel-thee
-nutritious,/njuːˈtrɪʃəs/,nyoo-trish-uhs
-empty calories,/ˈɛmpti ˈkæləriz/,emp-tee kal-uh-reez
-calories,/ˈkæləriz/,kal-uh-reez
-fat,/fæt/,fat
-protein,/ˈprəʊtiːn/,proh-teen
-carbohydrate,/ˌkɑːbəʊˈhaɪdreɪt/,kahr-boh-hai-drayt
-sugar,/ˈʃʊɡər/,shug-er
-salt,/sɔːlt/,sawlt
-vitamin,/ˈvaɪtəmɪn/,vai-tuh-min
-mineral,/ˈmɪnərəl/,min-er-uhl
-fiber,/ˈfaɪbər/,fai-ber
-cholesterol,/kəˈlɛstərɒl/,kuh-les-ter-ol
-saturated fat,/ˈsætʃəreɪtɪd fæt/,sat-chuh-ray-tid fat
-unsaturated fat,/ˌʌnˈsætʃəreɪtɪd fæt/,un-sat-chuh-ray-tid fat
-trans fat,/træns fæt/,trans fat
-organic,/ɔːˈɡænɪk/,or-gan-ik
-natural,/ˈnætʃərəl/,nat-chuh-ruhl
-artificial,/ˌɑːtɪˈfɪʃəl/,ahr-ti-fish-uhl
-processed,/ˈprəʊsɛst/,proh-sest
-unprocessed,/ʌnˈprəʊsɛst/,un-proh-sest
-whole,/həʊl/,hohl
-refined,/rɪˈfaɪnd/,ri-find
-fortified,/ˈfɔːtɪfaɪd/,for-ti-faid
-enriched,/ɪnˈrɪtʃt/,in-richt
-dietary,/ˈdaɪətəri/,dai-uh-ter-ee
-gluten-free,/ˈɡluːtn friː/,gloot-n free
-dairy-free,/ˈdɛəri friː/,dair-ee free
-nut-free,/nʌt friː/,nut free
-allergen-free,/ˈælədʒən friː/,al-er-jen free
-kosher,/ˈkəʊʃər/,koh-sher
-halal,/həˈlɑːl/,huh-lahl
-vegetarian,/ˌvɛdʒɪˈtɛəriən/,vej-i-tair-ee-uhn
-vegan,/ˈviːɡən/,vee-guhn
-pescatarian,/ˌpɛskəˈtɛəriən/,pes-kuh-tair-ee-uhn
-flexitarian,/ˌflɛksɪˈtɛəriən/,flek-si-tair-ee-uhn
-carnivore,/ˈkɑːnɪvɔːr/,kahr-ni-vawr
-herbivore,/ˈhɜːbɪvɔːr/,hur-bi-vawr
-omnivore,/ˈɒmnɪvɔːr/,om-ni-vawr
-frugivore,/ˈfruːdʒɪvɔːr/,frooj-i-vawr
-granivore,/ˈɡrænɪvɔːr/,gran-i-vawr
-nectarivore,/ˈnɛktərɪvɔːr/,nek-tuh-ri-vawr
-insectivore,/ɪnˈsɛktɪvɔːr/,in-sek-ti-vawr
-piscivore,/ˈpɪsɪvɔːr/,pis-i-vawr
-sanguivore,/ˈsæŋɡwɪvɔːr/,sang-gwi-vawr
-detritivore,/dɪˈtraɪtɪvɔːr/,di-trai-ti-vawr
-scavenger,/ˈskævɪndʒər/,skav-in-jer
-predator,/ˈprɛdətər/,pred-uh-ter
-prey,/preɪ/,pray
-hunter,/ˈhʌntər/,hun-ter
-gatherer,/ˈɡæðərər/,gath-er-er
-farmer,/ˈfɑːrmər/,fahr-mer
-rancher,/ˈræntʃər/,ranch-er
-fisherman,/ˈfɪʃərmən/,fish-er-muhn
-chef,/ʃɛf/,shef
-cook,/kʊk/,kuk
-baker,/ˈbeɪkər/,bay-ker
-butcher,/ˈbʊtʃər/,buch-er
-grocer,/ˈɡrəʊsər/,groh-ser
-vendor,/ˈvɛndər/,ven-der
-merchant,/ˈmɜːtʃənt/,mur-chuhnt
-trader,/ˈtreɪdər/,tray-der
-dealer,/ˈdiːlər/,dee-ler
-wholesaler,/ˈhəʊlseɪlər/,hohl-say-ler
-retailer,/ˈriːteɪlər/,ree-tay-ler
-consumer,/kənˈsjuːmər/,kuhn-soo-mer
-customer,/ˈkʌstəmər/,kus-tuh-mer
-client,/ˈklaɪənt/,klai-uhnt
-patron,/ˈpeɪtrən/,pay-truhn
-buyer,/ˈbaɪər/,bai-er
-seller,/ˈsɛlər/,sel-er
-supplier,/səˈplaɪər/,suh-plai-er
-manufacturer,/ˌmænjuˈfæktʃərər/,man-yoo-fak-cher-er
-producer,/prəˈdjuːsər/,pruh-doo-ser
-grower,/ˈɡrəʊər/,groh-er
-harvester,/ˈhɑːrvɪstər/,hahr-vis-ter
-processor,/ˈprəʊsesər/,proh-ses-er
-packager,/ˈpækɪdʒər/,pak-ij-er
-distributor,/dɪˈstrɪbjʊtər/,di-strib-yoo-ter
-logistics,/ləˈdʒɪstɪks/,luh-jis-tiks
-transportation,/ˌtrænspɔːˈteɪʃən/,tran-spawr-tay-shuhn
-shipping,/ˈʃɪpɪŋ/,ship-ing
-delivery,/dɪˈlɪvəri/,di-liv-er-ee
-pickup,/ˈpɪkʌp/,pik-up
-storage,/ˈstɔːrɪdʒ/,stor-ij
-warehouse,/ˈwɛəhaʊs/,wair-howz
-inventory,/ˈɪnvəntri/,in-vuhn-tree
-stock,/stɒk/,stok
-supply,/səˈplaɪ/,suh-plai
-demand,/dɪˈmɑːnd/,di-mahnd
-market,/ˈmɑːrkɪt/,mahr-kit
-economy,/ɪˈkɒnəmi/,i-kon-uh-mee
-finance,/ˈfaɪnæns/,fai-nans
-money,/ˈmʌni/,muh-nee
-currency,/ˈkʌrənsi/,kur-uhn-see
-cash,/kæʃ/,kash
-coin,/kɔɪn/,koin
-bill,/bɪl/,bil
-note,/nəʊt/,noht
-check,/tʃɛk/,chek
-credit,/ˈkrɛdɪt/,kred-it
-debit,/ˈdɛbɪt/,deb-it
-card,/kɑːrd/,kahrd
-account,/əˈkaʊnt/,uh-kownt
-bank,/bæŋk/,bangk
-ATM,/ˌeɪ tiː ˈɛm/,ay tee em
-loan,/ləʊn/,lohn
-mortgage,/ˈmɔːɡɪdʒ/,mor-gij
-interest,/ˈɪntrɪst/,in-trist
-rate,/reɪt/,rayt
-fee,/fiː/,fee
-charge,/tʃɑːrdʒ/,chahrdj
-cost,/kɒst/,kost
-price,/praɪs/,prais
-value,/ˈvæljuː/,val-yoo
-worth,/wɜːrθ/,wurth
-profit,/ˈprɒfɪt/,prof-it
-loss,/lɒs/,los
-gain,/ɡeɪn/,gayn
-income,/ˈɪnkʌm/,in-kum
-revenue,/ˈrɛvənjuː/,rev-uh-nyoo
-expense,/ɪkˈspɛns/,ik-spens
-expenditure,/ɪkˈspɛndɪtʃər/,ik-spen-di-cher
-budget,/ˈbʌdʒɪt/,buj-it
-forecast,/ˈfɔːrkɑːst/,for-kahst
-projection,/prəˈdʒɛkʃən/,pruh-jek-shuhn
-estimate,/ˈɛstɪmeɪt/,es-ti-mayt
-calculation,/ˌkælkjuˈleɪʃən/,kal-kyoo-lay-shuhn
-computation,/ˌkɒmpjʊˈteɪʃən/,kom-pyoo-tay-shuhn
-mathematics,/ˌmæθəˈmætɪks/,math-uh-mat-iks
-arithmetic,/əˈrɪθmətɪk/,uh-rith-muh-tik
-algebra,/ˈældʒɪbrə/,al-ji-bruh
-geometry,/dʒiˈɒmɪtri/,jee-om-i-tree
-trigonometry,/ˌtrɪɡəˈnɒmɪtri/,trig-uh-nom-i-tree
-calculus,/ˈkælkjʊləs/,kal-kyoo-luhs
-statistics,/stəˈtɪstɪks/,stuh-tis-tiks
-probability,/ˌprɒbəˈbɪlɪti/,prob-uh-bil-i-tee
-number,/ˈnʌmbər/,num-ber
-digit,/ˈdɪdʒɪt/,dij-it
-figure,/ˈfɪɡjər/,fig-yer
-numeral,/ˈnjuːmərəl/,nyoo-mer-uhl
-integer,/ˈɪntɪdʒər/,in-ti-jer
-fraction,/ˈfrækʃən/,frak-shuhn
-decimal,/ˈdɛsɪməl/,des-i-muhl
-percentage,/pərˈsɛntɪdʒ/,per-sen-tij
-ratio,/ˈreɪʃiəʊ/,ray-shee-oh
-proportion,/prəˈpɔːʃən/,pruh-por-shuhn
-equation,/ɪˈkweɪʒən/,i-kway-zhuhn
-formula,/ˈfɔːrmjʊlə/,for-myoo-luh
-function,/ˈfʌŋkʃən/,fungk-shuhn
-variable,/ˈvɛəriəbəl/,vair-ee-uh-buhl
-constant,/ˈkɒnstənt/,kon-stuhnt
-coefficient,/ˌkəʊɪˈfɪʃənt/,koh-i-fish-uhnt
-exponent,/ɪkˈspəʊnənt/,ik-spoh-nuhnt
-logarithm,/ˈlɒɡərɪðəm/,log-uh-rith-uhm
-root,/ruːt/,root
-square,/skweər/,skwair
-cube,/kjuːb/,kyoob
-power,/ˈpaʊər/,pow-er
-base,/beɪs/,bayz
-index,/ˈɪndɛks/,in-deks
-matrix,/ˈmeɪtrɪks/,may-triks
-vector,/ˈvɛktər/,vek-ter
-scalar,/ˈskeɪlər/,skay-ler
-tensor,/ˈtɛnsər/,ten-ser
-coordinate,/kəʊˈɔːdɪneɪt/,koh-or-di-nayt
-axis,/ˈæksɪs/,ak-sis
-plane,/pleɪn/,playn
-space,/speɪs/,spays
-dimension,/daɪˈmɛnʃən/,di-men-shuhn
-point,/pɔɪnt/,point
-line,/laɪn/,lain
-curve,/kɜːrv/,kurv
-circle,/ˈsɜːkl/,surk-uhl
-ellipse,/ɪˈlɪps/,i-lips
-parabola,/pəˈræbələ/,puh-rab-uh-luh
-hyperbola,/haɪˈpɜːbələ/,hai-pur-buh-luh
-triangle,/ˈtraɪæŋɡl/,trai-ang-guhl
-quadrilateral,/ˌkwɒdrɪˈlætərəl/,kwod-ri-lat-er-uhl
-polygon,/ˈpɒlɪɡən/,pol-i-guhn
-polyhedron,/ˌpɒliˈhiːdrən/,pol-i-hee-druhn
-sphere,/sfɪər/,sfeer
-cylinder,/ˈsɪlɪndər/,sil-in-der
-cone,/kəʊn/,kohn
-pyramid,/ˈpɪrəmɪd/,pir-uh-mid
-prism,/ˈprɪzəm/,priz-uhm
-cube,/kjuːb/,kyoob
-rectangular prism,/rɛkˈtæŋɡjʊlər ˈprɪzəm/,rek-tang-gyoo-lur priz-uhm
-surface,/ˈsɜːrfɪs/,sur-fis
-area,/ˈeəriə/,air-ee-uh
-volume,/ˈvɒljuːm/,vol-yoom
-perimeter,/pəˈrɪmɪtər/,puh-rim-i-ter
-circumference,/səˈrʌmfərəns/,suh-rum-fer-uhns
-diameter,/daɪˈæmɪtər/,dai-am-i-ter
-radius,/ˈreɪdiəs/,ray-dee-uhs
-chord,/kɔːrd/,kord
-arc,/ɑːrk/,ahrk
-sector,/ˈsɛktər/,sek-ter
-segment,/ˈsɛɡmənt/,seg-ment
-angle,/ˈæŋɡl/,ang-guhl
-degree,/dɪˈɡriː/,di-gree
-radian,/ˈreɪdiən/,ray-dee-uhn
-acute,/əˈkjuːt/,uh-kyoot
-obtuse,/əbˈtjuːs/,uhb-tyoos
-right,/raɪt/,rait
-straight,/streɪt/,strayt
-reflex,/ˈriːflɛks/,ree-fleks
-complementary,/ˌkɒmplɪˈmɛntəri/,kom-pli-men-tuh-ree
-supplementary,/ˌsʌplɪˈmɛntəri/,sup-li-men-tuh-ree
-vertical,/ˈvɜːrtɪkəl/,vur-ti-kuhl
-adjacent,/əˈdʒeɪsənt/,uh-jay-suhnt
-corresponding,/ˌkɒrɪˈspɒndɪŋ/,kor-i-spon-ding
-alternate,/ˈɔːltərnɪt/,or-ter-nit
-interior,/ɪnˈtɪəriər/,in-teer-ee-er
-exterior,/ɛkˈstɪəriər/,ek-steer-ee-er
-parallel,/ˈpærəlel/,par-uh-lel
-perpendicular,/ˌpɜːrpənˈdɪkjʊlər/,pur-puhn-dik-yoo-ler
-intersecting,/ˌɪntərˈsɛktɪŋ/,in-ter-sek-ting
-skew,/skjuː/,skyoo
-congruent,/kənˈɡruːənt/,kuhn-groo-uhnt
-similar,/ˈsɪmɪlər/,sim-i-ler
-equivalent,/ɪˈkwɪvələnt/,i-kwiv-uh-luhnt
-equal,/ˈiːkwəl/,ee-kwuhl
-unequal,/ʌnˈiːkwəl/,un-ee-kwuhl
-greater than,/ˈɡreɪtər ðæn/,gray-ter than
-less than,/lɛs ðæn/,les than
-greater than or equal to,/ˈɡreɪtər ðæn ɔːr ˈiːkwəl tuː/,gray-ter than or ee-kwuhl too
-less than or equal to,/lɛs ðæn ɔːr ˈiːkwəl tuː/,les than or ee-kwuhl too
-not equal to,/nɒt ˈiːkwəl tuː/,not ee-kwuhl too
-approximately equal to,/əˈprɒksɪmɪtli ˈiːkwəl tuː/,uh-prok-sim-i-tlee ee-kwuhl too
-identical to,/aɪˈdɛntɪkəl tuː/,ai-den-ti-kuhl too
-different from,/ˈdɪfrənt frɒm/,dif-ruhnt from
-symmetric,/sɪˈmɛtrɪk/,si-met-rik
-asymmetric,/ˌeɪsɪˈmɛtrɪk/,ay-si-met-rik
-transitive,/trænˈzɪtɪv/,tran-zit-iv
-reflexive,/rɪˈflɛksɪv/,ri-flek-siv
-irreflexive,/ˌɪrɪˈflɛksɪv/,ir-i-flek-siv
-antisymmetric,/ˌæntɪsɪˈmɛtrɪk/,an-ti-si-met-rik
-equivalence relation,/ɪˈkwɪvələns rɪˈleɪʃən/,i-kwiv-uh-luhns ri-lay-shuhn
-partial order,/ˈpɑːrʃəl ˈɔːdər/,pahr-shuhl or-der
-total order,/ˈtəʊtl ˈɔːdər/,toh-tl or-der
-well-order,/ˈwɛl ˈɔːdər/,wel or-der
-lattice,/ˈlætɪs/,lat-is
-group,/ɡruːp/,groop
-ring,/rɪŋ/,ring
-field,/fiːld/,feeld
-vector space,/ˈvɛktər speɪs/,vek-ter spays
-basis,/ˈbeɪsɪs/,bay-sis
-dimension,/daɪˈmɛnʃən/,di-men-shuhn
-linear independence,/ˈlɪniər ˌɪndɪˈpɛndəns/,lin-ee-er in-di-pen-duhns
-span,/spæn/,span
-subspace,/ˈsʌbˌspeɪs/,sub-spays
-linear transformation,/ˈlɪniər ˌtrænsfəˈmeɪʃən/,lin-ee-er tran-sfer-may-shuhn
-matrix multiplication,/ˈmeɪtrɪks ˌmʌltɪplɪˈkeɪʃən/,may-triks mul-ti-pli-kay-shuhn
-determinant,/dɪˈtɜːmɪnənt/,di-tur-min-uhnt
-eigenvalue,/ˈaɪɡənˌvæljuː/,ai-guhn-val-yoo
-eigenvector,/ˈaɪɡənˌvɛktər/,ai-guhn-vek-ter
-diagonalization,/daɪˌæɡənəlaɪˈzeɪʃən/,dai-ag-uh-nuh-lai-zay-shuhn
-orthogonality,/ɔːrˌθɒɡəˈnælɪti/,or-thog-uh-nal-i-tee
-orthonormality,/ɔːrˌθəʊnɔːˈmælɪti/,or-thoh-nor-mal-i-tee
-Gram-Schmidt process,/ɡrɑːm ʃmɪt ˈprəʊses/,grahm shmit proh-ses
-QR decomposition,/kjuː ɑːr ˌdiːkɒmpəˈzɪʃən/,kyoo ar dee-kom-puh-zish-uhn
-LU decomposition,/ɛl juː ˌdiːkɒmpəˈzɪʃən/,el yoo dee-kom-puh-zish-uhn
-SVD,/ˌɛs viː ˈdiː/,es vee dee
-eigen decomposition,/ˈaɪɡən ˌdiːkɒmpəˈzɪʃən/,ai-guhn dee-kom-puh-zish-uhn
-spectral theorem,/ˈspɛktrəl ˈθɪərəm/,spek-truhl thee-uh-ruhm
-positive definite,/ˈpɒzətɪv ˈdɛfɪnɪt/,poz-i-tiv def-i-nit
-negative definite,/ˈnɛɡətɪv ˈdɛfɪnɪt/,neg-uh-tiv def-i-nit
-indefinite,/ˌɪndɪˈfɪnɪt/,in-di-fin-it
-semi-definite,/ˌsɛmi dɪˈfaɪnɪt/,sem-i di-fai-nit
-norm,/nɔːrm/,norm
-metric,/ˈmɛtrɪk/,met-rik
-distance,/ˈdɪstəns/,dis-tuhns
-topology,/təˈpɒlədʒi/,tuh-pol-uh-jee
-open set,/ˈəʊpən sɛt/,oh-puhn set
-closed set,/kləʊzd sɛt/,klohzd set
-compact,/kəmˈpækt/,kuhm-pakt
-connected,/kəˈnɛktɪd/,kuh-nek-tid
-path-connected,/pæθ kəˈnɛktɪd/,path kuh-nek-tid
-simply connected,/ˈsɪmpli kəˈnɛktɪd/,sim-plee kuh-nek-tid
-homotopy,/həˈmɒtəpi/,huh-mot-uh-pee
-homology,/həˈmɒlədʒi/,huh-mol-uh-jee
-cohomology,/ˌkəʊhəˈmɒlədʒi/,koh-huh-mol-uh-jee
-manifold,/ˈmænɪfəʊld/,man-i-fohld
-differential geometry,/ˌdɪfəˈrɛnʃəl dʒiˈɒmɪtri/,dif-er-en-shuhl jee-om-i-tree
-Riemannian geometry,/riːˈmɑːniən dʒiˈɒmɪtri/,ree-mahn-ee-uhn jee-om-i-tree
-Lorentzian geometry,/ləˈrɛntsɪən dʒiˈɒmɪtri/,luh-ren-tsee-uhn jee-om-i-tree
-symplectic geometry,/sɪmˈplɛktɪk dʒiˈɒmɪtri/,sim-plek-tik jee-om-i-tree
-complex geometry,/kəmˈplɛks dʒiˈɒmɪtri/,kuhm-pleks jee-om-i-tree
-algebraic geometry,/ˌældʒɪˈbreɪɪk dʒiˈɒmɪtri/,al-ji-bray-ik jee-om-i-tree
-analytic geometry,/ˌænəˈlɪtɪk dʒiˈɒmɪtri/,an-uh-lit-ik jee-om-i-tree
-projective geometry,/prəˈdʒɛktɪv dʒiˈɒmɪtri/,pruh-jek-tiv jee-om-i-tree
-affine geometry,/əˈfaɪn dʒiˈɒmɪtri/,uh-fain jee-om-i-tree
-Euclidean geometry,/juːˈklɪdiən dʒiˈɒmɪtri/,yoo-klid-ee-uhn jee-om-i-tree
-non-Euclidean geometry,/ˌnɒn juːˈklɪdiən dʒiˈɒmɪtri/,non yoo-klid-ee-uhn jee-om-i-tree
-hyperbolic geometry,/ˌhaɪpəˈbɒlɪk dʒiˈɒmɪtri/,hai-per-bol-ik jee-om-i-tree
-elliptic geometry,/ɪˈlɪptɪk dʒiˈɒmɪtri/,i-lip-tik jee-om-i-tree
-spherical geometry,/sfɪˈrɪkəl dʒiˈɒmɪtri/,sfer-i-kuhl jee-om-i-tree
-taxicab geometry,/ˈtæksikæb dʒiˈɒmɪtri/,tak-si-kab jee-om-i-tree
-discrete geometry,/dɪˈskriːt dʒiˈɒmɪtri/,dis-kreet jee-om-i-tree
-computational geometry,/ˌkɒmpjʊˈteɪʃənəl dʒiˈɒmɪtri/,kom-pyoo-tay-shuh-nuhl jee-om-i-tree
-fractal geometry,/ˈfræktəl dʒiˈɒmɪtri/,frak-tuhl jee-om-i-tree
-chaos theory,/ˈkeɪɒs ˈθɪəri/,kay-os thee-uh-ree
-dynamical systems,/daɪˈnæmɪkəl ˈsɪstəmz/,dai-nam-i-kuhl sis-tuhmz
-bifurcation,/ˌbaɪfɜːˈkeɪʃən/,bai-fur-kay-shuhn
-attractor,/əˈtræktər/,uh-trak-ter
-repeller,/rɪˈpɛlər/,ri-pel-er
-fixed point,/fɪkst pɔɪnt/,fikst point
-periodic point,/ˌpɪərɪˈɒdɪk pɔɪnt/,peer-ee-od-ik point
-chaotic attractor,/keɪˈɒtɪk əˈtræktər/,kay-ot-ik uh-trak-ter
-strange attractor,/streɪndʒ əˈtræktər/,straynj uh-trak-ter
-Lyapunov exponent,/ˈljæpənuːf ɪkˈspəʊnənt/,lyap-uh-noof ik-spoh-nuhnt
-entropy,/ˈɛntrəpi/,en-truh-pee
-information theory,/ˌɪnfəˈmeɪʃən ˈθɪəri/,in-fuh-may-shuhn thee-uh-ree
-Shannon entropy,/ˈʃænən ˈɛntrəpi/,shan-uhn en-truh-pee
-mutual information,/ˈmjuːtʃuəl ˌɪnfəˈmeɪʃən/,myoo-choo-uhl in-fuh-may-shuhn
-conditional entropy,/kənˈdɪʃənəl ˈɛntrəpi/,kuhn-dish-uh-nuhl en-truh-pee
-relative entropy,/ˈrɛlətɪv ˈɛntrəpi/,rel-uh-tiv en-truh-pee
-Kullback-Leibler divergence,/ˈkʊlbæk ˈlaɪblər daɪˈvɜːdʒəns/,kul-bak laib-ler dai-vur-juhns
-cross-entropy,/krɒs ˈɛntrəpi/,kros en-truh-pee
-perplexity,/pərˈplɛksɪti/,per-plek-si-tee
-coding theory,/ˈkəʊdɪŋ ˈθɪəri/,koh-ding thee-uh-ree
-error-correcting code,/ɪˈrɜːr kəˈrɛktɪŋ kəʊd/,er-er kuh-rek-ting kohd
-Hamming code,/ˈhæmɪŋ kəʊd/,ham-ing kohd
-Reed-Solomon code,/riːd ˈsɒləmən kəʊd/,reed sol-uh-muhn kohd
-convolutional code,/ˌkɒnvəˈluːʃənəl kəʊd/,kon-vuh-loo-shuh-nuhl kohd
-turbo code,/ˈtɜːbəʊ kəʊd/,tur-boh kohd
-LDPC code,/ˌɛl diː piː ˈsiː kəʊd/,el dee pee see kohd
-polar code,/ˈpəʊlər kəʊd/,poh-ler kohd
-quantum error correction,/ˈkwɒntəm ˈɛrər kəˈrɛkʃən/,kwon-tuhm er-er kuh-rek-shuhn
-quantum information,/ˈkwɒntəm ˌɪnfəˈmeɪʃən/,kwon-tuhm in-fuh-may-shuhn
-qubit,/ˈkjuːbɪt/,kyoo-bit
-quantum gate,/ˈkwɒntəm ɡeɪt/,kwon-tuhm gayt
-quantum circuit,/ˈkwɒntəm ˈsɜːkɪt/,kwon-tuhm sur-kit
-quantum algorithm,/ˈkwɒntəm ˈælɡərɪðəm/,kwon-tuhm al-guh-ri-thuhm
-Shor's algorithm,/ˈʃɔːrz ˈælɡərɪðəm/,shorz al-guh-ri-thuhm
-Grover's algorithm,/ˈɡrəʊvərz ˈælɡərɪðəm/,groh-verz al-guh-ri-thuhm
-quantum Fourier transform,/ˈkwɒntəm ˈfʊərieɪ ˈtrænsfɔːm/,kwon-tuhm foo-ree-ay trans-form
-quantum teleportation,/ˈkwɒntəm ˌtɛlɪpɔːˈteɪʃən/,kwon-tuhm tel-i-por-tay-shuhn
-quantum entanglement,/ˈkwɒntəm ɪnˈtæŋɡəlmənt/,kwon-tuhm in-tang-guhl-muhnt
-Bell inequality,/bɛl ˌɪnɪˈkwɒlɪti/,bel in-i-kwol-i-tee
-EPR paradox,/ˌiː piː ˈɑːr ˈpærədɒks/,ee pee ar par-uh-doks
-quantum decoherence,/ˈkwɒntəm ˌdiːkəʊˈhɪərəns/,kwon-tuhm dee-koh-heer-uhns
-quantum measurement,/ˈkwɒntəm ˈmɛʒəmənt/,kwon-tuhm mezh-uh-muhnt
-wave function,/weɪv ˈfʌŋkʃən/,wayv fungk-shuhn
-Schrödinger equation,/ˈʃrɜːdɪŋər ɪˈkweɪʒən/,shroo-ding-er i-kway-zhuhn
-Heisenberg uncertainty principle,/ˈhaɪzənbɜːɡ ʌnˈsɜːrtnti ˈprɪnsəpəl/,hize-uhn-burg un-sur-tn-tee prin-suh-puhl
-Pauli exclusion principle,/ˈpɔːli ɪkˈskluːʒən ˈprɪnsəpəl/,paw-lee ik-skloo-zhuhn prin-suh-puhl
-spin,/spɪn/,spin
-angular momentum,/ˈæŋɡjʊlər moʊˈmɛntəm/,ang-gyoo-lur moh-men-tuhm
-linear momentum,/ˈlɪniər moʊˈmɛntəm/,lin-ee-er moh-men-tuhm
-energy,/ˈɛnərdʒi/,en-er-jee
-kinetic energy,/kɪˈnɛtɪk ˈɛnərdʒi/,ki-net-ik en-er-jee
-potential energy,/pəˈtɛnʃəl ˈɛnərdʒi/,puh-ten-shuhl en-er-jee
-conservation laws,/ˌkɒnsəˈveɪʃən lɔːz/,kon-ser-vay-shuhn lawz
-symmetry,/ˈsɪmɪtri/,sim-i-tree
-Noether's theorem,/ˈnɜːtərz ˈθɪərəm/,nur-terz thee-uh-ruhm
-Lagrangian mechanics,/ləˈɡreɪdʒiən mɪˈkænɪks/,luh-gray-jee-uhn mi-kan-iks
-Hamiltonian mechanics,/ˌhæmɪlˈtəʊniən mɪˈkænɪks/,ham-il-toh-nee-uhn mi-kan-iks
-classical mechanics,/klæsɪkəl mɪˈkænɪks/,klas-i-kuhl mi-kan-iks
-quantum mechanics,/ˈkwɒntəm mɪˈkænɪks/,kwon-tuhm mi-kan-iks
-relativity,/ˌrɛləˈtɪvɪti/,rel-uh-tiv-i-tee
-special relativity,/ˈspɛʃəl ˌrɛləˈtɪvɪti/,spesh-uhl rel-uh-tiv-i-tee
-general relativity,/ˈdʒɛnərəl ˌrɛləˈtɪvɪti/,jen-er-uhl rel-uh-tiv-i-tee
-spacetime,/ˈspeɪstaɪm/,spays-taim
-curvature,/ˈkɜːrvətʃər/,kur-vuh-cher
-black hole,/blæk həʊl/,blak hohl
-white hole,/waɪt həʊl/,wait hohl
-wormhole,/ˈwɜːrmhəʊl/,wurm-hohl
-cosmology,/kɒzˈmɒlədʒi/,koz-mol-uh-jee
-Big Bang,/bɪɡ bæŋ/,big bang
-inflation,/ˌɪnflеɪˈʃən/,in-flay-shuhn
-dark matter,/dɑːrk ˈmætər/,dahrk mat-er
-dark energy,/dɑːrk ˈɛnərdʒi/,dahrk en-er-jee
-cosmic microwave background,/ˈkɒzmɪk ˈmaɪkrəweɪv ˈbækɡraʊnd/,koz-mik mai-kruh-wayv bak-ground
-galaxy,/ˈɡæləksi/,gal-uhk-see
-star,/stɑːr/,stahr
-planet,/ˈplænɪt/,plan-it
-moon,/muːn/,moon
-asteroid,/ˈæstərɔɪd/,as-ter-oid
-comet,/ˈkɒmɪt/,kom-it
-meteor,/ˈmiːtiər/,mee-tee-or
-nebula,/ˈnɛbjʊlə/,neb-yoo-luh
-supernova,/ˌsuːpərˈnəʊvə/,soo-per-noh-vuh
-pulsar,/ˈpʌlsɑːr/,pul-sahr
-quasar,/ˈkweɪzɑːr/,kway-zahr
-neutron star,/ˈnjuːtrɒn stɑːr/,nyoo-tron stahr
-white dwarf,/waɪt dwɔːrf/,wait dwarff
-red giant,/rɛd ˈdʒaɪənt/,red jai-uhnt
-blue giant,/bluː ˈdʒaɪənt/,bloo jai-uhnt
-main sequence,/meɪn ˈsiːkwəns/,main see-kwuhns
-Hertzsprung-Russell diagram,/ˈhɜːrtsprʌŋ ˈrʌsəl ˈdaɪəɡræm/,hurts-prung rus-uhl dai-uh-gram
-stellar evolution,/ˈstɛlər ˌɛvəˈluːʃən/,stel-er ev-uh-loo-shuhn
-nuclear fusion,/ˈnjuːkliər ˈfjuːʒən/,nyoo-klee-er fyoo-zhuhn
-nuclear fission,/ˈnjuːkliər ˈfɪʃən/,nyoo-klee-er fish-uhn
-radioactivity,/ˌreɪdiəʊækˈtɪvɪti/,ray-dee-oh-ak-tiv-i-tee
-half-life,/ˈhɑːf laɪf/,hahf life
-decay,/dɪˈkeɪ/,di-kay
-alpha decay,/ˈælfə dɪˈkeɪ/,al-fuh di-kay
-beta decay,/ˈbiːtə dɪˈkeɪ/,bee-tuh di-kay
-gamma decay,/ˈɡæmə dɪˈkeɪ/,gam-uh di-kay
-neutron capture,/ˈnjuːtrɒn ˈkæptʃər/,nyoo-tron kap-cher
-proton capture,/ˈprəʊtɒn ˈkæptʃər/,proh-ton kap-cher
-electron capture,/ɪˈlɛktrɒn ˈkæptʃər/,i-lek-tron kap-cher
-positron emission,/pəˈzɪtrɒn ɪˈmɪʃən/,puh-zit-ron i-mish-uhn
-electron-positron annihilation,/ɪˈlɛktrɒn pəˈzɪtrɒn əˌnaɪəˈleɪʃən/,i-lek-tron puh-zit-ron uh-nai-uh-lay-shuhn
-pair production,/pɛər prəˈdʌkʃən/,pair pruh-duhk-shuhn
-Compton scattering,/ˈkɒmptən ˈskætərɪŋ/,kompt-uhn skat-er-ing
-photoelectric effect,/ˌfəʊtəʊɪˈlɛktrɪk ɪˈfɛkt/,foh-toh-i-lek-trik i-fekt
-wave-particle duality,/weɪv ˈpɑːrtɪkəl djuːˈælɪti/,wayv pahr-ti-kuhl doo-al-i-tee
-de Broglie wavelength,/də ˈbrɔɪli ˈweɪvleŋθ/,duh broy-lee wayv-leng-th
-Planck's constant,/plæŋks ˈkɒnstənt/,plangs kon-stuhnt
-speed of light,/spiːd əv laɪt/,speed uv lait
-gravitational constant,/ˌɡrævɪˈteɪʃənəl ˈkɒnstənt/,grav-i-tay-shuh-nuhl kon-stuhnt
-Boltzmann constant,/ˈbəʊltzmən ˈkɒnstənt/,boltz-muhn kon-stuhnt
-Avogadro's number,/ˌævəˈɡɑːdrəʊz ˈnʌmbər/,av-uh-gah-drohz num-ber
-gas constant,/ɡæs ˈkɒnstənt/,gas kon-stuhnt
-Faraday constant,/fəˈreɪdi ˈkɒnstənt/,fuh-ray-dee kon-stuhnt
-elementary charge,/ˌɛlɪˈmɛntəri tʃɑːrdʒ/,el-i-men-tuh-ree chahrdj
-electron mass,/ɪˈlɛktrɒn mæs/,i-lek-tron mas
-proton mass,/ˈprəʊtɒn mæs/,proh-ton mas
-neutron mass,/ˈnjuːtrɒn mæs/,nyoo-tron mas
-atomic mass unit,/əˈtɒmɪk mæs ˈjuːnɪt/,uh-tom-ik mas yoo-nit
-angstrom,/ˈæŋstrəm/,ang-struhm
-light-year,/ˈlaɪt jɪər/,lait yeer
-parsec,/ˈpɑːsɛk/,pahr-sek
-astronomical unit,/ˌæstrəˈnɒmɪkəl ˈjuːnɪt/,as-truh-nom-i-kuhl yoo-nit
-solar mass,/ˈsəʊlər mæs/,soh-lur mas
-solar radius,/ˈsəʊlər ˈreɪdiəs/,soh-lur ray-dee-uhs
-solar luminosity,/ˈsəʊlər ˌluːmɪˈnɒsɪti/,soh-lur loo-mi-nos-i-tee
-Earth mass,/ɜːrθ mæs/,urth mas
-Earth radius,/ɜːrθ ˈreɪdiəs/,urth ray-dee-uhs
-Earth year,/ɜːrθ jɪər/,urth yeer
-Earth day,/ɜːrθ deɪ/,urth day
-sidereal day,/saɪˈdɪəriəl deɪ/,si-deer-ee-uhl day
-sidereal year,/saɪˈdɪəriəl jɪər/,si-deer-ee-uhl yeer
-tropical year,/ˈtrɒpɪkəl jɪər/,trop-i-kuhl yeer
-anomalistic year,/ˌænəməˈlɪstɪk jɪər/,an-uh-muh-lis-tik yeer
-draconic month,/drəˈkɒnɪk mʌnθ/,druh-kon-ik munth
-synodic month,/sɪˈnɒdɪk mʌnθ/,si-nod-ik munth
-sidereal month,/saɪˈdɪəriəl mʌnθ/,si-deer-ee-uhl munth
-anomalistic month,/ˌænəməˈlɪstɪk mʌnθ/,an-uh-muh-lis-tik munth
-tropical month,/ˈtrɒpɪkəl mʌnθ/,trop-i-kuhl munth
-eclipse,/ɪˈklɪps/,i-klips
-solar eclipse,/ˈsəʊlər ɪˈklɪps/,soh-lur i-klips
-lunar eclipse,/ˈluːnər ɪˈklɪps/,loo-nur i-klips
-total eclipse,/ˈtəʊtl ɪˈklɪps/,toh-tl i-klips
-partial eclipse,/ˈpɑːrʃəl ɪˈklɪps/,pahr-shuhl i-klips
-annular eclipse,/ˈænjʊlər ɪˈklɪps/,an-yoo-lur i-klips
-hybrid eclipse,/ˈhaɪbrɪd ɪˈklɪps/,hai-brihd i-klips
-umbra,/ˈʌmbrə/,um-bruh
-penumbra,/pɪˈnʌmbrə/,pi-num-bruh
-antumbra,/ænˈtʌmbrə/,an-tum-bruh
-saros cycle,/ˈsɛərɒs ˈsaɪkəl/,sair-os sai-kuhl
-eclipse season,/ɪˈklɪps ˈsiːzn/,i-klips see-zuhn
-node,/nəʊd/,nohd
-ascending node,/əˈsɛndɪŋ nəʊd/,uh-sen-ding nohd
-descending node,/dɪˈsɛndɪŋ nəʊd/,di-sen-ding nohd
-line of nodes,/laɪn əv nəʊdz/,lain uv nohdz
-inclination,/ˌɪnklɪˈneɪʃən/,in-kli-nay-shuhn
-eccentricity,/ˌɛksɛnˈtrɪsɪti/,ek-sen-tris-i-tee
-semi-major axis,/ˌsɛmi ˈmeɪdʒər ˈæksɪs/,sem-i may-jer ak-sis
-semi-minor axis,/ˌsɛmi ˈmaɪnər ˈæksɪs/,sem-i mai-ner ak-sis
-orbital period,/ˈɔːrbɪtl ˈpɪəriəd/,or-bit-l peer-ee-uhd
-sidereal period,/saɪˈdɪəriəl ˈpɪəriəd/,si-deer-ee-uhl peer-ee-uhd
-synodic period,/sɪˈnɒdɪk ˈpɪəriəd/,si-nod-ik peer-ee-uhd
-anomalistic period,/ˌænəməˈlɪstɪk ˈpɪəriəd/,an-uh-muh-lis-tik peer-ee-uhd
-tropical period,/ˈtrɒpɪkəl ˈpɪəriəd/,trop-i-kuhl peer-ee-uhd
-Kepler's laws,/ˈkɛplərz lɔːz/,kep-lerz lawz
-Newton's law of universal gravitation,/ˈnjuːtənz lɔː əv ˌjuːnɪˈvɜːsəl ˌɡrævɪˈteɪʃən/,nyoo-tuhnz law uv yoo-ni-vur-suhl grav-i-tay-shuhn
-tidal force,/ˈtaɪdl fɔːrs/,tai-dl forss
-Roche limit,/rəʊʃ ˈlɪmɪt/,rohsh lim-it
-Hill sphere,/hɪl sfɪər/,hil sfeer
-Lagrange points,/ləˈɡreɪndʒ pɔɪnts/,luh-graynj points
-L1,/ɛl wʌn/,el wuhn
-L2,/ɛl tuː/,el too
-L3,/ɛl θriː/,el three
-L4,/ɛl fɔːr/,el fawr
-L5,/ɛl faɪv/,el fai-v
-corotation,/ˌkəʊrəʊˈteɪʃən/,koh-roh-tay-shuhn
-synchronous rotation,/sɪŋˈkrɒnəs rəʊˈteɪʃən/,sing-kron-uhs roh-tay-shuhn
-tidal locking,/ˈtaɪdl ˈlɒkɪŋ/,tai-dl lok-ing
-orbital resonance,/ˈɔːrbɪtl ˈrɛzənəns/,or-bit-l rez-uh-nuhns
-mean motion resonance,/miːn ˈməʊʃən ˈrɛzənəns/,meen moh-shuhn rez-uh-nuhns
-spin-orbit resonance,/spɪn ˈɔːrbɪt ˈrɛzənəns/,spin or-bit rez-uh-nuhns
-secular resonance,/ˈsɛkjʊlər ˈrɛzənəns/,sek-yoo-lur rez-uh-nuhns
-Kozai mechanism,/kəˈzaɪ ˈmɛkənɪzəm/,kuh-zai mek-uh-niz-uhm
-Yarkovsky effect,/jɑːrˈkɒfski ɪˈfɛkt/,yahr-kof-skee i-fekt
-YORP effect,/jɔːrp ɪˈfɛkt/,yor-p i-fekt
-Poynting-Robertson drag,/ˈpɔɪntɪŋ ˈrɒbərtsən dræɡ/,poin-ting rob-ert-suhn drag
-radiation pressure,/ˌreɪdiˈeɪʃən ˈprɛʃər/,ray-dee-ay-shuhn presh-er
-solar wind,/ˈsəʊlər wɪnd/,soh-lur wind
-magnetosphere,/mæɡˈniːtəʊsfɪər/,mag-nee-toh-sfeer
-ionosphere,/aɪˈɒnəsfɪər/,ai-on-uh-sfeer
-exosphere,/ˈɛksəʊsfɪər/,ek-soh-sfeer
-thermosphere,/ˈθɜːrməʊsfɪər/,thur-moh-sfeer
-mesosphere,/ˈmɛsəʊsfɪər/,mes-oh-sfeer
-stratosphere,/ˈstrætəʊsfɪər/,strat-oh-sfeer
-troposphere,/ˈtrɒpəʊsfɪər/,trop-oh-sfeer
-boundary layer,/ˈbaʊndəri ˈleɪər/,bawn-der-ee lay-er
-planetary boundary layer,/ˈplænɪtəri ˈbaʊndəri ˈleɪər/,plan-i-ter-ee bawn-der-ee lay-er
-tropopause,/ˈtrɒpəʊpɔːz/,trop-oh-pawz
-stratopause,/ˈstrætəʊpɔːz/,strat-oh-pawz
-mesopause,/ˈmɛsəʊpɔːz/,mes-oh-pawz
-thermopause,/ˈθɜːrməʊpɔːz/,thur-moh-pawz
-exobase,/ˈɛksəʊbeɪs/,ek-soh-bays
-homopause,/ˈhɒməʊpɔːz/,hom-oh-pawz
-heteropause,/ˈhɛtərəʊpɔːz/,het-er-oh-pawz
-turbopause,/ˈtɜːrbəʊpɔːz/,tur-boh-pawz
-ozone layer,/ˈəʊzəʊn ˈleɪər/,oh-zohn lay-er
-Van Allen radiation belts,/væn ˈælən ˌreɪdiˈeɪʃən bɛlts/,van al-uhn ray-dee-ay-shuhn belts
-aurora,/ɔːˈrɔːrə/,or-or-uh
-northern lights,/ˈnɔːrðərn laɪts/,nawr-thern laits
-southern lights,/ˈsʌðərn laɪts/,suth-ern laits
-geomagnetic storm,/ˌdʒiːəʊmæɡˈnɛtɪk stɔːrm/,jee-oh-mag-net-ik stawrm
-solar flare,/ˈsəʊlər fleər/,soh-lur flair
-coronal mass ejection,/kəˈroʊnəl mæs ɪˈdʒɛkʃən/,kuh-roh-nuhl mas i-jek-shuhn
-solar prominence,/ˈsəʊlər ˈprɒmɪnəns/,soh-lur prom-i-nuhns
-sunspot,/ˈsʌnspɒt/,sun-spot
-solar cycle,/ˈsəʊlər ˈsaɪkəl/,soh-lur sai-kuhl
-Maunder minimum,/ˈmɔːndər ˈmɪnɪməm/,mawn-der min-i-muhm
-Dalton minimum,/ˈdɔːltən ˈmɪnɪməm/,dawl-tuhn min-i-muhm
-Gleissberg cycle,/ˈɡlaɪsbɜːrɡ ˈsaɪkəl/,glaiss-berg sai-kuhl
-Suess cycle,/ˈsuːɛs ˈsaɪkəl/,soo-ess sai-kuhl
-Hallstatt cycle,/ˈhælstæt ˈsaɪkəl/,hal-stat sai-kuhl
-Milankovitch cycles,/ˌmɪlənˈkɒvɪtʃ ˈsaɪkəlz/,mil-un-kov-itch sai-kuhlz
-eccentricity cycle,/ˌɛksɛnˈtrɪsɪti ˈsaɪkəl/,ek-sen-tris-i-tee sai-kuhl
-obliquity cycle,/əˈblɪkwɪti ˈsaɪkəl/,uh-blik-wi-tee sai-kuhl
-precession cycle,/prɪˈsɛʃən ˈsaɪkəl/,pri-sesh-uhn sai-kuhl
-axial precession,/ˈæksiəl prɪˈsɛʃən/,ak-see-uhl pri-sesh-uhn
-apsidal precession,/æpˈsaɪdəl prɪˈsɛʃən/,ap-sai-duhl pri-sesh-uhn
-nodal precession,/ˈnoʊdl prɪˈsɛʃən/,noh-duhl pri-sesh-uhn
-Chandler wobble,/ˈtʃændlər ˈwɒbəl/,chan-ler wob-uhl
-polar motion,/ˈpəʊlər ˈməʊʃən/,poh-ler moh-shuhn
-true polar wander,/truː ˈpəʊlər ˈwɒndər/,troo poh-ler won-der
-plate tectonics,/pleɪt tɛkˈtɒnɪks/,playt tek-ton-iks
-continental drift,/ˌkɒntɪˈnɛntəl drɪft/,kon-ti-nen-tuhl drift
-seafloor spreading,/ˈsiːflɔːr ˈsprɛdɪŋ/,see-floor spred-ing
-subduction,/səbˈdʌkʃən/,suhb-duhk-shuhn
-mid-ocean ridge,/mɪd ˈəʊʃən rɪdʒ/,mid oh-shuhn rij
-transform fault,/trænsˈfɔːrm fɔːlt/,trans-form fawlt
-divergent boundary,/daɪˈvɜːdʒənt ˈbaʊndəri/,dai-vur-juhnt bawn-der-ee
-convergent boundary,/kənˈvɜːdʒənt ˈbaʊndəri/,kuhn-vur-juhnt bawn-der-ee
-collision zone,/kəˈlɪʒən zəʊn/,kuh-lij-uhn zohn
-orogeny,/əˈrɒdʒəni/,uh-roj-uh-nee
-mountain building,/ˈmaʊntən ˈbɪldɪŋ/,mown-tuhn bild-ing
-erosion,/ɪˈrəʊʒən/,i-roh-zhuhn
-weathering,/ˈwɛðərɪŋ/,weth-er-ing
-deposition,/ˌdɛpəˈzɪʃən/,dep-uh-zish-uhn
-sedimentation,/ˌsɛdɪmɛnˈteɪʃən/,sed-i-men-tay-shuhn
-lithification,/ˌlɪθɪfɪˈkeɪʃən/,lith-i-fi-kay-shuhn
-metamorphism,/mɪˈtæmɔːfɪzəm/,mi-tam-or-fiz-uhm
-igneous rock,/ˈɪɡniəs rɒk/,ig-nee-uhs rok
-sedimentary rock,/sɪˈdɪməntəri rɒk/,si-dim-en-tuh-ree rok
-metamorphic rock,/ˌmɛtəˈmɔːrfɪk rɒk/,met-uh-mor-fik rok
-granite,/ˈɡrænɪt/,gran-it
-basalt,/bəˈsɔːlt/,buh-sawlt
-sandstone,/ˈsændstəʊn/,sand-stohn
-limestone,/ˈlaɪmstəʊn/,laim-stohn
-shale,/ʃeɪl/,shayl
-marble,/ˈmɑːrbəl/,mahr-buhl
-quartzite,/ˈkwɔːrtsaɪt/,kworts-aait
-schist,/ʃɪst/,shist
-gneiss,/naɪs/,nais
-slate,/sleɪt/,slayt
-phyllite,/ˈfɪlaɪt/,fil-aait
-hornfels,/ˈhɔːrnfɛlz/,horn-fels
-eclogite,/ˈɛklədʒaɪt/,ek-luh-jait
-amphibolite,/æmˈfɪbəlaɪt/,am-fib-uh-laait
-greenstone,/ˈɡriːnstəʊn/,green-stohn
-komatiite,/kəˈmɑːti.aɪt/,kuh-mah-tee-aait
-peridotite,/pəˈrɪdətaɪt/,puh-rid-uh-tait
-dunite,/ˈdjuːnaɪt/,dyoo-naait
-harzburgite,/ˈhɑːrtsbɜːɡaɪt/,hahrts-bur-gaait
-lherzolite,/ˈlɛərtsəlaɪt/,lair-tsuh-laait
-wehrlite,/ˈvɛərlaɪt/,vair-laait
-pyroxenite,/paɪˈrɒksənaɪt/,pai-rok-suh-naait
-gabbro,/ˈɡæbrəʊ/,gab-roh
-diorite,/ˈdaɪəraɪt/,dai-uh-raait
-andesite,/ˈændɪsaɪt/,an-di-saait
-rhyolite,/ˈraɪəlaɪt/,rai-uh-laait
-dacite,/ˈdeɪsaɪt/,day-saait
-trachyte,/ˈtrækaɪt/,trak-aait
-phonolite,/ˈfəʊnəlaɪt/,foh-nuh-laait
-pumice,/ˈpʌmɪs/,pum-is
-obsidian,/əbˈsɪdiən/,uhb-sid-ee-uhn
-tuff,/tʌf/,tuf
-breccia,/ˈbrɛtʃə/,bretch-uh
-conglomerate,/kənˈɡlɒmərɪt/,kuhn-glom-er-it
-chalk,/tʃɔːk/,chawk
-chert,/tʃɜːrt/,churt
-flint,/flɪnt/,flint
-jasper,/ˈdʒæspər/,jas-per
-agate,/ˈæɡət/,ag-it
-onyx,/ˈɒnɪks/,on-iks
-opal,/ˈəʊpəl/,oh-puhl
-coal,/kəʊl/,kohl
-peat,/piːt/,peet
-lignite,/ˈlɪɡnaɪt/,lig-naait
-bituminous coal,/bɪˈtjuːmɪnəs kəʊl/,bi-too-min-uhs kohl
-anthracite,/ˈænθrəsaɪt/,an-thruh-saait
-graphite,/ˈɡræfaɪt/,graf-aait
-diamond,/ˈdaɪəmənd/,dai-uh-muhnd
-oil,/ɔɪl/,oil
-petroleum,/pɪˈtrəʊliəm/,pi-troh-lee-uhm
-natural gas,/ˈnætʃrəl ɡæs/,nat-chur-uhl gas
-methane,/ˈmiːθeɪn/,mee-thayn
-ethane,/ˈiːθeɪn/,ee-thayn
-propane,/ˈprəʊpeɪn/,proh-payn
-butane,/ˈbjuːteɪn/,byoo-tayn
-pentane,/ˈpɛnteɪn/,pen-tayn
-hexane,/ˈhɛkseɪn/,hek-sayn
-heptane,/ˈhɛpteɪn/,hep-tayn
-octane,/ˈɒkteɪn/,ok-tayn
-nonane,/ˈnəʊneɪn/,noh-nayn
-decane,/ˈdɛkeɪn/,dek-ayn
-alkane,/ˈælkeɪn/,al-kayn
-alkene,/ˈælkiːn/,al-keen
-alkyne,/ˈælkaɪn/,al-kain
-aromatic hydrocarbon,/ˌærəˈmætɪk ˌhaɪdrəˈkɑːbən/,ar-uh-mat-ik hai-druh-kahr-buhn
-benzene,/ˈbɛnziːn/,ben-zeen
-toluene,/ˈtɒljuːiːn/,tol-yoo-een
-xylene,/ˈzaɪliːn/,zai-leen
-naphthalene,/ˈnæfθəliːn/,naf-thuh-leen
-anthracene,/ˈænθrəsiːn/,an-thruh-seen
-phenanthrene,/fɪˈnænθriːn/,fi-nan-three-n
-pyrene,/ˈpɪriːn/,pi-reen
-coronene,/kəˈrɒniːn/,kuh-ron-een
-ovalene,/əˈveɪliːn/,uh-vay-leen
-circumcoronene,/ˌsɜːkəmkəˈrɒniːn/,sur-kuhm-kuh-ron-een
-circumpyrene,/ˌsɜːkəmpɪˈriːn/,sur-kuhm-pi-reen
-circumovalene,/ˌsɜːkəməˈveɪliːn/,sur-kuhm-uh-vay-leen
-polycyclic aromatic hydrocarbon,/ˌpɒliˈsaɪklɪk ˌærəˈmætɪk ˌhaɪdrəˈkɑːbən/,pol-i-sai-klik ar-uh-mat-ik hai-druh-kahr-buhn
-PAH,/piː eɪ eɪtʃ/,pee ay aitch
-fullerene,/ˈfʊləriːn/,ful-uh-reen
-buckminsterfullerene,/ˌbʌkmɪnstəˈfʊləriːn/,buk-min-ster-ful-uh-reen
-C60,/siː sɪksti/,see sik-see
-carbon nanotube,/ˈkɑːbən ˈnænətuːb/,kahr-buhn nan-uh-toob
-graphene,/ˈɡræfiːn/,graf-een
-carbon fiber,/ˈkɑːbən ˈfaɪbər/,kahr-buhn fai-ber
-carbon black,/ˈkɑːbən blæk/,kahr-buhn blak
-activated carbon,/ˈæktɪveɪtɪd ˈkɑːbən/,ak-ti-vay-tid kahr-buhn
-charcoal,/ˈtʃɑːkəʊl/,chahr-kohl
-biochar,/ˈbaɪəʊkɑːr/,bai-oh-kahr
-carbon sequestration,/ˈkɑːbən ˌsiːkwəˈstreɪʃən/,kahr-buhn see-kwuh-stray-shuhn
-carbon capture,/ˈkɑːbən ˈkæptʃər/,kahr-buhn kap-cher
-carbon storage,/ˈkɑːbən ˈstɔːrɪdʒ/,kahr-buhn stor-ij
-carbon sink,/ˈkɑːbən sɪŋk/,kahr-buhn singk
-carbon source,/ˈkɑːbən sɔːrs/,kahr-buhn sors
-carbon neutral,/ˈkɑːbən ˈnjuːtrəl/,kahr-buhn nyoo-truhl
-carbon negative,/ˈkɑːbən ˈnɛɡətɪv/,kahr-buhn neg-uh-tiv
-carbon positive,/ˈkɑːbən ˈpɒzətɪv/,kahr-buhn poz-uh-tiv
-net zero,/nɛt ˈzɪərəʊ/,net zeer-oh
-climate change,/ˈklaɪmɪt tʃeɪndʒ/,klaimit chaynj
-global warming,/ˈɡləʊbəl ˈwɔːrmɪŋ/,gloh-buhl wor-ming
-greenhouse effect,/ˈɡriːnhaʊs ɪˈfɛkt/,green-hows i-fekt
-greenhouse gas,/ˈɡriːnhaʊs ɡæs/,green-hows gas
-carbon dioxide,/ˈkɑːbən daɪˈɒksaɪd/,kahr-buhn dai-ok-side
-CO2,/siː əʊ tuː/,see oh too
-methane,/ˈmiːθeɪn/,mee-thayn
-CH4,/siː eɪtʃ fɔːr/,see aitch fawr
-nitrous oxide,/ˈnaɪtrəs ˈɒksaɪd/,nai-truhs ok-side
-N2O,/ɛn tuː əʊ/,en too oh
-water vapor,/ˈwɔːtər ˈveɪpər/,waw-ter vay-per
-H2O,/eɪtʃ tuː əʊ/,aich too oh
-ozone,/ˈəʊzəʊn/,oh-zohn
-O3,/əʊ θriː/,oh three
-chlorofluorocarbon,/ˌklɔːrəʊˈflʊərəʊˌkɑːbən/,klor-oh-floo-ruh-oh-kahr-buhn
-CFC,/siː ef siː/,see ef see
-hydrochlorofluorocarbon,/ˌhaɪdrəʊklɔːrəʊˈflʊərəʊˌkɑːbən/,hai-droh-klor-oh-floo-ruh-oh-kahr-buhn
-HCFC,/eɪtʃ siː ef siː/,aich see ef see
-hydrofluorocarbon,/ˌhaɪdrəʊˈflʊərəʊˌkɑːbən/,hai-droh-floo-ruh-oh-kahr-buhn
-HFC,/eɪtʃ ef siː/,aich ef see
-perfluorocarbon,/ˌpɜːfluːərəʊˈkɑːbən/,pur-floo-ruh-oh-kahr-buhn
-PFC,/piː ef siː/,pee ef see
-sulfur hexafluoride,/ˈsʌlfər ˌhɛksəˈflʊəraɪd/,sul-fer hek-suh-floo-raid
-SF6,/ɛs ef sɪks/,es ef siks
-nitrogen trifluoride,/ˈnaɪtrədʒən traɪˈflʊəraɪd/,nai-truh-juhn trai-floo-raid
-NF3,/ɛn ef θriː/,en ef three
-trifluoromethyl sulfur pentafluoride,/traɪˌfluːərəʊˈmɛθəl ˈsʌlfər ˌpɛntəˈflʊəraɪd/,trai-floo-ruh-oh-meth-uhl sul-fer pen-tuh-floo-raid
-SF5CF3,/ɛs ef faɪv siː ef θriː/,es ef fai-v see ef three
-radiative forcing,/ˈreɪdieɪtɪv ˈfɔːrsɪŋ/,ray-dee-ay-tiv for-sing
-climate sensitivity,/ˈklaɪmɪt ˌsɛnsɪˈtɪvɪti/,klaimit sen-si-tiv-i-tee
-equilibrium climate sensitivity,/ˌiːkwɪˈlɪbriəm ˈklaɪmɪt ˌsɛnsɪˈtɪvɪti/,ee-kwil-i-bree-um klaimit sen-si-tiv-i-tee
-transient climate response,/ˈtrænziənt ˈklaɪmɪt rɪˈspɒns/,tran-zee-uhnt klaimit ri-spons
-earth system sensitivity,/ɜːrθ ˈsɪstəm ˌsɛnsɪˈtɪvɪti/,urth sis-tuhm sen-si-tiv-i-tee
-feedback,/ˈfiːdbæk/,feed-bak
-positive feedback,/ˈpɒzətɪv ˈfiːdbæk/,poz-i-tiv feed-bak
-negative feedback,/ˈnɛɡətɪv ˈfiːdbæk/,neg-uh-tiv feed-bak
-ice-albedo feedback,/aɪs ˈælbɪdəʊ ˈfiːdbæk/,ais al-bi-doh feed-bak
-water vapor feedback,/ˈwɔːtər ˈveɪpər ˈfiːdbæk/,waw-ter vay-per feed-bak
-cloud feedback,/klaʊd ˈfiːdbæk/,klowd feed-bak
-lapse rate feedback,/læps reɪt ˈfiːdbæk/,laps rayt feed-bak
-carbon cycle feedback,/ˈkɑːbən ˈsaɪkəl ˈfiːdbæk/,kahr-buhn sigh-kul feed-bak
-permafrost feedback,/ˈpɜːrməfrɒst ˈfiːdbæk/,pur-muh-frost feed-bak
-methane clathrate feedback,/ˈmiːθeɪn ˈklæθreɪt ˈfiːdbæk/,mee-thayn klath-rayt feed-bak
-forest dieback feedback,/ˈfɒrɪst ˈdaɪbæk ˈfiːdbæk/,for-ist dai-bak feed-bak
-ocean circulation feedback,/ˈəʊʃən ˌsɜːkjʊˈleɪʃən ˈfiːdbæk/,oh-shuhn sur-kyoo-lay-shuhn feed-bak
-Atlantic meridional overturning circulation,/ətˈlæntɪk ˌmɛrɪˈdɪənəl ˌəʊvəˈtɜːnɪŋ ˌsɜːkjʊˈleɪʃən/,uh-tlan-tik mer-i-dee-uh-nuhl oh-ver-tur-ning sur-kyoo-lay-shuhn
-AMOC,/eɪ em əʊ siː/,ay em oh see
-Gulf Stream,/ɡʌlf striːm/,gulf streem
-North Atlantic Drift,/nɔːrθ ətˈlæntɪk drɪft/,nawrth uh-tlan-tik drift
-North Atlantic Deep Water,/nɔːrθ ətˈlæntɪk diːp ˈwɔːtər/,nawrth uh-tlan-tik deep waw-ter
-Antarctic Bottom Water,/ænˈtɑːrktɪk ˈbɒtəm ˈwɔːtər/,an-tahrk-tik bot-uhm waw-ter
-thermohaline circulation,/ˌθɜːrməʊˈheɪlaɪn ˌsɜːkjʊˈleɪʃən/,thur-moh-hay-line sur-kyoo-lay-shuhn
-global conveyor belt,/ˈɡləʊbəl kənˈveɪər bɛlt/,gloh-buhl kuhn-vay-er belt
-El Niño,/ɛl ˈniːnjəʊ/,el neen-yoh
-La Niña,/lɑː ˈniːnjə/,lah neen-yah
-ENSO,/ɛn suː/,en soo
-El Niño-Southern Oscillation,/ɛl ˈniːnjəʊ ˈsʌðərn ˌɒsɪˈleɪʃən/,el neen-yoh suh-thern os-i-lay-shuhn
-Pacific Decadal Oscillation,/pəˈsɪfɪk dɪˈkeɪdəl ˌɒsɪˈleɪʃən/,puh-sif-ik di-kay-duhl os-i-lay-shuhn
-PDO,/piː diː əʊ/,pee dee oh
-Atlantic Multidecadal Oscillation,/ətˈlæntɪk ˌmʌltiˈdɛkədəl ˌɒsɪˈleɪʃən/,uh-tlan-tik mul-ti-dek-uh-duhl os-i-lay-shuhn
-AMO,/eɪ em əʊ/,ay em oh
-North Atlantic Oscillation,/nɔːrθ ətˈlæntɪk ˌɒsɪˈleɪʃən/,nawrth uh-tlan-tik os-i-lay-shuhn
-NAO,/en eɪ əʊ/,en ay oh
-Arctic Oscillation,/ˈɑːktɪk ˌɒsɪˈleɪʃən/,ahrk-tik os-i-lay-shuhn
-AO,/eɪ əʊ/,ay oh
-Antarctic Oscillation,/ænˈtɑːrktɪk ˌɒsɪˈleɪʃən/,an-tahrk-tik os-i-lay-shuhn
-AAO,/eɪ eɪ əʊ/,ay ay oh
-Southern Annular Mode,/ˈsʌðərn ˈænjʊlər məʊd/,suh-thern an-yoo-lur mohd
-SAM,/ɛs eɪ em/,es ay em
-Indian Ocean Dipole,/ˈɪndiən ˈəʊʃən ˈdaɪpəʊl/,in-dee-uhn oh-shuhn dai-pohl
-IOD,/aɪ əʊ diː/,ai oh dee
-Madden-Julian Oscillation,/ˈmædən dʒʊˈliən ˌɒsɪˈleɪʃən/,mad-uhn joo-lee-uhn os-i-lay-shuhn
-MJO,/ɛm dʒeɪ əʊ/,em jay oh
-Quasi-Biennial Oscillation,/ˈkweɪzaɪ baɪˈɛniəl ˌɒsɪˈleɪʃən/,kway-zai bai-en-ee-uhl os-i-lay-shuhn
-QBO,/kjuː biː əʊ/,kyoo bee oh
-stratospheric sudden warming,/ˌstrætəˈsfɛrɪk ˈsʌdən ˈwɔːrmɪŋ/,strat-uh-sfer-ik sud-uhn wor-ming
-SSW,/ɛs es dʌbəljuː/,es es dub-uhl-yoo
-polar vortex,/ˈpəʊlər ˈvɔːrteks/,poh-ler vor-teks
-jet stream,/dʒɛt striːm/,jet streem
-subtropical jet,/ˌsʌbtrəˈpɪkəl dʒɛt/,sub-truh-pik-uhl jet
-polar jet,/ˈpəʊlər dʒɛt/,poh-ler jet
-front,/frʌnt/,frunt
-cold front,/kəʊld frʌnt/,kohld frunt
-warm front,/wɔːrm frʌnt/,wawrm frunt
-stationary front,/ˈsteɪʃənəri frʌnt/,stay-shuh-ner-ee frunt
-occluded front,/əˈkluːdɪd frʌnt/,uh-klood-id frunt
-dry line,/draɪ laɪn/,drai lain
-squall line,/skwɔːl laɪn/,skwawl lain
-derecho,/dɪˈreɪtʃoʊ/,di-ray-choh
-thunderstorm,/ˈθʌndərstɔːrm/,thun-der-stawrm
-lightning,/ˈlaɪtnɪŋ/,lait-ning
-thunder,/ˈθʌndər/,thun-der
-hail,/heɪl/,hayl
-tornado,/tɔːrˈneɪdəʊ/,tor-nay-doh
-waterspout,/ˈwɔːtərspaʊt/,waw-ter-spowt
-landspout,/ˈlændspaʊt/,land-spowt
-gustnado,/ɡʌsˈteɪdəʊ/,gus-tay-doh
-funnel cloud,/ˈfʌnəl klaʊd/,fun-uhl kloud
-wall cloud,/wɔːl klaʊd/,wawl kloud
-shelf cloud,/ʃɛlf klaʊd/,shelf kloud
-roll cloud,/rəʊl klaʊd/,rohl kloud
-mammatus,/ˈmæmətəs/,mam-uh-tuhs
-anvil,/ˈænvɪl/,an-vil
-overshooting top,/ˌəʊvəˈʃuːtɪŋ tɒp/,oh-ver-shoo-ting top
-beaver tail,/ˈbiːvər teɪl/,bee-ver tayl
-tail cloud,/teɪl klaʊd/,tayl kloud
-inflow band,/ˈɪnfləʊ bænd/,in-flow band
-outflow boundary,/ˈaʊtfləʊ ˈbaʊndəri/,out-flow bawn-der-ee
-gust front,/ɡʌst frʌnt/,gust frunt
-downburst,/ˈdaʊnbɜːrst/,down-burst
-microburst,/ˈmaɪkrəʊbɜːrst/,mai-kroh-burst
-macroburst,/ˈmækrəʊbɜːrst/,mak-roh-burst
-heat burst,/hiːt bɜːrst/,heet burst
-haboob,/hæˈbuːb/,hab-oob
-dust devil,/dʌst ˈdɛvəl/,dust dev-uhl
-whirlwind,/ˈwɜːlwaɪnd/,wurl-waind
-cyclone,/ˈsaɪkləʊn/,sai-klohn
-tropical cyclone,/ˈtrɒpɪkəl ˈsaɪkləʊn/,trop-i-kuhl sai-klohn
-hurricane,/ˈhʌrɪkən/,hur-i-kuhn
-typhoon,/taɪˈfuːn/,tai-foon
-baguio,/bɑːˈɡiːoʊ/,bah-gee-oh
-wilipar,/ˈwɪlɪpɑːr/,wil-i-pahr
-willy-willy,/ˈwɪli ˈwɪli/,wil-ee wil-ee
-tropical depression,/trɒpɪkəl dɪˈprɛʃən/,trop-i-kuhl di-presh-uhn
-tropical storm,/ˈtrɒpɪkəl stɔːrm/,trop-i-kuhl stawrm
-category 1 hurricane,/ˈkætɪɡəri wʌn ˈhʌrɪkən/,kat-i-guh-ree wuhn hur-i-kuhn
-category 2 hurricane,/ˈkætɪɡəri tuː ˈhʌrɪkən/,kat-i-guh-ree too hur-i-kuhn
-category 3 hurricane,/ˈkætɪɡəri θriː ˈhʌrɪkən/,kat-i-guh-ree three hur-i-kuhn
-category 4 hurricane,/ˈkætɪɡəri fɔːr ˈhʌrɪkən/,kat-i-guh-ree fawr hur-i-kuhn
-category 5 hurricane,/ˈkætɪɡəri faɪv ˈhʌrɪkən/,kat-i-guh-ree fai-v hur-i-kuhn
-Saffir-Simpson scale,/ˈsæfər ˈsɪmpsən skeɪl/,saf-er simp-suhn skayl
-Beaufort scale,/ˈbəʊfərt skeɪl/,boh-fert skayl
-enhanced Fujita scale,/ɪnˈhɑːnst fuːˈdʒiːtə skeɪl/,in-hahnst foo-jee-tuh skayl
-EF0,/iː ef zɪərəʊ/,ee ef zeer-oh
-EF1,/iː ef wʌn/,ee ef wuhn
-EF2,/iː ef tuː/,ee ef too
-EF3,/iː ef θriː/,ee ef three
-EF4,/iː ef fɔːr/,ee ef fawr
-EF5,/iː ef faɪv/,ee ef fai-v
-Fujita scale,/fuːˈdʒiːtə skeɪl/,foo-jee-tuh skayl
-F0,/ɛf zɪərəʊ/,ef zeer-oh
-F1,/ɛf wʌn/,ef wuhn
-F2,/ɛf tuː/,ef too
-F3,/ɛf θriː/,ef three
-F4,/ɛf fɔːr/,ef fawr
-F5,/ɛf faɪv/,ef fai-v
-TORRO scale,/ˈtɒrəʊ skeɪl/,tor-oh skayl
-T0,/tiː zɪərəʊ/,tee zeer-oh
-T1,/tiː wʌn/,tee wuhn
-T2,/tiː tuː/,tee too
-T3,/tiː θriː/,tee three
-T4,/tiː fɔːr/,tee fawr
-T5,/tiː faɪv/,tee fai-v
-T6,/tiː sɪks/,tee siks
-T7,/tiː sɛvən/,tee sev-uhn
-T8,/tiː eɪt/,tee ayt
-T9,/tiː naɪn/,tee nain
-T10,/tiː tɛn/,tee ten
-T11,/tiː ɪˈlɛvən/,tee i-lev-uhn
-wind speed,/wɪnd spiːd/,wind speed
-gust,/ɡʌst/,gust
-sustained wind,/səˈsteɪnd wɪnd/,suh-staynd wind
-peak wind,/piːk wɪnd/,peek wind
-mean wind,/miːn wɪnd/,meen wind
-wind direction,/wɪnd dɪˈrɛkʃən/,wind di-rek-shuhn
-wind rose,/wɪnd rəʊz/,wind rohz
-prevailing wind,/prɪˈveɪlɪŋ wɪnd/,pri-vay-ling wind
-trade wind,/treɪd wɪnd/,trayd wind
-westerly,/ˈwɛstərli/,wes-ter-lee
-easterly,/ˈiːstərli/,ees-ter-lee
-northerly,/ˈnɔːrðərli/,nawr-ther-lee
-southerly,/ˈsʌðərli/,suh-ther-lee
-sea breeze,/siː briːz/,see breez
-land breeze,/lænd briːz/,land breez
-mountain breeze,/ˈmaʊntən briːz/,mown-tuhn breez
-valley breeze,/ˈvæli briːz/,val-ee breez
-katabatic wind,/ˌkætəˈbætɪk wɪnd/,kat-uh-bat-ik wind
-anabatic wind,/ˌænəˈbætɪk wɪnd/,an-uh-bat-ik wind
-foehn,/fɜːn/,furn
-chinook,/ʃɪˈnuːk/,shi-nook
-sirocco,/sɪˈrɒkəʊ/,si-rok-oh
-mistral,/mɪˈstrɑːl/,mi-strahl
-bora,/ˈbɔːrə/,bor-uh
-santa ana,/ˈsæntə ˈɑːnə/,san-tuh ah-nuh
-haboob,/hæˈbuːb/,hab-oob
-khamsin,/kæmˈsiːn/,kam-seen
-shamal,/ʃəˈmɑːl/,shuh-mahl
-brickfielder,/brɪkˈfiːldər/,brik-feel-der
-buster,/ˈbʌstər/,bus-ter
-nor'wester,/nɔːrˈwɛstər/,nor-wes-ter
-sou'wester,/suːˈwɛstər/,soo-wes-ter
-williwaw,/ˈwɪliwɔː/,wil-i-waw
-piteraq,/ˈpɪtəræk/,pit-er-ak
-boomerang wind,/ˈbuːməræŋ wɪnd/,boo-mer-ang wind
-monsoon,/mɒnˈsuːn/,mon-soon
-summer monsoon,/ˈsʌmər mɒnˈsuːn/,sum-er mon-soon
-winter monsoon,/ˈwɪntər mɒnˈsuːn/,win-ter mon-soon
-southwest monsoon,/ˌsaʊθˈwɛst mɒnˈsuːn/,south-west mon-soon
-northeast monsoon,/ˌnɔːrθˈiːst mɒnˈsuːn/,north-east mon-soon
-Indian monsoon,/ˈɪndiən mɒnˈsuːn/,in-dee-uhn mon-soon
-East Asian monsoon,/iːst ˈeɪʒən mɒnˈsuːn/,east ay-zhuhn mon-soon
-West African monsoon,/wɛst ˈæfrɪkən mɒnˈsuːn/,west af-ri-kuhn mon-soon
-North American monsoon,/nɔːrθ əˈmɛrɪkən mɒnˈsuːn/,north uh-mer-i-kuhn mon-soon
-Australian monsoon,/ɒˈstreɪliən mɒnˈsuːn/,os-tray-lee-uhn mon-soon
-South American monsoon,/saʊθ əˈmɛrɪkən mɒnˈsuːn/,south uh-mer-i-kuhn mon-soon
-rainy season,/ˈreɪni ˈsiːzn/,ray-nee see-zuhn
-dry season,/draɪ ˈsiːzn/,drai see-zuhn
-wet season,/wɛt ˈsiːzn/,wet see-zuhn
-precipitation,/prɪˌsɪpɪˈteɪʃən/,pri-sip-i-tay-shuhn
-rain,/reɪn/,rayn
-snow,/snəʊ/,snoh
-sleet,/sliːt/,sleet
-freezing rain,/ˈfriːzɪŋ reɪn/,free-zing rayn
-hail,/heɪl/,hayl
-graupel,/ˈɡraʊpəl/,grow-puhl
-virga,/ˈvɜːrɡə/,vur-guh
-drizzle,/ˈdrɪzl/,driz-uhl
-shower,/ˈʃaʊər/,show-er
-thundershower,/ˈθʌndərʃaʊər/,thun-der-show-er
-downpour,/ˈdaʊnpɔːr/,down-pawr
-cloudburst,/ˈklaʊdbɜːrst/,cloud-burst
-deluge,/ˈdɛljuːdʒ/,del-ooj
-flood,/flʌd/,flud
-flash flood,/flæʃ flʌd/,flash flud
-river flood,/ˈrɪvər flʌd/,riv-er flud
-coastal flood,/ˈkəʊstəl flʌd/,koh-stuhl flud
-urban flood,/ˈɜːbən flʌd/,ur-buhn flud
-pluvial flood,/ˈpluːviəl flʌd/,ploo-vee-uhl flud
-fluvial flood,/ˈfluːviəl flʌd/,floo-vee-uhl flud
-storm surge,/stɔːrm sɜːrdʒ/,stawrm surj
-tidal surge,/ˈtaɪdl sɜːrdʒ/,tai-duhl surj
-king tide,/kɪŋ taɪd/,king tide
-spring tide,/sprɪŋ taɪd/,spring tide
-neap tide,/niːp taɪd/,neep tide
-high tide,/haɪ taɪd/,hai tide
-low tide,/ləʊ taɪd/,loh tide
-ebb tide,/ɛb taɪd/,eb tide
-flood tide,/flʌd taɪd/,flud tide
-slack tide,/slæk taɪd/,slak tide
-tidal range,/ˈtaɪdl reɪndʒ/,tai-duhl raynj
-mean sea level,/miːn siː ˈlɛvəl/,meen see lev-uhl
-sea level rise,/siː ˈlɛvəl raɪz/,see lev-uhl rize
-thermal expansion,/ˈθɜːrməl ɪkˈspænʃən/,thur-muhl ik-span-shuhn
-glacial isostatic adjustment,/ˈɡleɪʃəl ˌaɪsəˈstætɪk əˈdʒʌstmənt/,glay-shuhl ai-suh-stat-ik uh-just-ment
-post-glacial rebound,/pəʊst ˈɡleɪʃəl riˈbaʊnd/,pohst glay-shuhl ri-bownd
-subsidence,/səbˈsaɪdəns/,suhb-sai-duhns
-uplift,/ˈʌplɪft/,up-lift
-eustatic sea level change,/juːˈstætɪk siː ˈlɛvəl tʃeɪndʒ/,yoo-stat-ik see lev-uhl chaynj
-relative sea level change,/ˈrɛlətɪv siː ˈlɛvəl tʃeɪndʒ/,rel-uh-tiv see lev-uhl chaynj
-absolute sea level change,/ˈæbsəluːt siː ˈlɛvəl tʃeɪndʒ/,ab-suh-loot see lev-uhl chaynj
-geoid,/ˈdʒiːɔɪd/,jee-oid
-ellipsoid,/ɪˈlɪpsɔɪd/,i-lip-soid
-datum,/ˈdeɪtəm/,day-tuhm
-vertical datum,/ˈvɜːrtɪkəl ˈdeɪtəm/,vur-ti-kuhl day-tuhm
-horizontal datum,/ˌhɒrɪˈzɒntəl ˈdeɪtəm/,hor-i-zon-tuhl day-tuhm
-geodetic datum,/ˌdʒiːəˈdɛtɪk ˈdeɪtəm/,jee-uh-det-ik day-tuhm
-WGS84,/ˌdʌbljuː dʒiː ɛs eɪt fɔːr/,dub-lyoo jee es ay-eight fawr
-NAD83,/ɛn eɪ diː eɪt θriː/,en ay dee ay-eight three
-NAD27,/ɛn eɪ diː tuː sevən/,en ay dee too sev-uhn
-ETRS89,/iː tiː ɑːr es eɪt naɪn/,ee tee ar es ay-eight nine
-ITRF,/aɪ tiː ɑːr ef/,ai tee ar ef
-International Terrestrial Reference Frame,/ˌɪntəˈnæʃənəl təˈrɛstriəl ˈrɛfərəns freɪm/,in-ter-nash-uh-nuhl tuh-res-tree-uhl ref-er-uhns fraym
-GPS,/dʒiː piː ɛs/,jee pee es
-Global Positioning System,/ˈɡləʊbəl ˈpəʊzɪʃənɪŋ ˈsɪstəm/,gloh-buhl poh-zish-uh-ning sis-tuhm
-GNSS,/dʒiː en es es/,jee en es es
-Global Navigation Satellite System,/ˈɡləʊbəl ˌnævɪˈɡeɪʃən ˈsætəlaɪt ˈsɪstəm/,gloh-buhl nav-i-gay-shuhn sat-uh-lite sis-tuhm
-GLONASS,/ɡləˈnɑːs/,gluh-nahs
-Galileo,/ˌɡælɪˈleɪoʊ/,gal-i-lay-oh
-BeiDou,/ˈbeɪˈduː/,bay-doo
-IRNSS,/aɪ ɑːr en es es/,ai ar en es es
-NavIC,/ˈnævɪk/,nav-ik
-QZSS,/kjuː zɛd es es/,kyoo zed es es
-SBAS,/ɛs biː eɪ es/,es bee ay es
-Satellite-Based Augmentation System,/ˈsætəlaɪt bɪst æɡˌmɛntəˈʃən ˈsɪstəm/,sat-uh-lite bist ag-men-tay-shuhn sis-tuhm
-WAAS,/ˈwɑːs/,wahs
-EGNOS,/ˈɛɡnɒs/,eg-nos
-MSAS,/ˈɛmsæs/,em-sas
-GAGAN,/ˈɡæɡæn/,gag-an
-DORIS,/ˈdɔːrɪs/,dor-is
-VLBI,/viː el biː aɪ/,vee el bee ai
-SLR,/ɛs el ɑːr/,es el ar
-GNSS reflectometry,/dʒiː en es es ˌrɛflɛkˈtɒmɪtri/,jee en es es ref-lek-tom-i-tree
-GNSS radio occultation,/dʒiː en es es ˌreɪdiəʊ ˌɒkʌlˈteɪʃən/,jee en es es ray-dee-oh ok-ul-tay-shuhn
-precise point positioning,/prɪˈsaɪs pɔɪnt ˈpəʊzɪʃənɪŋ/,pri-sais point poh-zish-uh-ning
-PPP,/piː piː piː/,pee pee pee
-real-time kinematic,/ˈrɪəl taɪm kɪˈnɛmətɪk/,ree-uhl time ki-nem-at-ik
-RTK,/ɑːr tiː keɪ/,ar tee kay
-network RTK,/ˈnɛtwɜːrk ɑːr tiː keɪ/,net-wurk ar tee kay
-VRS,/viː ɑːr es/,vee ar es
-FKP,/ɛf keɪ piː/,ef kay pee
-MAC,/mæk/,mak
-differential GPS,/ˌdɪfəˈrɛnʃəl dʒiː piː ɛs/,dif-er-en-shuhl jee pee es
-DGPS,/diː dʒiː piː ɛs/,dee jee pee es
-carrier-phase enhancement,/ˈkæriər feɪz ɪnˈhɑːnsmənt/,kar-ee-er fayz in-hahnss-ment
-CPGPS,/siː piː dʒiː piː ɛs/,see pee jee pee es
-assisted GPS,/əˈsɪstɪd dʒiː piː ɛs/,uh-sis-tid jee pee es
-A-GPS,/eɪ dʒiː piː ɛs/,ay jee pee es
-enhanced observed time difference,/ɪnˈhɑːnst əbˈzɜːrvd taɪm ˈdɪfrəns/,in-hahnst uhb-zurv-d time dif-ruhns
-E-OTD,/iː əʊ tiː diː/,ee oh tee dee
-observed time difference of arrival,/əbˈzɜːrvd taɪm ˈdɪfrəns əv əˈraɪvəl/,uhb-zurv-d time dif-ruhns uv uh-rai-vuhl
-OTDOA,/əʊ tiː diː əʊ eɪ/,oh tee dee oh ay
-time of arrival,/taɪm əv əˈraɪvəl/,time uv uh-rai-vuhl
-TOA,/tiː əʊ eɪ/,tee oh ay
-time difference of arrival,/taɪm ˈdɪfrəns əv əˈraɪvəl/,time dif-ruhns uv uh-rai-vuhl
-TDOA,/tiː diː əʊ eɪ/,tee dee oh ay
-angle of arrival,/ˈæŋɡəl əv əˈraɪvəl/,ang-guhl uv uh-rai-vuhl
-AOA,/eɪ əʊ eɪ/,ay oh ay
-received signal strength indication,/rɪˈsiːvd ˈsɪɡnəl strɛŋθ ˌɪndɪˈkeɪʃən/,ri-seevd sig-nuhl strength in-di-kay-shuhn
-RSSI,/ɑːr es es aɪ/,ar es es ai
-fingerprinting,/ˈfɪŋɡərprɪntɪŋ/,fing-ger-print-ing
-trilateration,/traɪˌlætəˈreɪʃən/,trai-lat-er-ay-shuhn
-multilateration,/ˌmʌltɪˌlætəˈreɪʃən/,mul-ti-lat-er-ay-shuhn
-triangulation,/traɪˌæŋɡjʊˈleɪʃən/,trai-ang-gyoo-lay-shuhn
-dead reckoning,/dɛd ˈrɛkənɪŋ/,ded rek-uh-ning
-inertial navigation,/ɪˈnɜːrʃəl ˌnævɪˈɡeɪʃən/,in-ur-shuhl nav-i-gay-shuhn
-INS,/aɪ en es/,ai en es
-IMU,/aɪ em juː/,ai em yoo
-inertial measurement unit,/ɪˈnɜːrʃəl ˈmɛʒərmənt ˈjuːnɪt/,in-ur-shuhl mezh-er-ment yoo-nit
-accelerometer,/əkˌsɛləˈrɒmɪtər/,ak-sel-er-om-i-ter
-gyroscope,/ˈdʒaɪrəskəʊp/,jai-ruh-skohp
-magnetometer,/mæɡˌniːˈtɒmɪtər/,mag-nee-tom-i-ter
-barometer,/bəˈrɒmɪtər/,buh-rom-i-ter
-altimeter,/ælˈtɪmɪtər/,al-tim-i-ter
-compass,/ˈkʌmpəs/,kum-puhs
-odometer,/əʊˈdɒmɪtər/,oh-dom-i-ter
-wheel encoder,/wiːl ɪnˈkəʊdər/,weel in-koh-der
-visual odometry,/ˈvɪʒuəl əʊˈdɒmɪtri/,vizh-oo-uhl oh-dom-i-tree
-SLAM,/ɛs læm/,es lam
-simultaneous localization and mapping,/ˌsɪmlˈteɪniəs ˌləʊkəlaɪˈzeɪʃən ænd ˈmæpɪŋ/,sim-ul-tay-nee-uhs loh-kuh-lai-zay-shuhn and map-ing
-visual SLAM,/ˈvɪʒuəl ɛs læm/,vizh-oo-uhl es lam
-lidar SLAM,/ˈlaɪdɑːr ɛs læm/,lai-dahr es lam
-radar SLAM,/ˈreɪdɑːr ɛs læm/,ray-dahr es lam
-sonar SLAM,/ˈsəʊnɑːr ɛs læm/,soh-nahr es lam
-WiFi SLAM,/ˈwaɪfaɪ ɛs læm/,wai-fai es lam
-Bluetooth SLAM,/ˈbluːtuːθ ɛs læm/,bloo-tooth es lam
-UWB SLAM,/juː dʌbəljuː biː ɛs læm/,yoo dub-uhl-yoo bee es lam
-5G SLAM,/faɪv dʒiː ɛs læm/,fai-v jee es lam
-RFID SLAM,/ɑːr ef aɪ diː ɛs læm/,ar ef ai dee es lam
-NFC SLAM,/ɛn ef siː ɛs læm/,en ef see es lam
-computer vision,/kəmˈpjuːtər ˈvɪʒən/,kum-pyoo-ter vizh-uhn
-machine vision,/məˈʃiːn ˈvɪʒən/,muh-sheen vizh-uhn
-image processing,/ˈɪmɪdʒ ˈprəʊsesɪŋ/,im-ij proh-ses-ing
-digital image processing,/ˈdɪdʒɪtəl ˈɪmɪdʒ ˈprəʊsesɪŋ/,dij-i-tuhl im-ij proh-ses-ing
-signal processing,/ˈsɪɡnəl ˈprəʊsesɪŋ/,sig-nuhl proh-ses-ing
-digital signal processing,/ˈdɪdʒɪtəl ˈsɪɡnəl ˈprəʊsesɪŋ/,dij-i-tuhl sig-nuhl proh-ses-ing
-Fourier transform,/ˈfʊərieɪ trænsˈfɔːrm/,foo-ree-ay trans-form
-discrete Fourier transform,/dɪˈskriːt ˈfʊərieɪ trænsˈfɔːrm/,dis-kreet foo-ree-ay trans-form
-DFT,/diː ef tiː/,dee ef tee
-fast Fourier transform,/fɑːst ˈfʊərieɪ trænsˈfɔːrm/,fahst foo-ree-ay trans-form
-FFT,/ef ef tiː/,ef ef tee
-inverse Fourier transform,/ɪnˈvɜːrs ˈfʊərieɪ trænsˈfɔːrm/,in-vurs foo-ree-ay trans-form
-IFFT,/aɪ ef ef tiː/,ai ef ef tee
-Laplace transform,/ləˈplɑːs trænsˈfɔːrm/,luh-plahs trans-form
-Z-transform,/ziː trænsˈfɔːrm/,zee trans-form
-wavelet transform,/ˈweɪvɪlɪt trænsˈfɔːrm/,wayv-il-it trans-form
-continuous wavelet transform,/kənˈtɪnjuəs ˈweɪvɪlɪt trænsˈfɔːrm/,kuhn-tin-yoo-uhs wayv-il-it trans-form
-CWT,/siː dʌbəljuː tiː/,see dub-uhl-yoo tee
-discrete wavelet transform,/dɪˈskriːt ˈweɪvɪlɪt trænsˈfɔːrm/,dis-kreet wayv-il-it trans-form
-DWT,/diː dʌbəljuː tiː/,dee dub-uhl-yoo tee
-stationary wavelet transform,/ˈsteɪʃənəri ˈweɪvɪlɪt trænsˈfɔːrm/,stay-shuh-ner-ee wayv-il-it trans-form
-SWT,/es dʌbəljuː tiː/,es dub-uhl-yoo tee
-lifting scheme,/ˈlɪftɪŋ skiːm/,lift-ing skeem
-filter bank,/ˈfɪltər bæŋk/,fil-ter bangk
-quadrature mirror filter,/ˈkwɒdrətʃər ˈmɪrər ˈfɪltər/,kwod-ruh-chur mir-er fil-ter
-QMF,/kjuː em ef/,kyoo em ef
-perfect reconstruction,/pərˈfɛkt ˌriːkənˈstrʌkʃən/,per-fekt ree-kuhn-struk-shuhn
-aliasing,/ˈeɪliəsɪŋ/,ay-lee-uh-sing
-Nyquist rate,/ˈnaɪkwɪst reɪt/,nai-kwist rayt
-Nyquist frequency,/ˈnaɪkwɪst ˈfriːkwənsi/,nai-kwist free-kwen-see
-sampling theorem,/ˈsɑːmplɪŋ ˈθɪərəm/,sahm-pling thee-uh-ruhm
-Shannon sampling theorem,/ˈʃænən ˈsɑːmplɪŋ ˈθɪərəm/,shan-uhn sahm-pling thee-uh-ruhm
-Whittaker-Shannon interpolation formula,/ˈwɪtəkər ˈʃænən ˌɪntərpəˈleɪʃən ˈfɔːrmjʊlə/,wit-uh-ker shan-uhn in-ter-puh-lay-shuhn for-myoo-luh
-sinc function,/sɪŋk ˈfʌŋkʃən/,singk fungk-shuhn
-Dirichlet kernel,/ˈdɪrɪkleɪ ˈkɜːrnl/,dir-i-klay kur-nuhl
-Fejér kernel,/ˈfeɪɪr ˈkɜːrnl/,fay-ir kur-nuhl
-Gibbs phenomenon,/ˈɡɪbz fɪˈnɒmɪnən/,gibz fi-nom-i-nuhn
-window function,/ˈwɪndəʊ ˈfʌŋkʃən/,win-doh fungk-shuhn
-rectangular window,/rɛkˈtæŋɡjʊlər ˈwɪndəʊ/,rek-tang-gyoo-lur win-doh
-Hann window,/hæn ˈwɪndəʊ/,han win-doh
-Hamming window,/ˈhæmɪŋ ˈwɪndəʊ/,ham-ing win-doh
-Blackman window,/ˈblækmən ˈwɪndəʊ/,blak-muhn win-doh
-Kaiser window,/ˈkaɪzər ˈwɪndəʊ/,kai-zer win-doh
-Chebyshev window,/ˈtʃɛbiʃɒf ˈwɪndəʊ/,cheb-i-shof win-doh
-Taylor window,/ˈteɪlər ˈwɪndəʊ/,tay-ler win-doh
-Dolph-Chebyshev window,/ˈdɒlf ˈtʃɛbiʃɒf  '', ''
-}
-zulit,/ˈzu.lɪt/,ZOO-lit
-vil,/vɪl/,vil
-optimera,/ɔp.tɪ'mɛ.ra/,op-ti-ME-ra
--ne,/nɛ/,neh
-ätat,/ˈɛ.tat/,EH-taht
-ät,/ɛt/,et
-grav,/grav/,grahv
-kung,/kuŋ/,koong
-fan,/fan/,fahn
-mat,/mat/,maht
-vunda,/ˈvun.da/,VOON-dah
-vund,/vund/,voond
-vund-sul,/ˈvund.sul/,VOOND-sool
-vund-sten,/ˈvund.stɛn/,VOOND-sten
--lik,/lik/,lik
-stam,/stam/,stahm
-mest-stark,/mɛst stark/,mest-stahrk
--s,/s/,s
-bygg-mästar,/bʏg mɛstar/,bewg-mes-tahr
-justerat,/jusˈtɛrat/,yoos-TEH-raht
-gräns-sida,/grɛnsˈsida/,grens-SEE-dah
-plan,/plan/,plahn
-utseende,/utˈsɛɛndɛ/,oot-SEH-en-deh
-vild-köp-sjuk,/vɪld kœp ʃʊk/,vild-koep-shook
-spel,/spɛl/,spel
-zul,/zul/,zool
-Kung,/kuŋ/,koong
-dun-sang,/dun saŋ/,doon-sahng
-fot-dans,/fɔt dans/,fot-dahns
+in,/in/,in
+super,/ˈsu.per/,SOO-pehr
+sub,/sub/,soob
+ante,/ˈan.te/,AHN-teh
+post,/post/,pohst
+inter,/ˈin.ter/,IN-tehr
+proxim,/ˈprok.sim/,PROK-sim
+long,/loŋ/,lohng
+ad,/ad/,ad
+ex,/eks/,eks
+per,/per/,pehr
+cum,/kum/,koom
+sine,/ˈsi.ne/,SEE-neh
+de,/de/,deh
+pro,/pro/,proh
+et,/et/,et
+aut,/aut/,owt
+sed,/sed/,sed
+quia,/ˈkwi.a/,KWEE-ah
+si,/si/,see
+quamvis,/kʷamˈwis/,kwahm-WIS
+cum,/kum/,koom
+unus,/ˈu.nus/,OO-nus
+duo,/ˈdu.o/,DOO-oh
+tres,/tres/,tres
+quattuor,/kʷatˈtu.or/,kwah-TOO-or
+quinque,/ˈkwin.kwe/,KWIN-kweh
+sex,/seks/,seks
+septem,/ˈsep.tem/,SEP-tehm
+octo,/ˈok.to/,OK-toh
+novem,/ˈno.wem/,NOH-wehm
+decem,/ˈde.kem/,DEH-kehm
+undecim,/unˈde.kim/,oon-DEH-kim
+duodecim,/duoˈde.kim/,doo-oh-DEH-kim
+tredecim,/treˈde.kim/,treh-DEH-kim
+quattuordecim,/kʷat.tuˈor.de.kim/,kwah-too-OR-deh-kim
+quindecim,/kwinˈde.kim/,kwin-DEH-kim
+sedecim,/seˈde.kim/,seh-DEH-kim
+septendecim,/sep.tenˈde.kim/,sep-ten-DEH-kim
+duodeviginti,/duo.de.wiˈɡin.ti/,doo-oh-deh-wee-GIN-tee
+undeviginti,/un.de.wiˈɡin.ti/,oon-deh-wee-GIN-tee
+viginti,/wiˈɡin.ti/,wee-GIN-tee
+viginti unus,/wiˈɡin.ti ˈu.nus/,wee-GIN-tee OO-nus
+viginti duo,/wiˈɡin.ti ˈdu.o/,wee-GIN-tee DOO-oh
+viginti tres,/wiˈɡin.ti tres/,wee-GIN-tee tres
+viginti quattuor,/wiˈɡin.ti kʷatˈtu.or/,wee-GIN-tee kwah-TOO-or
+viginti quinque,/wiˈɡin.ti ˈkwin.kwe/,wee-GIN-tee KWIN-kweh
+viginti sex,/wiˈɡin.ti seks/,wee-GIN-tee seks
+viginti septem,/wiˈɡin.ti ˈsep.tem/,wee-GIN-tee SEP-tehm
+viginti octo,/wiˈɡin.ti ˈok.to/,wee-GIN-tee OK-toh
+viginti novem,/wiˈɡin.ti ˈno.wem/,wee-GIN-tee NOH-wehm
+triginta,/triˈɡin.ta/,tree-GIN-tah
+triginta unus,/triˈɡin.ta ˈu.nus/,tree-GIN-tah OO-nus
+quadraginta,/kʷa.draˈɡin.ta/,kwah-drah-GIN-tah
+quinquaginta,/kʷin.kʷaˈɡin.ta/,kwin-kwah-GIN-tah
+sexaginta,/sek.saˈɡin.ta/,seks-sah-GIN-tah
+septuaginta,/sep.tu.aˈɡin.ta/,sep-too-ah-GIN-tah
+octoginta,/ok.toˈɡin.ta/,ok-toh-GIN-tah
+nonaginta,/no.naˈɡin.ta/,noh-nah-GIN-tah
+centum,/ˈken.tum/,KEN-toom
+primus,/ˈpri.mus/,PREE-mus
+secundus,/seˈkun.dus/,seh-KOON-dus
+tertius,/ˈter.ti.us/,TER-shus
+quartus,/ˈkwar.tus/,KWAR-tus
+quintus,/ˈkwin.tus/,KWIN-tus
+sextus,/ˈsek.stus/,SEK-stus
+septimus,/ˈsep.ti.mus/,SEP-ti-mus
+octavus,/okˈta.wus/,ok-TAH-woos
+nonus,/ˈno.nus/,NOH-nus
+decimus,/ˈde.ki.mus/,DEH-ki-mus
+undecimus,/unˈde.ki.mus/,oon-DEH-ki-mus
+duodecimus,/duoˈde.ki.mus/,doo-oh-DEH-ki-mus
+tertius decimus,/ˈter.ti.us ˈde.ki.mus/,TER-shus DEH-ki-mus
+quartus decimus,/ˈkwar.tus ˈde.ki.mus/,KWAR-tus DEH-ki-mus
+quintus decimus,/ˈkwin.tus ˈde.ki.mus/,KWIN-tus DEH-ki-mus
+sextus decimus,/ˈsek.stus ˈde.ki.mus/,SEK-stus DEH-ki-mus
+septimus decimus,/ˈsep.ti.mus ˈde.ki.mus/,SEP-ti-mus DEH-ki-mus
+duodevicesimus,/duo.de.wiˈke.si.mus/,doo-oh-deh-wee-KEH-si-mus
+undevicesimus,/un.de.wiˈke.si.mus/,oon-deh-wee-KEH-si-mus
+vicesimus,/wiˈke.si.mus/,wee-KEH-si-mus
+ah,/ah/,ah
+oh,/oh/,oh
+he,/he/,heh
+va,/wa/,wah
+ita,/ˈi.ta/,EE-tah
+minime,/ˈmi.ni.me/,MI-ni-meh
+quaeso,/kʷaˈe.so/,kwai-SOH
+gratias,/ˈɡra.ti.as/,GRAH-ti-ahs
+paenitet,/paiˈni.tet/,pie-NI-teht
+salve,/ˈsal.we/,SAHL-weh
+vale,/ˈwa.le/,WAH-leh
