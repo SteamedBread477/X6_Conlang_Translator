@@ -1,9 +1,20 @@
 """
 应用路径工具模块。
 
-PyInstaller 打包后 __file__ 指向临时解压目录 (sys._MEIPASS),
-而非 exe 旁边。此模块提供统一的路径获取函数，
-确保 data 目录始终在 exe（或开发模式项目根目录）旁边。
+PyInstaller onedir 模式打包后目录结构：
+  exe 所在目录/
+    Nikki Conlang Forge.exe        ← 主程序入口
+    _internal/                     ← PyInstaller 运行时 (sys._MEIPASS)
+    assets/                        ← 外部资源（优先，用户可替换）
+    data/                          ← 语言数据包
+    app_config.json                ← 用户配置
+
+此模块提供统一的路径获取函数，确保 assets/data 等目录
+始终在 exe 旁边（而非 _internal 内部）。
+
+资源查找优先级：
+  1. exe 旁边的外部 assets/（用户可替换图标、lang_icons 等）
+  2. _internal/assets/（打包内置的回退，仅在外部缺失时使用）
 
 - 开发模式：返回项目根目录 (app 包的 parent)
 - frozen 模式：返回 exe 所在目录
@@ -61,8 +72,6 @@ ICON_SOURCE_NAME: str = "app_icon.jpg"
 ICON_MAP: dict[str, str] = {
     "confirm":   "confirm.png",      # ✓ 确认操作
     "discard":   "discard.png",      # ✗ 丢弃/删除操作
-    "copy":      "copy.png",         # 复制操作
-    "translate": "translate.png",    # 翻译操作
 }
 
 
@@ -100,26 +109,45 @@ def get_icon_path(icon_key: str) -> Path:
     return path if path.is_file() else Path()
 
 
+def _has_any_image(directory: Path) -> bool:
+    """检查目录中是否存在任何图片文件（app_icon.* 或 icons/、lang_icons/）。"""
+    if any(directory.glob("app_icon.*")):
+        return True
+    icons = directory / "icons"
+    if icons.is_dir() and any(icons.iterdir()):
+        return True
+    lang_icons = directory / "lang_icons"
+    if lang_icons.is_dir() and any(lang_icons.iterdir()):
+        return True
+    return False
+
+
 def get_assets_dir() -> Path:
-    """返回 assets 目录路径，并确保目录存在。
+    """返回 assets 目录路径（优先外部，回退打包内置）。
 
-    位置: get_app_dir() / "assets"
+    查找优先级：
+      1. exe 旁边的外部 assets/ — 用户可替换图标、语言图标等
+      2. _internal/assets/ (sys._MEIPASS) — PyInstaller 打包内置的回退
 
-    PyInstaller 打包后，exe 旁边的 assets 目录可能为空（图标等资源打包在内部），
-    此时回退到 sys._MEIPASS 下的 assets 目录以确保能找到图标等资源。
+    onedir 模式下，pack_release.py 会将 assets 复制到 exe 旁边，
+    程序优先使用外部目录（用户可替换）。若外部目录完全空
+    （无任何图片文件），则回退到打包内置资源。
     """
-    assets_dir = get_app_dir() / "assets"
-    assets_dir.mkdir(parents=True, exist_ok=True)
+    # 外部 assets（exe 旁边，用户可替换）
+    external_assets = get_app_dir() / "assets"
+    external_assets.mkdir(parents=True, exist_ok=True)
 
-    # frozen 模式下，若外部 assets 目录无图标文件，回退到打包内部
+    if _has_any_image(external_assets):
+        return external_assets
+
+    # frozen 模式下，外部 assets 完全空时回退到打包内置
     if getattr(sys, "frozen", False):
-        has_icon = any(assets_dir.glob("app_icon.*"))
-        if not has_icon:
-            meipass_assets = Path(sys._MEIPASS) / "assets"
-            if meipass_assets.is_dir() and any(meipass_assets.glob("app_icon.*")):
-                return meipass_assets
+        meipass_assets = Path(sys._MEIPASS) / "assets"
+        if meipass_assets.is_dir() and _has_any_image(meipass_assets):
+            return meipass_assets
 
-    return assets_dir
+    # 开发模式或无法回退时，使用外部目录（即使为空）
+    return external_assets
 
 
 def get_icon_source_path() -> Path:
@@ -167,16 +195,16 @@ def get_icon_ico_path() -> Path:
     try:
         from PIL import Image  # type: ignore
         img = Image.open(str(source))
-        # ICO 格式需要尺寸为 16/32/48/64/128/256 的正方形
-        sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
-        resized = []
-        for w, h in sizes:
-            resized.append(img.resize((w, h), Image.LANCZOS))
-        resized[0].save(
+        # RGBA 图像需转为 RGB（ICO 格式不支持 alpha 通道）
+        if img.mode == "RGBA":
+            bg = Image.new("RGB", img.size, (255, 255, 255))
+            bg.paste(img, mask=img.split()[3])
+            img = bg
+        # Pillow 11+ 直接在 save() 时传 sizes 参数，内部自动 resize
+        img.save(
             str(ico_path),
             format="ICO",
-            sizes=[(s.width, s.height) for s in resized],
-            append_images=resized[1:],
+            sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)],
         )
         return ico_path
     except Exception:

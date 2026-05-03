@@ -439,5 +439,25 @@
       "tts_pitch_hint": "normal",
       "tts_rate_hint": "normal"
     }
+  },
+  {
+    "id": "TH_0025",
+    "timestamp": "2026-05-03T21:17:00",
+    "source": "我才是巨人王",
+    "conlang": "mi zul es grav Människa-Kung",
+    "phonetic": "mee zool ess grahv Man-nis-ka Koong",
+    "unmatched_words": [
+      "才",
+      "王"
+    ],
+    "source_language": "中文",
+    "target_language": "巨人语",
+    "translation_mode": "ai_assisted",
+    "emotion": {
+      "label": "neutral",
+      "intensity": 0.5,
+      "tts_pitch_hint": "normal",
+      "tts_rate_hint": "normal"
+    }
   }
 ]

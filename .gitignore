@@ -14,8 +14,7 @@ venv/
 get-pip.py
 
 # 本地配置（含 API Key）
-data/ai_settings.json
-data/app_config.json
+app_config.json
 
 # IDE
 .idea/

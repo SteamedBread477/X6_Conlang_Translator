@@ -15,7 +15,7 @@
       "input": 0                     // ±3px 输入框字号偏移
     }
   },
-  "paperhub_enabled": true,
+  "paperhub_enabled": false,
   ...
 }
 

@@ -1296,7 +1296,11 @@
     "想": "vil",
     "就": "se",
     "发疯购物": "vild-köp-sjuk",
-    "游戏、竞技、较量": "spel"
+    "游戏、竞技、较量": "spel",
+    "才": "zul",
+    "王": "Kung",
+    "回响之歌": "dun-sang",
+    "踏足之舞": "fot-dans"
   },
   "tts_map": {
     "sul": "sool",
@@ -3264,7 +3268,11 @@
     "plan": "plahn",
     "utseende": "oot-SEH-en-deh",
     "vild-köp-sjuk": "vild-koep-shook",
-    "spel": "spel"
+    "spel": "spel",
+    "zul": "zool",
+    "Kung": "koong",
+    "dun-sang": "doon-sahng",
+    "fot-dans": "fot-dahns"
   },
   "ipa_map": {
     "sul": "/sul/",
@@ -5232,7 +5240,11 @@
     "plan": "/plan/",
     "utseende": "/utˈsɛɛndɛ/",
     "vild-köp-sjuk": "/vɪld kœp ʃʊk/",
-    "spel": "/spɛl/"
+    "spel": "/spɛl/",
+    "zul": "/zul/",
+    "Kung": "/kuŋ/",
+    "dun-sang": "/dun saŋ/",
+    "fot-dans": "/fɔt dans/"
   },
   "anchors": {
     "我是蒸汽面包": "tiesKul",
@@ -5248,14 +5260,15 @@
     "我 是 巨人族 最厉害 的 机器制造师": "mi es grav Människa-stam mest-stark-s maskin-bygg-mästar",
     "调整了界面的布局和外观": "justerat gräns-sida-s plan Dö utseende",
     "我 想 吃饭 了": "mi vil ätat mat ät",
-    "就是非常想发疯购物": "se es mycket vil vild-köp-sjuk"
+    "就是非常想发疯购物": "se es mycket vil vild-köp-sjuk",
+    "我才是巨人王": "mi zul es grav Människa-Kung"
   },
   "summary": {
     "phoneme_row_count": 46,
     "grammar_rule_count": 9,
-    "lexicon_count": 838,
-    "mapping_count": 2014,
-    "ipa_count": 2014,
-    "anchor_count": 14
+    "lexicon_count": 842,
+    "mapping_count": 2018,
+    "ipa_count": 2018,
+    "anchor_count": 15
   }
 }

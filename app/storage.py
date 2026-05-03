@@ -168,6 +168,7 @@ class JsonStorage:
             "name": name.strip() or "默认语言",
             "folder": folder,
             "notes": "",
+            "icon": "",
         }
 
     def create_language_record(self, desired_name: str, languages: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -178,9 +179,8 @@ class JsonStorage:
             "name": name,
             "folder": folder,
             "notes": "",
+            "icon": "",
         }
-
-    def init_language_package(self, language: Dict[str, Any]) -> None:
         self._init_language_package(language)
 
     def export_language_pack_zip(self, language: Dict[str, Any], zip_path: Path) -> tuple[int, str]:

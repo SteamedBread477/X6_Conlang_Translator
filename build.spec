@@ -2,7 +2,16 @@
 """
 PyInstaller spec file for X6_Conlang_Translator (Nikki Conlang Forge)
 
-打包为单个 exe，data 目录在 exe 旁边运行时自动创建。
+打包为目录模式（onedir），exe 旁边有 _internal/（运行时依赖）
+以及 assets/、data/ 等用户可替换目录。
+
+目录结构：
+  dist/Nikki Conlang Forge/
+    Nikki Conlang Forge.exe        ← 主程序入口
+    _internal/                     ← PyInstaller 运行时（DLL、Python runtime）
+    assets/                        ← 用户可替换的资源（图标、lang_icons）
+    data/                          ← 语言数据包
+    app_config.json                ← 用户配置（首次运行自动创建）
 """
 import sys
 from pathlib import Path
@@ -16,7 +25,8 @@ a = Analysis(
     pathex=[str(PROJECT_ROOT)],
     binaries=[],
     datas=[
-        # 应用图标（运行时也会从 exe 旁 assets/ 目录加载，打包内作为备选）
+        # 应用图标（打包到 _internal/assets 作为回退；
+        # exe 旁边的外部 assets/ 优先，用户可替换）
         ('assets', 'assets'),
     ],
     hiddenimports=[
@@ -38,6 +48,9 @@ a = Analysis(
         'numpy._core',
         'openpyxl',
         'et_xmlfile',
+        # Pillow (jpg→ico 转换)
+        'PIL',
+        'PIL.Image',
         # openai
         'openai',
         'httpx',
@@ -77,6 +90,8 @@ a = Analysis(
         'app.material_service',
         'app.batch_translate_dialog',
         'app.appearance_dialog',
+        'app.font_settings',
+        'app.ipa_generator',
     ],
     hookspath=[],
     hooksconfig={},
@@ -86,7 +101,6 @@ a = Analysis(
         'tkinter',
         'matplotlib',
         'scipy',
-        'PIL',
         'IPython',
         'jupyter',
         'notebook',
@@ -108,9 +122,7 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
-    [],
+    [],                  # onedir 模式：EXE 不嵌入 binaries/datas
     name='Nikki Conlang Forge',
     debug=False,
     bootloader_ignore_signals=False,
@@ -127,4 +139,15 @@ exe = EXE(
     version_file=None,
     manifest=None,
     embed_manifest=True,
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.datas,
+    [],
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='Nikki Conlang Forge',
 )

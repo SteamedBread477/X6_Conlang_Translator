@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ============================================================
-echo   X6_Conlang_Translator 一键打包脚本
+echo   Nikki Conlang Forge 一键打包 + 安装器脚本
 echo ============================================================
 echo.
 
@@ -36,18 +36,34 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-echo [2/3] 安装 PyInstaller...
-venv\Scripts\pip.exe install pyinstaller -q
+echo [2/3] 打包发布目录（PyInstaller + 文件收集）...
+venv\Scripts\python.exe pack_release.py
 if %ERRORLEVEL% neq 0 (
-    echo [错误] PyInstaller 安装失败
+    echo [错误] 打包失败
     pause
     exit /b 1
 )
 
-echo [3/3] 打包...
-venv\Scripts\pyinstaller.exe build.spec --clean --noconfirm
+echo [3/3] 生成 NSIS 安装器...
+
+:: installer.nsi 的 UTF-8 BOM 编码已由 pack_release.py 的 ensure_nsi_bom() 自动处理
+:: 无需在此处手动转换
+
+set NSIS_PATH=C:\Program Files (x86)\NSIS\makensis.exe
+if not exist "%NSIS_PATH%" (
+    echo [警告] 未找到 NSIS (makensis.exe)，跳过安装器生成
+    echo   安装器需手动安装 NSIS 3.x: https://nsis.sourceforge.io/
+    echo   或运行: winget install NSIS.NSIS
+    echo.
+    echo   发布目录已就绪: dist\Nikki Conlang Forge\
+    echo   手动编译安装器: makensis installer.nsi
+    pause
+    exit /b 0
+)
+
+"%NSIS_PATH%" installer.nsi
 if %ERRORLEVEL% neq 0 (
-    echo [错误] 打包失败
+    echo [错误] 安装器编译失败
     pause
     exit /b 1
 )
@@ -55,14 +71,15 @@ if %ERRORLEVEL% neq 0 (
 echo.
 echo ============================================================
 echo   打包完成！
-echo   exe 文件位置: dist\X6_Conlang_Translator.exe
 echo ============================================================
 echo.
-echo 使用方法：
-echo   1. 将 dist\X6_Conlang_Translator.exe 复制到目标目录
-echo   2. 双击运行即可
-echo   3. 首次运行会在 exe 同级目录自动创建 data 文件夹
-echo   4. 首次运行会在 exe 同级目录自动创建 app_config.json
+echo   发布目录: dist\Nikki Conlang Forge\
+echo   安装器:   dist\Nikki_Conlang_Forge_Setup.exe
+echo.
+echo   使用方法：
+echo   1. 双击 Nikki_Conlang_Forge_Setup.exe 安装
+echo   2. 安装完成后桌面/开始菜单有快捷方式
+echo   3. 首次运行时 PaperHub 默认关闭，需手动配置 API Key
 echo.
 
 pause
