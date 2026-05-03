@@ -1212,9 +1212,9 @@ class MainWindow(QMainWindow):
         self._ask_ai_pending += piece
 
         if self._ask_ai_just_started:
-            # 首次收到 chunk：插入 QVQ 标签
+            # 首次收到 chunk：插入 DUD 标签
             self._ask_chat_display.append(
-                f'<p style="margin:4px 0;"><b style="color:#5A4EAF;">QVQ：</b>'
+                f'<p style="margin:4px 0;"><b style="color:#2b2b2b;">DUD：</b>'
             )
             self._ask_ai_just_started = False
 
@@ -1331,6 +1331,8 @@ class MainWindow(QMainWindow):
         label.setProperty("class", "section-title")
         label.setObjectName("cls_section_title")
         label.setAlignment(Qt.AlignVCenter)
+        label.setFixedHeight(34)
+        label.setStyleSheet("padding-top:0;")
         self._ask_template_row.addWidget(label, 0, Qt.AlignVCenter)
 
         for tpl in self._ask_templates:
@@ -1793,8 +1795,8 @@ class MainWindow(QMainWindow):
             label = "你"
             color_token = theme_manager.token("color_text_primary")
         elif role == "ai":
-            label = "QVQ"
-            color_token = "#5A4EAF"
+            label = "DUD"
+            color_token = "#2b2b2b"
         else:
             label = "系统"
             color_token = theme_manager.token("color_text_secondary")

@@ -49,7 +49,11 @@
     "grandmar": "grandmar",
     "lilíli": "lee-LEE-lee",
     "babaó": "bah-bah-OH",
-    "mjamja": "MYAHM-yah"
+    "mjamja": "MYAHM-yah",
+    "zan": "zan",
+    "mirel": "mi-REL",
+    "kofa": "KO-fa",
+    "glisthura": "glis-THU-ra"
   },
   "ipa_map": {
     "kh-": "/x/",
@@ -85,7 +89,11 @@
     "grandmar": "/ˈgrand.mar/",
     "lilíli": "/liˈliː.li/",
     "babaó": "/ba.baˈo/",
-    "mjamja": "/ˈmjam.ja/"
+    "mjamja": "/ˈmjam.ja/",
+    "zan": "/zan/",
+    "mirel": "/miˈrɛl/",
+    "kofa": "/ˈko.fa/",
+    "glisthura": "/glisˈθu.ra/"
   },
   "anchors": {
     "灵魂": "sul",
@@ -103,8 +111,8 @@
     "phoneme_row_count": 0,
     "grammar_rule_count": 0,
     "lexicon_count": 0,
-    "mapping_count": 34,
-    "ipa_count": 34,
+    "mapping_count": 38,
+    "ipa_count": 38,
     "anchor_count": 10
   }
 }
