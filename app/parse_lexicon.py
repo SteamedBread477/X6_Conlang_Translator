@@ -10,9 +10,13 @@ from typing import Any, Dict, List, Tuple
 # 词性（POS）拆分
 # ---------------------------------------------------------------------------
 
-# 匹配词条中的词性标注括号 (.xxx/yyy) 或 (.xxx)
+# 匹配词条中的词性标注括号
+# (.xxx/yyy) — 新标准格式，如 (.n/指示代词)
+# (.xxx)     — 短格式，如 (.v)
+# (xxx.)     — 旧词库格式，如 (n.)
 _POS_BRACKET_RE = re.compile(r"\(\.[a-zA-Z]+/[\u4e00-\u9fff\w]*\)")
 _POS_SHORT_RE = re.compile(r"\(\.[a-zA-Z]+\)")
+_POS_DOT_END_RE = re.compile(r"\([a-zA-Z]+\.\)")
 
 
 def split_pos_from_key(raw_key: str) -> Tuple[str, str]:
@@ -36,6 +40,13 @@ def split_pos_from_key(raw_key: str) -> Tuple[str, str]:
     m = _POS_SHORT_RE.search(key)
     if m:
         pos = m.group()[1:-1]  # → ".v"
+        cn = key[:m.start()] + key[m.end():]
+        return (cn.strip(), pos)
+    # 最后兼容旧格式 (xxx.)，如 (n.)
+    m = _POS_DOT_END_RE.search(key)
+    if m:
+        inner = m.group()[1:-1]  # → "n."
+        pos = "." + inner.rstrip(".")  # → ".n"
         cn = key[:m.start()] + key[m.end():]
         return (cn.strip(), pos)
     return (key, "")

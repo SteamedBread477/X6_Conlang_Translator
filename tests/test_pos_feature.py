@@ -131,6 +131,21 @@ class TestSplitPosFromKey:
         assert cn == "水"
         assert pos == ".n/名词"
 
+    def test_legacy_dot_end_pos(self):
+        """旧词库格式 (xxx.) 如 灵魂(n.)，应拆分为 cn='灵魂', pos='.n'。"""
+        cn, pos = split_pos_from_key("灵魂(n.)")
+        assert cn == "灵魂"
+        assert pos == ".n"
+
+    def test_legacy_dot_end_pos_variants(self):
+        """旧格式的各种词性：(v.), (adj.), (adv.)。"""
+        cn, pos = split_pos_from_key("跑(v.)")
+        assert cn == "跑"
+        assert pos == ".v"
+        cn, pos = split_pos_from_key("快(adj.)")
+        assert cn == "快"
+        assert pos == ".adj"
+
 
 # ---------------------------------------------------------------------------
 # 3. rule_translator — 两级匹配策略
