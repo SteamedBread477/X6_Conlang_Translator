@@ -1073,7 +1073,7 @@ class MainWindow(QMainWindow):
 
         self._ask_input = QPlainTextEdit()
         self._ask_input.setPlaceholderText("输入你的问题，按发送或 Ctrl+Enter 提交…")
-        self._ask_input.setMaximumHeight(80)
+        self._ask_input.setMinimumHeight(60)
         self._ask_input.setObjectName("cls_ask_input")
         self._ask_input.keyPressEvent = self._ask_input_key_event
         input_row.addWidget(self._ask_input, 1)
