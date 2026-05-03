@@ -15,8 +15,6 @@ import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
-from app.parse_lexicon import PosEntry
-
 # ---------------------------------------------------------------------------
 # 标点集合
 # ---------------------------------------------------------------------------
@@ -189,7 +187,6 @@ def _segment_longest_match(
     lexicon: Dict[str, str],
     *,
     respect_spaces: bool = False,
-    pos_lexicon: Optional[Dict[str, List[PosEntry]]] = None,
 ) -> List[TokenResult]:
     """
     词库最长匹配分词。未命中字符用【】标记，连续未命中合并为一个 token。
@@ -205,9 +202,7 @@ def _segment_longest_match(
         tokens: List[TokenResult] = []
         for idx, frag in enumerate(fragments):
             if frag:
-                frag_tokens = _segment_longest_match(
-                    frag, lexicon, respect_spaces=False, pos_lexicon=pos_lexicon,
-                )
+                frag_tokens = _segment_longest_match(frag, lexicon, respect_spaces=False)
                 tokens.extend(frag_tokens)
             # 在片段之间插入空格边界 token（末尾片段后不加）
             if idx < len(fragments) - 1:
@@ -222,12 +217,7 @@ def _segment_longest_match(
         matched = False
         for k in keys:
             if text.startswith(k, i):
-                # 当有词性词库时，优先用两级匹配策略获取翻译
-                if pos_lexicon and k in pos_lexicon:
-                    con_val = _resolve_pos_match(k, pos_lexicon)
-                else:
-                    con_val = lexicon[k]
-                tokens.append(TokenResult(k, con_val, True))
+                tokens.append(TokenResult(k, lexicon[k], True))
                 i += len(k)
                 matched = True
                 break
@@ -244,37 +234,6 @@ def _segment_longest_match(
                 tokens.append(TokenResult(ch, f"【{ch}】", False))
             i += 1
     return tokens
-
-
-def _resolve_pos_match(
-    cn_word: str,
-    pos_lexicon: Dict[str, List[PosEntry]],
-    jieba_pos_hint: str = "",
-) -> str:
-    """两级词性匹配策略：
-
-    1. 精确匹配：cn_word + jieba 词性 → 找到同 pos 的义项
-    2. 宽松 fallback：仅用 cn_word → 取第一个义项
-
-    返回匹配到的自创语翻译；找不到时返回空字符串。
-    """
-    entries = pos_lexicon.get(cn_word)
-    if not entries:
-        return ""
-
-    # 如果 jieba 提供了词性提示，尝试精确匹配
-    if jieba_pos_hint:
-        # jieba 词性格式如 "v" / "n" / "r" 等
-        # 词库 pos 格式如 ".v/动词" / ".n/名词" / ".n"
-        # 精确匹配逻辑：jieba_pos_hint 匹配 pos 中 "." 后的第一个字母
-        for entry in entries:
-            if entry.pos:
-                pos_letter = entry.pos.lstrip(".").split("/")[0].strip()
-                if pos_letter == jieba_pos_hint:
-                    return entry.conlang
-
-    # fallback：取第一个义项（无 pos 或 pos 不匹配时）
-    return entries[0].conlang
 
 
 def _build_conlang_from_tokens(tokens: List[TokenResult]) -> str:
@@ -350,7 +309,6 @@ def translate_rule(
     source: str,
     lexicon: Dict[str, str],
     tts_map: Dict[str, str],
-    pos_lexicon: Optional[Dict[str, List[PosEntry]]] = None,
 ) -> RuleTranslationResult:
     """
     规则模式单段翻译（支持含标点的多子句文本）。
@@ -388,7 +346,7 @@ def translate_rule(
     for clause_text, punct in clause_pairs:
         if not clause_text:
             continue
-        tokens = _segment_longest_match(clause_text, lexicon, respect_spaces=respect_spaces, pos_lexicon=pos_lexicon)
+        tokens = _segment_longest_match(clause_text, lexicon, respect_spaces=respect_spaces)
 
         conlang_clause = _build_conlang_from_tokens(tokens) + punct
         phonetic_clause = _build_tts_from_tokens(tokens, tts_map) + _PUNCT_PASSTHROUGH.get(
@@ -447,7 +405,6 @@ def translate_multiline_rule(
     text: str,
     lexicon: Dict[str, str],
     tts_map: Dict[str, str],
-    pos_lexicon: Optional[Dict[str, List[PosEntry]]] = None,
 ) -> RuleTranslationResult:
     """
     多行输入的规则翻译：逐非空行调用 translate_rule，聚合结果。
@@ -469,7 +426,7 @@ def translate_multiline_rule(
             all_conlang.append("")
             all_phonetic.append("")
             continue
-        res = translate_rule(line, lexicon, tts_map, pos_lexicon)
+        res = translate_rule(line, lexicon, tts_map)
         all_conlang.append(res.conlang)
         all_phonetic.append(res.phonetic)
         all_sentences.extend(res.sentences)

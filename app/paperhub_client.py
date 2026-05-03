@@ -29,7 +29,6 @@ from app.lexicon_segment import (
     lexicon_hits_preview,
     segment_with_lexicon,
 )
-from app.parse_lexicon import split_pos_from_key
 from app.rule_translator import translate_multiline_rule
 
 
@@ -45,7 +44,6 @@ class NewWord:
     ipa: str
     tts: str
     logic: str
-    pos: str = ""  # 词性标注，如 ".v/动词"；无标注时为空字符串
 
 
 @dataclass
@@ -170,7 +168,7 @@ def _build_user_prompt_full(chinese_text: str) -> str:
         "  \"conlang_text\": \"自创语文本\",\n"
         "  \"new_words\": [\n"
         "    {\n"
-        "      \"chinese\": \"中文原词(.词性/词性名)\",\n"
+        "      \"chinese\": \"中文原词\",\n"
         "      \"conlang\": \"自创语\",\n"
         "      \"ipa\": \"IPA音标\",\n"
         "      \"tts\": \"TTS友好拼写\",\n"
@@ -178,11 +176,7 @@ def _build_user_prompt_full(chinese_text: str) -> str:
         "    }\n"
         "  ],\n"
         "  \"tts_phonetic\": \"完整TTS友好拼写\"\n"
-        "}\n\n"
-        "【词性标注格式说明】new_words 中的 chinese 字段请附上词性标注，\n"
-        "格式为：中文原词(.词性缩写/词性全称)，例如：跑(.v/动词)、那个(.n/指示代词)、水(.n/名词)。\n"
-        "常见词性缩写：v=动词、n=名词、a=形容词、d=副词、r=代词、p=介词、c=连词、m=数词、q=量词。\n"
-        "如果不确定词性，可以只写缩写如 跑(.v)。"
+        "}"
     )
 
 
@@ -210,7 +204,7 @@ def _build_user_prompt_unmatched(
         "  \"conlang_text\": \"完整的自创语文本（合并词库翻译与新创词汇）\",\n"
         "  \"new_words\": [\n"
         "    {\n"
-        "      \"chinese\": \"中文原词(.词性/词性名)\",\n"
+        "      \"chinese\": \"中文原词\",\n"
         "      \"conlang\": \"自创语\",\n"
         "      \"ipa\": \"IPA音标\",\n"
         "      \"tts\": \"TTS友好拼写\",\n"
@@ -218,11 +212,7 @@ def _build_user_prompt_unmatched(
         "    }\n"
         "  ],\n"
         "  \"tts_phonetic\": \"完整TTS友好拼写\"\n"
-        "}\n\n"
-        "【词性标注格式说明】new_words 中的 chinese 字段请附上词性标注，\n"
-        "格式为：中文原词(.词性缩写/词性全称)，例如：跑(.v/动词)、那个(.n/指示代词)、水(.n/名词)。\n"
-        "常见词性缩写：v=动词、n=名词、a=形容词、d=副词、r=代词、p=介词、c=连词、m=数词、q=量词。\n"
-        "如果不确定词性，可以只写缩写如 跑(.v)。"
+        "}"
     )
 
 
@@ -283,22 +273,19 @@ def _extract_json_from_response(raw: str) -> Optional[Dict[str, Any]]:
 
 
 def _parse_new_words(new_words_raw: Any) -> List[NewWord]:
-    """解析 new_words 数组为 NewWord 对象列表。自动剥离中文词中的词性括号。"""
+    """解析 new_words 数组为 NewWord 对象列表。"""
     result: List[NewWord] = []
     if not isinstance(new_words_raw, list):
         return result
     for item in new_words_raw:
         if not isinstance(item, dict):
             continue
-        raw_chinese = str(item.get("chinese") or item.get("中文") or "").strip()
-        cn, pos = split_pos_from_key(raw_chinese)
         nw = NewWord(
-            chinese=cn,
+            chinese=str(item.get("chinese") or item.get("中文") or "").strip(),
             conlang=str(item.get("conlang") or item.get("自创语") or "").strip(),
             ipa=str(item.get("ipa") or item.get("IPA") or "").strip(),
             tts=str(item.get("tts") or item.get("TTS") or "").strip(),
             logic=str(item.get("logic") or item.get("构词逻辑") or item.get("构词逻辑说明") or "").strip(),
-            pos=pos,
         )
         if nw.chinese and nw.conlang:
             result.append(nw)
@@ -612,7 +599,6 @@ def translate_with_paperhub(
 
     lexicon = _normalize_lexicon(bundle)
     tts_map = _normalize_tts_map(bundle)
-    pos_lexicon = bundle.get("lexicon_pos") or {}
     strategy = params["strategy"]
     system_prompt = _build_system_prompt(bundle)
 
@@ -636,7 +622,7 @@ def translate_with_paperhub(
         try:
             raw = _call_paperhub_chat(user_prompt=user_prompt, **_common)
         except PaperHubError as exc:
-            rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
             return PaperHubResult(
                 conlang=rule_result.conlang,
                 tts=rule_result.phonetic,
@@ -648,7 +634,7 @@ def translate_with_paperhub(
         parsed.strategy_used = "always"
         parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
         if parsed.error and not parsed.conlang:
-            rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
             parsed.conlang = rule_result.conlang
             parsed.tts = rule_result.phonetic
             parsed.strategy_used = "always→rule_fallback"
@@ -656,7 +642,7 @@ def translate_with_paperhub(
 
     # ── unmatched_only 策略：规则 + AI 补全 ──────────────────────────
     if strategy == "unmatched_only":
-        rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
+        rule_result = translate_multiline_rule(text, lexicon, tts_map)
         unmatched = rule_result.unmatched_words
 
         if not unmatched:
@@ -695,7 +681,7 @@ def translate_with_paperhub(
         try:
             raw = _call_paperhub_chat(user_prompt=user_prompt, **_common)
         except PaperHubError as exc:
-            rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
             return PaperHubResult(
                 conlang=rule_result.conlang,
                 tts=rule_result.phonetic,
@@ -708,7 +694,7 @@ def translate_with_paperhub(
         parsed.tts = _fallback_tts(parsed.conlang, tts_map, parsed.tts)
 
         if parsed.error and not parsed.conlang:
-            rule_result = translate_multiline_rule(text, lexicon, tts_map, pos_lexicon)
+            rule_result = translate_multiline_rule(text, lexicon, tts_map)
             parsed.conlang = rule_result.conlang
             parsed.tts = rule_result.phonetic
             parsed.strategy_used = "confirm→rule_fallback"

@@ -79,9 +79,8 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
     master = storage.asset_path(language, "master_library")
     if master.is_file():
         try:
-            idx, pos_idx, n, _raw = load_master_library(master)
+            idx, n, _raw = load_master_library(master)
             bundle["lexicon"] = idx
-            bundle["lexicon_pos"] = pos_idx
             bundle["summary"]["lexicon_count"] = n
         except Exception as exc:
             parse_notes.append(f"主词库 JSON 无效或无法索引：{exc}")
