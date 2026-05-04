@@ -492,6 +492,10 @@ class MainWindow(QMainWindow):
         # 让多轮对话里 AI 不会"忘掉"前几轮提到过的词。每条 zh-key 至多保留若干轮。
         self._ask_hot_words: List[str] = []
         self._ask_hot_words_max: int = 200
+        # 候选词数据模型（source of truth）。QTableWidget 退化为纯展示，
+        # 任何变更都先动 store 再 _ask_render_pending_table 整体重渲染。
+        from app.models.pending_words import PendingWordStore
+        self._ask_pending_store = PendingWordStore()
         self._ph_text: str = ""
         self._ph_lang: Optional[Dict] = None
         self._ph_bundle: Dict = {}
@@ -1420,41 +1424,23 @@ class MainWindow(QMainWindow):
         )
 
     def _ask_parse_ai_response(self, ai_text: str) -> None:
-        """解析 AI 响应中的候选词，添加到待审核表格（第 6 步完善）。"""
-        # 提取 【新词】xxx|IPA|TTS|含义|风格标签 格式的候选词
+        """解析 AI 响应���的【新词】行，加入候选词 store 并重渲染表格。
+
+        markdown 装饰剥离统一在 PendingWord.from_ai_match 工厂里做，
+        view 不再持有清洗逻辑。
+        """
         import re
         pattern = r"【新词】(.+?)\|(.+?)\|(.+?)\|(.+?)\|(.+)"
         matches = re.findall(pattern, ai_text)
         if not matches:
             return
 
-        def _clean(s: str) -> str:
-            """剥离 AI 输出常见的装饰：markdown 加粗/斜体、反引号、首尾标点空白。"""
-            s = s.strip()
-            # 反复剥离成对的 markdown 包裹符
-            for _ in range(3):
-                stripped = re.sub(r"^(\*{1,3}|`+|_{1,3})(.+?)\1$", r"\2", s)
-                if stripped == s:
-                    break
-                s = stripped.strip()
-            # 兜底去掉残余的孤立 * / ` / 下划线（AI 偶尔不闭合）
-            s = s.strip("*`_ \t")
-            return s
-
         for m in matches:
             conlang, ipa, tts, meaning, tags = m
-            self._ask_add_pending_row(
-                _clean(conlang), _clean(ipa), _clean(tts), _clean(meaning), _clean(tags)
+            self._ask_pending_store.add_from_ai_match(
+                conlang, ipa, tts, meaning, tags
             )
-        # 显示批量操作按钮
-        if self._ask_batch_confirm_btn is not None:
-            self._ask_batch_confirm_btn.setVisible(True)
-        if self._ask_batch_discard_btn is not None:
-            self._ask_batch_discard_btn.setVisible(True)
-        if self._ask_confirm_selected_btn is not None:
-            self._ask_confirm_selected_btn.setVisible(True)
-        if self._ask_discard_selected_btn is not None:
-            self._ask_discard_selected_btn.setVisible(True)
+        self._ask_render_pending_table()
 
     def _ask_input_key_event(self, event) -> None:
         """拦截 Ctrl+Enter 发送消息，其余按键正常传递。"""
@@ -1625,104 +1611,18 @@ class MainWindow(QMainWindow):
                 "收起" if not visible else "展开"
             )
 
-    def _ask_batch_confirm_pending(self) -> None:
-        """批量确认所有待审核候选词，导入词库。"""
-        if self._ask_pending_table is None:
-            return
-        lang = self._ph_lang
-        if not lang or not isinstance(lang, dict):
-            QMessageBox.warning(self, "提示", "请先选择一种语言。")
-            return
+    # ── 候选词表格：基于 PendingWordStore 的渲染 / 操作 ────────────────────
+    #
+    # 数据流：
+    #   AI 回复 → _ask_parse_ai_response → store.add_from_ai_match
+    #   用户 ✓ ✗ → store.remove_at / remove_indices → _ask_render_pending_table
+    #   清空 / 批量 → store.clear → render
+    #
+    # 这一层不再有 cell.text() 与脏 markdown 数据；
+    # store 是唯一真实数据源，view 每次完整重渲染。
 
-        new_words: List[NewWord] = []
-        for row in range(self._ask_pending_table.rowCount()):
-            conlang_item = self._ask_pending_table.item(row, 0)
-            ipa_item = self._ask_pending_table.item(row, 1)
-            tts_item = self._ask_pending_table.item(row, 2)
-            meaning_item = self._ask_pending_table.item(row, 3)
-            tags_item = self._ask_pending_table.item(row, 4)
-
-            nw = NewWord(
-                chinese=meaning_item.text().strip() if meaning_item else "",
-                conlang=conlang_item.text().strip() if conlang_item else "",
-                ipa=ipa_item.text().strip() if ipa_item else "",
-                tts=tts_item.text().strip() if tts_item else "",
-                logic=tags_item.text().strip() if tags_item else "",
-            )
-            if nw.chinese and nw.conlang:
-                new_words.append(nw)
-
-        if not new_words:
-            return
-
-        self._write_new_words_to_lexicon(new_words, lang)
-        self._ask_clear_pending_table()
-        self._ask_append_chat_message("system", f"✅ {len(new_words)} 个候选词已确认导入词库。")
-
-    def _ask_batch_discard_pending(self) -> None:
-        """批量丢弃所有待审核候选词。"""
-        if self._ask_pending_table is None:
-            return
-        count = self._ask_pending_table.rowCount()
-        if count == 0:
-            return
-        reply = QMessageBox.question(
-            self, "丢弃确认",
-            f"确定丢弃全部 {count} 个候选词？此操作不可撤销。",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
-        )
-        if reply != QMessageBox.Yes:
-            return
-        self._ask_clear_pending_table()
-        self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个候选词。")
-
-    def _ask_on_table_context_menu(self, pos) -> None:
-        """待审核表格右键菜单：复制选中单元格内容。"""
-        from PyQt5.QtWidgets import QMenu
-        from PyQt5.QtGui import QClipboard
-        from PyQt5.QtWidgets import QApplication as QApp
-        item = self._ask_pending_table.itemAt(pos)
-        if item is None:
-            return
-        menu = QMenu(self._ask_pending_table)
-        copy_action = menu.addAction("复制")
-        if menu.exec_(self._ask_pending_table.viewport().mapToGlobal(pos)) == copy_action:
-            # 复制当前选中单元格的文本
-            selected = self._ask_pending_table.selectedItems()
-            if selected:
-                texts = [s.text() for s in selected]
-                QApp.clipboard().setText("\n".join(texts))
-
-    def _ask_clear_pending_table(self) -> None:
-        """清空待审核表格并隐藏批量操作按钮。"""
-        if self._ask_pending_table is not None:
-            self._ask_pending_table.setRowCount(0)
-        if self._ask_batch_confirm_btn is not None:
-            self._ask_batch_confirm_btn.setVisible(False)
-        if self._ask_batch_discard_btn is not None:
-            self._ask_batch_discard_btn.setVisible(False)
-        if self._ask_confirm_selected_btn is not None:
-            self._ask_confirm_selected_btn.setVisible(False)
-        if self._ask_discard_selected_btn is not None:
-            self._ask_discard_selected_btn.setVisible(False)
-
-    
-
-    def _ask_add_pending_row(
-        self, conlang: str, ipa: str, tts: str, meaning: str, tags: str
-    ) -> None:
-        """向待审核表格添加一行候选词，并在「操作」列放置 ✓确认 / ✗丢弃 按钮。"""
-        if self._ask_pending_table is None:
-            return
-        row = self._ask_pending_table.rowCount()
-        self._ask_pending_table.insertRow(row)
-        for col, text in enumerate([conlang, ipa, tts, meaning, tags]):
-            item = QTableWidgetItem(text)
-            item.setToolTip(text)
-            self._ask_pending_table.setItem(row, col, item)
-
-        # 操作列：✓确认 + ✗丢弃 按钮
+    def _ask_make_op_widget(self, row: int) -> QWidget:
+        """为指定 store-row 创建操作列按钮 widget（✓ 确认 / ✗ 丢弃）。"""
         op_widget = QWidget()
         op_layout = QHBoxLayout(op_widget)
         op_layout.setContentsMargins(0, 0, 0, 0)
@@ -1751,13 +1651,98 @@ class MainWindow(QMainWindow):
         op_layout.addWidget(btn_confirm)
         op_layout.addWidget(btn_discard)
         op_widget.setLayout(op_layout)
-        self._ask_pending_table.setCellWidget(row, 5, op_widget)
+        return op_widget
 
-    def _ask_confirm_single_pending(self, row: int) -> None:
-        """确认导入单条候选词到词库。"""
+    def _ask_render_pending_table(self) -> None:
+        """从 store 整体重渲染待审核表格 + 同步批量操作按钮可见性。
+
+        所有候选词变更（add / remove / clear）后调用一次即可，
+        不需要再为局部修改做行号 fix-up。
+        """
         if self._ask_pending_table is None:
             return
-        if row < 0 or row >= self._ask_pending_table.rowCount():
+        self._ask_pending_table.setRowCount(0)
+        for row, w in enumerate(self._ask_pending_store):
+            self._ask_pending_table.insertRow(row)
+            for col, text in enumerate(w.to_view_row()):
+                item = QTableWidgetItem(text)
+                item.setToolTip(text)
+                self._ask_pending_table.setItem(row, col, item)
+            self._ask_pending_table.setCellWidget(row, 5, self._ask_make_op_widget(row))
+
+        non_empty = not self._ask_pending_store.is_empty()
+        for btn in (
+            self._ask_batch_confirm_btn,
+            self._ask_batch_discard_btn,
+            self._ask_confirm_selected_btn,
+            self._ask_discard_selected_btn,
+        ):
+            if btn is not None:
+                btn.setVisible(non_empty)
+
+    def _ask_batch_confirm_pending(self) -> None:
+        """批量确认所有待审核候选词，导入词库。"""
+        lang = self._ph_lang
+        if not lang or not isinstance(lang, dict):
+            QMessageBox.warning(self, "提示", "请先选择一种语言。")
+            return
+
+        valid = self._ask_pending_store.valid_words()
+        if not valid:
+            return
+
+        new_words = [
+            NewWord(chinese=w.meaning, conlang=w.conlang, ipa=w.ipa, tts=w.tts, logic=w.style)
+            for w in valid
+        ]
+        self._write_new_words_to_lexicon(new_words, lang)
+        self._ask_pending_store.clear()
+        self._ask_render_pending_table()
+        self._ask_append_chat_message(
+            "system", f"✅ {len(new_words)} 个候选词已确认导入词库。"
+        )
+
+    def _ask_batch_discard_pending(self) -> None:
+        """批量丢弃所有待审核候选词。"""
+        count = len(self._ask_pending_store)
+        if count == 0:
+            return
+        reply = QMessageBox.question(
+            self, "丢弃确认",
+            f"确定丢弃全部 {count} 个候选词？此操作不可撤销。",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+        if reply != QMessageBox.Yes:
+            return
+        self._ask_pending_store.clear()
+        self._ask_render_pending_table()
+        self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个候选词。")
+
+    def _ask_on_table_context_menu(self, pos) -> None:
+        """待审核表格右键菜单：复制选中单元格内容。"""
+        from PyQt5.QtWidgets import QMenu
+        from PyQt5.QtWidgets import QApplication as QApp
+        item = self._ask_pending_table.itemAt(pos)
+        if item is None:
+            return
+        menu = QMenu(self._ask_pending_table)
+        copy_action = menu.addAction("复制")
+        if menu.exec_(self._ask_pending_table.viewport().mapToGlobal(pos)) == copy_action:
+            selected = self._ask_pending_table.selectedItems()
+            if selected:
+                texts = [s.text() for s in selected]
+                QApp.clipboard().setText("\n".join(texts))
+
+    def _ask_clear_pending_table(self) -> None:
+        """清空待审核（store + view）。"""
+        self._ask_pending_store.clear()
+        self._ask_render_pending_table()
+
+    def _ask_confirm_single_pending(self, row: int) -> None:
+        """确认导入单条候选词到词库。row 是 store/view 当前行号。"""
+        word = self._ask_pending_store.get(row)
+        if word is None:
             return
 
         lang = self._ph_lang
@@ -1765,48 +1750,29 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "提示", "请先选择一种语言。")
             return
 
-        conlang_item = self._ask_pending_table.item(row, 0)
-        ipa_item = self._ask_pending_table.item(row, 1)
-        tts_item = self._ask_pending_table.item(row, 2)
-        meaning_item = self._ask_pending_table.item(row, 3)
-        tags_item = self._ask_pending_table.item(row, 4)
-
-        nw = NewWord(
-            chinese=meaning_item.text().strip() if meaning_item else "",
-            conlang=conlang_item.text().strip() if conlang_item else "",
-            ipa=ipa_item.text().strip() if ipa_item else "",
-            tts=tts_item.text().strip() if tts_item else "",
-            logic=tags_item.text().strip() if tags_item else "",
-        )
-        if nw.chinese and nw.conlang:
+        if word.is_valid:
+            nw = NewWord(
+                chinese=word.meaning,
+                conlang=word.conlang,
+                ipa=word.ipa,
+                tts=word.tts,
+                logic=word.style,
+            )
             self._write_new_words_to_lexicon([nw], lang)
 
-        self._ask_pending_table.removeRow(row)
-        # 按钮的 row 引用的是旧行号，移除后后续行的按钮 row 需要更新
-        self._ask_refresh_pending_row_buttons()
-        self._ask_append_chat_message("system", f"✅ 候选词「{nw.chinese} → {nw.conlang}」已确认导入词库。")
-
-        # 如果表格清空，隐藏按钮
-        if self._ask_pending_table.rowCount() == 0:
-            self._ask_clear_pending_table()
+        self._ask_pending_store.remove_at(row)
+        self._ask_render_pending_table()
+        self._ask_append_chat_message(
+            "system", f"✅ 候选词「{word.label()}」已确认导入词库。"
+        )
 
     def _ask_discard_single_pending(self, row: int) -> None:
         """丢弃单条候选词。"""
-        if self._ask_pending_table is None:
+        word = self._ask_pending_store.remove_at(row)
+        if word is None:
             return
-        if row < 0 or row >= self._ask_pending_table.rowCount():
-            return
-
-        meaning_item = self._ask_pending_table.item(row, 3)
-        conlang_item = self._ask_pending_table.item(row, 0)
-        label = f"{meaning_item.text() if meaning_item else ''} → {conlang_item.text() if conlang_item else ''}"
-
-        self._ask_pending_table.removeRow(row)
-        self._ask_refresh_pending_row_buttons()
-        self._ask_append_chat_message("system", f"🗑 已丢弃候选词「{label}」。")
-
-        if self._ask_pending_table.rowCount() == 0:
-            self._ask_clear_pending_table()
+        self._ask_render_pending_table()
+        self._ask_append_chat_message("system", f"🗑 已丢弃候选词「{word.label()}」。")
 
     def _ask_confirm_selected_pending(self) -> None:
         """确认导入选中行的候选词到词库。"""
@@ -1818,50 +1784,39 @@ class MainWindow(QMainWindow):
             return
 
         selected_rows = sorted(
-            set(idx.row() for idx in self._ask_pending_table.selectedIndexes()),
-            reverse=True
+            set(idx.row() for idx in self._ask_pending_table.selectedIndexes())
         )
         if not selected_rows:
             self.statusBar().showMessage("请先在表格中选择要确认的候选词", 3000)
             return
 
-        new_words: List[NewWord] = []
-        for row in selected_rows:
-            conlang_item = self._ask_pending_table.item(row, 0)
-            ipa_item = self._ask_pending_table.item(row, 1)
-            tts_item = self._ask_pending_table.item(row, 2)
-            meaning_item = self._ask_pending_table.item(row, 3)
-            tags_item = self._ask_pending_table.item(row, 4)
-
-            nw = NewWord(
-                chinese=meaning_item.text().strip() if meaning_item else "",
-                conlang=conlang_item.text().strip() if conlang_item else "",
-                ipa=ipa_item.text().strip() if ipa_item else "",
-                tts=tts_item.text().strip() if tts_item else "",
-                logic=tags_item.text().strip() if tags_item else "",
-            )
-            if nw.chinese and nw.conlang:
-                new_words.append(nw)
+        # 先在 store 里取出选中的有效条目（删除前），构造 NewWord
+        selected_words = [
+            self._ask_pending_store[r]
+            for r in selected_rows
+            if 0 <= r < len(self._ask_pending_store)
+        ]
+        valid_words = [w for w in selected_words if w.is_valid]
+        new_words = [
+            NewWord(chinese=w.meaning, conlang=w.conlang, ipa=w.ipa, tts=w.tts, logic=w.style)
+            for w in valid_words
+        ]
 
         if new_words:
             self._write_new_words_to_lexicon(new_words, lang)
 
-        # 从表格移除选中行（倒序移除以保持索引正确）
-        for row in selected_rows:
-            self._ask_pending_table.removeRow(row)
-        self._ask_refresh_pending_row_buttons()
-        self._ask_append_chat_message("system", f"✅ {len(new_words)} 个选中候选词已确认导入词库。")
-
-        if self._ask_pending_table.rowCount() == 0:
-            self._ask_clear_pending_table()
+        self._ask_pending_store.remove_indices(selected_rows)
+        self._ask_render_pending_table()
+        self._ask_append_chat_message(
+            "system", f"✅ {len(new_words)} 个选中候选词已确认导入词库。"
+        )
 
     def _ask_discard_selected_pending(self) -> None:
         """丢弃选中行的候选词。"""
         if self._ask_pending_table is None:
             return
         selected_rows = sorted(
-            set(idx.row() for idx in self._ask_pending_table.selectedIndexes()),
-            reverse=True
+            set(idx.row() for idx in self._ask_pending_table.selectedIndexes())
         )
         if not selected_rows:
             self.statusBar().showMessage("请先在表格中选择要丢弃的候选词", 3000)
@@ -1877,66 +1832,11 @@ class MainWindow(QMainWindow):
         if reply != QMessageBox.Yes:
             return
 
-        for row in selected_rows:
-            self._ask_pending_table.removeRow(row)
-        self._ask_refresh_pending_row_buttons()
-        self._ask_append_chat_message("system", f"🗑 已丢弃 {count} 个选中候选词。")
-
-        if self._ask_pending_table.rowCount() == 0:
-            self._ask_clear_pending_table()
-
-    def _ask_refresh_pending_row_buttons(self) -> None:
-        """移除行后重新绑定每行操作按钮的 row 参数，确保索引正确。"""
-        if self._ask_pending_table is None:
-            return
-        for row in range(self._ask_pending_table.rowCount()):
-            op_widget = self._ask_pending_table.cellWidget(row, 5)
-            if op_widget is None:
-                # 如果该行没有操作按钮（旧数据），重新添加
-                self._ask_rebuild_row_buttons(row)
-                continue
-            btns = op_widget.findChildren(QPushButton)
-            for btn in btns:
-                # 断开旧连接，重新绑定当前行号
-                btn.clicked.disconnect()
-                if btn.toolTip().startswith("确认"):
-                    btn.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
-                else:
-                    btn.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
-
-    def _ask_rebuild_row_buttons(self, row: int) -> None:
-        """为没有操作按钮的已有行重新创建按钮 widget。"""
-        if self._ask_pending_table is None:
-            return
-        op_widget = QWidget()
-        op_layout = QHBoxLayout(op_widget)
-        op_layout.setContentsMargins(0, 0, 0, 0)
-        op_layout.setSpacing(4)
-
-        confirm_icon_path = get_icon_path("confirm")
-        btn_confirm = QPushButton()
-        btn_confirm.setObjectName("cls_round_confirm")
-        if confirm_icon_path:
-            btn_confirm.setIcon(QIcon(str(confirm_icon_path)))
-        else:
-            btn_confirm.setText("✓")
-        btn_confirm.setToolTip("确认导入此词")
-        btn_confirm.clicked.connect(lambda _, r=row: self._ask_confirm_single_pending(r))
-
-        discard_icon_path = get_icon_path("discard")
-        btn_discard = QPushButton()
-        btn_discard.setObjectName("cls_round_discard")
-        if discard_icon_path:
-            btn_discard.setIcon(QIcon(str(discard_icon_path)))
-        else:
-            btn_discard.setText("✗")
-        btn_discard.setToolTip("丢弃此词")
-        btn_discard.clicked.connect(lambda _, r=row: self._ask_discard_single_pending(r))
-
-        op_layout.addWidget(btn_confirm)
-        op_layout.addWidget(btn_discard)
-        op_widget.setLayout(op_layout)
-        self._ask_pending_table.setCellWidget(row, 5, op_widget)
+        removed = self._ask_pending_store.remove_indices(selected_rows)
+        self._ask_render_pending_table()
+        self._ask_append_chat_message(
+            "system", f"🗑 已丢弃 {len(removed)} 个选中候选词。"
+        )
 
     def _ask_append_chat_message(self, role: str, content: str) -> None:
         """向对话历史区追加一条消息。"""
