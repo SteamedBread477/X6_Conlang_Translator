@@ -2878,10 +2878,22 @@ class MainWindow(QMainWindow):
 
             if isinstance(data, dict):
                 for nw in new_words:
-                    data[nw.chinese] = nw.conlang
+                    # 语言大师候选词的 logic 字段承载用户填的"风格标签"，
+                    # 非空时升级为结构化元数据写入；空则仍写扁平 str 保持向后兼容。
+                    style = (nw.logic or "").strip()
+                    if style:
+                        from app.parse_lexicon import serialize_lexicon_entry
+                        data[nw.chinese] = serialize_lexicon_entry(
+                            nw.conlang, {"style": style}
+                        )
+                    else:
+                        data[nw.chinese] = nw.conlang
             elif isinstance(data, list):
                 for nw in new_words:
-                    data.append({"zh": nw.chinese, "conlang": nw.conlang})
+                    entry: Dict[str, Any] = {"zh": nw.chinese, "conlang": nw.conlang}
+                    if (nw.logic or "").strip():
+                        entry["style"] = nw.logic.strip()
+                    data.append(entry)
 
             master_path.parent.mkdir(parents=True, exist_ok=True)
             master_path.write_text(
