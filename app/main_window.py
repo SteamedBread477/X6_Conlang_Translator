@@ -1211,8 +1211,14 @@ class MainWindow(QMainWindow):
         if self._ask_input is None or self._ask_send_btn is None:
             return
         # 如果 AI 正在回复，不允许再次发送
-        if self._ask_chat_thread is not None and self._ask_chat_thread.isRunning():
-            return
+        # 注意：_ask_chat_thread 在 _ask_on_chat_finished 中会被重置为 None；
+        # 用 try/except 兜底已被 deleteLater 销毁的对象访问 isRunning()。
+        if self._ask_chat_thread is not None:
+            try:
+                if self._ask_chat_thread.isRunning():
+                    return
+            except RuntimeError:
+                self._ask_chat_thread = None
 
         user_text = self._ask_input.toPlainText().strip()
         if not user_text:
@@ -1249,8 +1255,11 @@ class MainWindow(QMainWindow):
         bundle = self._material_by_lang.get(lang.get("id", ""), {})
         self._ph_lang = lang
         self._ph_bundle = bundle
-        # 把当前提问中命中词库的中文词加入会话热词集合
-        self._ask_accumulate_hot_words(user_text, bundle)
+        # 把当前提问中命中词库的中文词加入会话热词集合（失败不影响发送）
+        try:
+            self._ask_accumulate_hot_words(user_text, bundle)
+        except Exception:
+            pass
         system_prompt = self._build_ask_system_prompt(bundle, current_input=user_text)
 
         # 禁用发送按钮
@@ -1297,6 +1306,10 @@ class MainWindow(QMainWindow):
             self._ask_send_btn.setEnabled(True)
             self._ask_send_btn.setText("发送")
 
+        # 线程引用清空，避免下次 _ask_send_message 在已 deleteLater 的对象上调
+        # isRunning() 抛 RuntimeError 导致按钮点击静默失败
+        self._ask_chat_thread = None
+
         if error:
             self._ask_append_chat_message("system", f"⚠ {error}")
             return
@@ -1307,22 +1320,26 @@ class MainWindow(QMainWindow):
 
         if not ai_text.strip():
             self._ask_append_chat_message("system", "AI 返回了空内容。")
+            self._ask_ai_pending = ""
             return
 
         # 追加 AI 消息到对话记录
         self._ask_messages.append({"role": "assistant", "content": ai_text})
         self._ask_update_token_display()
 
-        # AI 回复中如果引用了词库词，也累积进会话热词
-        if self._ph_bundle:
-            self._ask_accumulate_hot_words(ai_text, self._ph_bundle)
-
         # 如果不是流式模式，需要手动追加显示
         if not self._ask_ai_pending:
             self._ask_append_chat_message("ai", ai_text)
 
-        # 第 6 步会在这里解析候选词
+        # 解析候选词（必须先于其他副作用，避免被它们抛异常打断）
         self._ask_parse_ai_response(ai_text)
+
+        # AI 回复中如果引用了词库词，累积进会话热词；失败不影响主流程
+        if self._ph_bundle:
+            try:
+                self._ask_accumulate_hot_words(ai_text, self._ph_bundle)
+            except Exception:
+                pass
 
         self._ask_ai_pending = ""
 
