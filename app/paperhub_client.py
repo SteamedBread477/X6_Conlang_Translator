@@ -549,14 +549,42 @@ def _normalize_tts_map(bundle: Dict[str, Any]) -> Dict[str, str]:
 
 
 def _apply_tts_map_to_conlang(conlang: str, tts_map: Dict[str, str]) -> str:
-    """对自创语文本应用 TTS 映射，生成 TTS 音译。"""
+    """对自创语文本应用 TTS 映射，生成 TTS 音译。
+
+    关键点：同一位置的字符最多被一条映射消费一次；替换产生的 spell 不会再次
+    被后续映射扫描到，避免"链式误伤"（如 {a:b, b:c} 使 "a" 变成 "c"）。
+
+    实现：从左到右扫描，每个位置用"当前剩余 tts_map 中最长的匹配"吞掉若干字符，
+    吞掉的片段直接写入输出，不再参与后续匹配。
+    """
     if not conlang or not tts_map:
         return conlang
-    result = conlang
-    for word, spell in sorted(tts_map.items(), key=lambda kv: len(kv[0]), reverse=True):
-        if word and word in result:
-            result = result.replace(word, spell)
-    return result
+
+    # 只考虑非空 key，按长度倒序以保证最长匹配优先
+    items = sorted(
+        ((w, s) for w, s in tts_map.items() if w),
+        key=lambda kv: len(kv[0]),
+        reverse=True,
+    )
+    if not items:
+        return conlang
+
+    out: list[str] = []
+    i = 0
+    n = len(conlang)
+    while i < n:
+        matched = False
+        for word, spell in items:
+            wlen = len(word)
+            if wlen and conlang.startswith(word, i):
+                out.append(spell)
+                i += wlen
+                matched = True
+                break
+        if not matched:
+            out.append(conlang[i])
+            i += 1
+    return "".join(out)
 
 
 def _fallback_tts(conlang: str, tts_map: Dict[str, str], ai_tts: str) -> str:
