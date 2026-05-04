@@ -174,7 +174,7 @@ class JsonStorage:
     def create_language_record(self, desired_name: str, languages: List[Dict[str, Any]]) -> Dict[str, Any]:
         name = self.ensure_unique_language_name((desired_name or "").strip() or "新语言", languages)
         folder = self.ensure_unique_folder_name(name)
-        return {
+        language = {
             "id": self.new_language_id(),
             "name": name,
             "folder": folder,
@@ -182,6 +182,7 @@ class JsonStorage:
             "icon": "",
         }
         self._init_language_package(language)
+        return language
 
     def export_language_pack_zip(self, language: Dict[str, Any], zip_path: Path) -> tuple[int, str]:
         import zipfile

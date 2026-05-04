@@ -29,3 +29,6 @@ Desktop.ini
 
 # 运行时自动生成的 ICO（源文件 jpg/png 应保留在 assets/）
 assets/app_icon.ico
+
+# 本地测试用例（仅本机使用，不纳入版本管理）
+test_cases/
