@@ -16,7 +16,7 @@ from app.import_classify import (
     classify_import_path,
 )
 from app.parse_history_json import load_translation_anchors
-from app.parse_lexicon import load_master_library
+from app.parse_lexicon import load_master_library_full
 from app.parse_mapping_csv import load_ipa_mapping, load_tts_mapping
 from app.parse_whitepaper import parse_whitepaper
 
@@ -57,6 +57,7 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
         "language_id": language.get("id"),
         "whitepaper": {},
         "lexicon": {},
+        "lexicon_meta": {},
         "tts_map": {},
         "ipa_map": {},
         "anchors": {},
@@ -79,8 +80,9 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
     master = storage.asset_path(language, "master_library")
     if master.is_file():
         try:
-            idx, n, _raw = load_master_library(master)
-            bundle["lexicon"] = idx
+            flat, meta_idx, n, _raw = load_master_library_full(master)
+            bundle["lexicon"] = flat
+            bundle["lexicon_meta"] = meta_idx
             bundle["summary"]["lexicon_count"] = n
         except Exception as exc:
             parse_notes.append(f"主词库 JSON 无效或无法索引：{exc}")
