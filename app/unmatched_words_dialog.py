@@ -502,6 +502,7 @@ class UnmatchedWordsDialog(QDialog):
 
         self._ai_thread = _WordAIThread(word, self.bundle, self.paperhub_settings, self)
         self._ai_thread.finished.connect(self._on_ai_single_finished)
+        self._ai_thread.finished.connect(self._ai_thread.deleteLater)
         self._ai_thread.start()
 
     def _on_ai_single_finished(
@@ -564,6 +565,7 @@ class UnmatchedWordsDialog(QDialog):
             self.unmatched_words, self.bundle, self.paperhub_settings, self
         )
         self._ai_thread.finished.connect(self._on_batch_ai_finished)
+        self._ai_thread.finished.connect(self._ai_thread.deleteLater)
         self._ai_thread.start()
 
     def _on_batch_ai_finished(

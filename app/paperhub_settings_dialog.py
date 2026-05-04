@@ -445,6 +445,7 @@ class PaperHubSettingsDialog(QDialog):
 
         self._fetch_thread = _FetchModelsThread(api_key, base_url, self)
         self._fetch_thread.result_ready.connect(self._on_fetch_models_result)
+        self._fetch_thread.finished.connect(self._fetch_thread.deleteLater)
         self._fetch_thread.start()
 
     def _on_fetch_models_result(
@@ -491,6 +492,7 @@ class PaperHubSettingsDialog(QDialog):
 
         self._test_thread = _TestConnectionThread(api_key, base_url, model, self)
         self._test_thread.result_ready.connect(self._on_test_result)
+        self._test_thread.finished.connect(self._test_thread.deleteLater)
         self._test_thread.start()
 
     def _on_test_result(self, ok: bool, message: str) -> None:

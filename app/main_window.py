@@ -1255,6 +1255,7 @@ class MainWindow(QMainWindow):
         )
         self._ask_chat_thread.stream_chunk.connect(self._ask_on_stream_chunk)
         self._ask_chat_thread.finished.connect(self._ask_on_chat_finished)
+        self._ask_chat_thread.finished.connect(self._ask_chat_thread.deleteLater)
         self._ask_chat_thread.start()
 
     def _ask_on_stream_chunk(self, piece: str) -> None:
@@ -2426,6 +2427,7 @@ class MainWindow(QMainWindow):
             self._paperhub_settings, bundle, text, self,
         )
         self._ph_thread.finished.connect(self._on_paperhub_thread_finished)
+        self._ph_thread.finished.connect(self._ph_thread.deleteLater)
         # 流式输出：token 实时追加到「实时生成过程」模块，不写入自创语输出框
         if self._paperhub_settings.get("paperhub_stream", True):
             self._ph_thread.stream_chunk.connect(self._on_stream_chunk)
@@ -3209,6 +3211,7 @@ class MainWindow(QMainWindow):
         self._batch_worker.progress.connect(self._on_batch_progress)
         self._batch_worker.finished.connect(self._on_batch_finished)
         self._batch_worker.log_message.connect(self._on_batch_log)
+        self._batch_worker.finished.connect(self._batch_worker.deleteLater)
 
         # UI 进入翻译状态
         if self.batch_progress is not None:
