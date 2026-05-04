@@ -2878,43 +2878,22 @@ class MainWindow(QMainWindow):
 
     def _write_new_words_to_lexicon(self, new_words: List[NewWord], lang: Dict) -> None:
         """将 AI 创造的新词写入主词库和映射表。"""
+        from app.services.lexicon_writer import LexiconEntry, upsert_entries
         errors: List[str] = []
 
-        # ── 写入主词库 JSON ────────────────────────────────────────
+        # ── 写入主词库 JSON（统一走 services.lexicon_writer，原子写）─────
         master_path = self.storage.asset_path(lang, "master_library")
         try:
-            data: Any = {}
-            if master_path.is_file():
-                raw = master_path.read_text(encoding="utf-8-sig").strip()
-                if raw and raw not in ("{}", ""):
-                    try:
-                        data = json.loads(raw)
-                    except json.JSONDecodeError:
-                        data = {}
-
-            if isinstance(data, dict):
-                for nw in new_words:
-                    # 语言大师候选词的 logic 字段承载用户填的"风格标签"，
-                    # 非空时升级为结构化元数据写入；空则仍写扁平 str 保持向后兼容。
-                    style = (nw.logic or "").strip()
-                    if style:
-                        from app.parse_lexicon import serialize_lexicon_entry
-                        data[nw.chinese] = serialize_lexicon_entry(
-                            nw.conlang, {"style": style}
-                        )
-                    else:
-                        data[nw.chinese] = nw.conlang
-            elif isinstance(data, list):
-                for nw in new_words:
-                    entry: Dict[str, Any] = {"zh": nw.chinese, "conlang": nw.conlang}
-                    if (nw.logic or "").strip():
-                        entry["style"] = nw.logic.strip()
-                    data.append(entry)
-
-            master_path.parent.mkdir(parents=True, exist_ok=True)
-            master_path.write_text(
-                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
+            entries = [
+                LexiconEntry(
+                    zh=nw.chinese,
+                    conlang=nw.conlang,
+                    style=(nw.logic or "").strip(),
+                )
+                for nw in new_words
+                if nw.chinese and nw.conlang
+            ]
+            upsert_entries(master_path, entries)
         except Exception as exc:
             errors.append(f"主词库写入失败：{exc}")
 
@@ -2969,106 +2948,38 @@ class MainWindow(QMainWindow):
     ) -> None:
         """将 UnmatchedWordEntry（含富元数据）写入主词库和映射表。
 
-        主词库写入格式（阶段七升级）：
-          {
-            "vocabulary": {
-              "星之海": {
-                "conlang": "aether'maris",
-                "ipa": "ae-ther-ma-ris",
-                "tts": "aethermaris",
-                "logic": "星+aether组合",
-                "created_by": "paperhub_ai",
-                "created_time": "2025-04-29T10:30:00",
-                "model": "qwen3-max"
-              }
-            }
-          }
+        统一走 services.lexicon_writer：
+          - 顶层条目：标准化 LexiconEntry（zh, conlang，未来可加 style 等）
+          - 审计 sidecar：写入 master_data['vocabulary'][zh] 保留 ipa/tts/logic/
+            created_by/created_time/model，便于事后溯源
         """
+        from app.services.lexicon_writer import (
+            AuditRecord,
+            LexiconEntry,
+            upsert_entries,
+        )
         errors: List[str] = []
 
-        # ── 写入主词库 JSON ────────────────────────────────────────
+        # ── 写入主词库 JSON（含审计 sidecar）────────────────────────
         master_path = self.storage.asset_path(lang, "master_library")
         try:
-            data: Any = {}
-            if master_path.is_file():
-                raw = master_path.read_text(encoding="utf-8-sig").strip()
-                if raw and raw not in ("{}", ""):
-                    try:
-                        data = json.loads(raw)
-                    except json.JSONDecodeError:
-                        data = {}
-
-            # 确保顶层有 vocabulary 键
-            if isinstance(data, dict):
-                vocab = data.setdefault("vocabulary", {})
-                if not isinstance(vocab, dict):
-                    vocab = {}
-                    data["vocabulary"] = vocab
-
-                for entry in entries:
-                    if not entry.conlang:
-                        continue
-                    # 检查是否已有该词条 — 如果有则更新，否则新增
-                    existing = vocab.get(entry.chinese)
-                    if isinstance(existing, dict):
-                        # 已有富元数据条目 → 更新字段
-                        existing["conlang"] = entry.conlang
-                        existing["ipa"] = entry.ipa or existing.get("ipa", "")
-                        existing["tts"] = entry.tts or existing.get("tts", "")
-                        existing["logic"] = entry.logic or existing.get("logic", "")
-                        if entry.created_by:
-                            existing["created_by"] = entry.created_by
-                        if entry.created_time:
-                            existing["created_time"] = entry.created_time
-                        if entry.model:
-                            existing["model"] = entry.model
-                    elif isinstance(existing, str):
-                        # 旧格式（简单映射 "中文": "自创语"）→ 升级为富元数据
-                        vocab[entry.chinese] = {
-                            "conlang": entry.conlang,
-                            "ipa": entry.ipa or "",
-                            "tts": entry.tts or entry.conlang,
-                            "logic": entry.logic or "",
-                            "created_by": entry.created_by or "manual",
-                            "created_time": entry.created_time or "",
-                            "model": entry.model or "",
-                        }
-                    else:
-                        # 新增条目
-                        vocab[entry.chinese] = {
-                            "conlang": entry.conlang,
-                            "ipa": entry.ipa or "",
-                            "tts": entry.tts or entry.conlang,
-                            "logic": entry.logic or "",
-                            "created_by": entry.created_by or "manual",
-                            "created_time": entry.created_time or "",
-                            "model": entry.model or "",
-                        }
-
-                # 同时保持顶层简单映射兼容性（规则翻译使用顶层键值对）
-                for entry in entries:
-                    if entry.conlang:
-                        data[entry.chinese] = entry.conlang
-
-            elif isinstance(data, list):
-                # 列表格式 → 逐条追加
-                for entry in entries:
-                    if entry.conlang:
-                        data.append({
-                            "zh": entry.chinese,
-                            "conlang": entry.conlang,
-                            "ipa": entry.ipa,
-                            "tts": entry.tts or entry.conlang,
-                            "logic": entry.logic,
-                            "created_by": entry.created_by or "manual",
-                            "created_time": entry.created_time or "",
-                            "model": entry.model or "",
-                        })
-
-            master_path.parent.mkdir(parents=True, exist_ok=True)
-            master_path.write_text(
-                json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
-            )
+            lex_entries: List[LexiconEntry] = []
+            audit: Dict[str, AuditRecord] = {}
+            for entry in entries:
+                if not entry.conlang:
+                    continue
+                lex_entries.append(
+                    LexiconEntry(zh=entry.chinese, conlang=entry.conlang)
+                )
+                audit[entry.chinese] = AuditRecord(
+                    ipa=entry.ipa or "",
+                    tts=entry.tts or entry.conlang,
+                    logic=entry.logic or "",
+                    created_by=entry.created_by or "manual",
+                    created_time=entry.created_time or "",
+                    model=entry.model or "",
+                )
+            upsert_entries(master_path, lex_entries, audit_records=audit)
         except Exception as exc:
             errors.append(f"主词库写入失败：{exc}")
 

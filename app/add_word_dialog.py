@@ -146,34 +146,16 @@ class AddWordDialog(QDialog):
 
     # ------------------------------------------------------------------
     def _write_master_library(self, pairs: List[Tuple[str, str]]) -> None:
-        """将 (中文, 自创语) 追加到 Conlang_Master_Library.json。"""
-        path = self.master_library_path
-        data: Any = {}
-        if path.is_file():
-            raw = path.read_text(encoding="utf-8-sig").strip()
-            if raw and raw not in ("{}", ""):
-                try:
-                    data = json.loads(raw)
-                except json.JSONDecodeError:
-                    data = {}
+        """将 (中文, 自创语) 追加到 Conlang_Master_Library.json。
 
-        if isinstance(data, dict):
-            for zh, con in pairs:
-                data[zh] = con
-        elif isinstance(data, list):
-            existing_zh = {
-                item.get("zh") or item.get("中文") or item.get("source")
-                for item in data
-                if isinstance(item, dict)
-            }
-            for zh, con in pairs:
-                if zh not in existing_zh:
-                    data.append({"zh": zh, "conlang": con})
-        else:
-            data = {zh: con for zh, con in pairs}
-
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        统一走 services.lexicon_writer，保证：
+          - 原子写（.tmp + os.replace），写中途崩不破坏老文件
+          - 已有 list / dict / 混合形态全兼容
+          - 元数据未来若加（如风格标签），只改 LexiconEntry 即可
+        """
+        from app.services.lexicon_writer import LexiconEntry, upsert_entries
+        entries = [LexiconEntry(zh=zh, conlang=con) for zh, con in pairs]
+        upsert_entries(self.master_library_path, entries)
 
     def _write_mapping_rules(self, pairs: List[Tuple[str, str]]) -> None:
         """将 (自创语, TTS拼写) 追加到 Mapping_Rules.csv。"""

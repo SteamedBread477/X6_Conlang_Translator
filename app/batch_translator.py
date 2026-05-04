@@ -395,59 +395,49 @@ class BatchTranslateWorker(QThread):
                     return PaperHubResult(error=str(exc))
 
     def _auto_add_new_words(self, new_words: List[NewWord]) -> None:
-        """自动将 AI 创造的新词追加到主词库和映射表。"""
-        # 获取语言目录路径（从 bundle 中）
+        """自动将 AI 创造的新词追加到主词库和映射表。
+
+        主词库走 services.lexicon_writer.upsert_entries：
+          - 顶层条目：标准化的 LexiconEntry（含 style，从 nw.logic 透传）
+          - sidecar：AuditRecord 写到 master_data['vocabulary'][zh] 留作溯源
+        """
+        from app.services.lexicon_writer import (
+            AuditRecord,
+            LexiconEntry,
+            upsert_entries,
+        )
+
         master_path = self._bundle.get("master_library_path")
         mapping_path = self._bundle.get("mapping_rules_path")
 
         if not master_path or not mapping_path:
             return
 
-        # ── 写入主词库 ────────────────────────────────────────────
+        # ── 写入主词库（含 audit sidecar）──────────────────────────
         master_file = Path(master_path)
         try:
-            if master_file.is_file():
-                with master_file.open("r", encoding="utf-8-sig") as fh:
-                    master_data = json.load(fh)
-            else:
-                master_data = {}
-
-            # 确保 vocabulary 键存在
-            vocab = master_data.get("vocabulary")
-            if vocab is None:
-                vocab = {}
-                master_data["vocabulary"] = vocab
-
-            # 简单中文→自创语映射（顶层，供 rule_translator 兼容）
-            simple_map = {}
-            if isinstance(master_data, dict):
-                for k, v in master_data.items():
-                    if k != "vocabulary" and isinstance(v, str):
-                        simple_map[k] = v
-
             now = datetime.now().isoformat(timespec="seconds")
+            entries: List[LexiconEntry] = []
+            audit: Dict[str, AuditRecord] = {}
             for nw in new_words:
-                if nw.chinese and nw.conlang:
-                    # 顶层简单映射
-                    simple_map[nw.chinese] = nw.conlang
-                    # vocabulary 富元数据
-                    vocab[nw.chinese] = {
-                        "conlang": nw.conlang,
-                        "ipa": nw.ipa,
-                        "tts": nw.tts or nw.conlang,
-                        "logic": nw.logic,
-                        "created_by": "paperhub_ai",
-                        "created_time": now,
-                        "model": self._settings.model,
-                    }
-
-            # 合并顶层简单映射与 vocabulary
-            master_data["vocabulary"] = vocab
-            for k, v in simple_map.items():
-                master_data[k] = v
-
-            with master_file.open("w", encoding="utf-8") as fh:
-                json.dump(master_data, fh, ensure_ascii=False, indent=2)
+                if not (nw.chinese and nw.conlang):
+                    continue
+                entries.append(
+                    LexiconEntry(
+                        zh=nw.chinese,
+                        conlang=nw.conlang,
+                        style=(nw.logic or "").strip(),
+                    )
+                )
+                audit[nw.chinese] = AuditRecord(
+                    ipa=nw.ipa,
+                    tts=nw.tts or nw.conlang,
+                    logic=nw.logic,
+                    created_by="paperhub_ai",
+                    created_time=now,
+                    model=self._settings.model,
+                )
+            upsert_entries(master_file, entries, audit_records=audit)
         except Exception as exc:
             self.log_message.emit(f"❌ 自动入库失败（主词库 {master_file.name}）：{exc}")
 
