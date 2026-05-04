@@ -488,6 +488,10 @@ class MainWindow(QMainWindow):
         self._ask_chat_thread: Optional[_AskChatThread] = None
         self._ask_ai_pending: str = ""
         self._ask_ai_just_started: bool = False
+        # 会话热词集合：累积本会话所有用户提问与 AI 回复中命中词库的中文词，
+        # 让多轮对话里 AI 不会"忘掉"前几轮提到过的词。每条 zh-key 至多保留若干轮。
+        self._ask_hot_words: List[str] = []
+        self._ask_hot_words_max: int = 200
         self._ph_text: str = ""
         self._ph_lang: Optional[Dict] = None
         self._ph_bundle: Dict = {}
@@ -1197,6 +1201,7 @@ class MainWindow(QMainWindow):
     def _ask_clear_conversation(self) -> None:
         """清空 ASK 对话历史和 Token 计数。"""
         self._ask_messages.clear()
+        self._ask_hot_words.clear()
         if self._ask_chat_display is not None:
             self._ask_chat_display.clear()
         self._ask_update_token_display()
@@ -1244,7 +1249,9 @@ class MainWindow(QMainWindow):
         bundle = self._material_by_lang.get(lang.get("id", ""), {})
         self._ph_lang = lang
         self._ph_bundle = bundle
-        system_prompt = self._build_ask_system_prompt(bundle)
+        # 把当前提问中命中词库的中文词加入会话热词集合
+        self._ask_accumulate_hot_words(user_text, bundle)
+        system_prompt = self._build_ask_system_prompt(bundle, current_input=user_text)
 
         # 禁用发送按钮
         self._ask_send_btn.setEnabled(False)
@@ -1306,6 +1313,10 @@ class MainWindow(QMainWindow):
         self._ask_messages.append({"role": "assistant", "content": ai_text})
         self._ask_update_token_display()
 
+        # AI 回复中如果引用了词库词，也累积进会话热词
+        if self._ph_bundle:
+            self._ask_accumulate_hot_words(ai_text, self._ph_bundle)
+
         # 如果不是流式模式，需要手动追加显示
         if not self._ask_ai_pending:
             self._ask_append_chat_message("ai", ai_text)
@@ -1315,8 +1326,42 @@ class MainWindow(QMainWindow):
 
         self._ask_ai_pending = ""
 
-    def _build_ask_system_prompt(self, bundle: Dict[str, Any]) -> str:
-        """构建 ASK 对话模式的系统提示词。"""
+    def _ask_accumulate_hot_words(self, text: str, bundle: Dict[str, Any]) -> None:
+        """对 text 与当前 bundle 词库做最长匹配，命中的中文词追加到会话热词集合。
+
+        热词集合是有序去重 list（保留首次出现顺序），上限 _ask_hot_words_max；
+        超过上限时丢弃最早的，给最新提到的词让位。
+        """
+        if not text:
+            return
+        lexicon = bundle.get("lexicon") or {}
+        if not isinstance(lexicon, dict) or not lexicon:
+            return
+        try:
+            from app.lexicon_segment import segment_with_lexicon
+        except ImportError:
+            return
+        segs = segment_with_lexicon(text, {str(k): str(v) for k, v in lexicon.items() if str(k).strip()})
+        existing = set(self._ask_hot_words)
+        for kind, s in segs:
+            if kind == "lex" and s and s not in existing:
+                self._ask_hot_words.append(s)
+                existing.add(s)
+        if len(self._ask_hot_words) > self._ask_hot_words_max:
+            drop = len(self._ask_hot_words) - self._ask_hot_words_max
+            del self._ask_hot_words[:drop]
+
+    def _build_ask_system_prompt(
+        self, bundle: Dict[str, Any], current_input: Optional[str] = None
+    ) -> str:
+        """构建 ASK 对话模式的系统提示词。
+
+        三层词库注入：
+          - L1 核心词常驻（lexicon_meta 中 core=True 或 freq Top-N）
+          - L2 当前提问命中 + 会话热词（self._ask_hot_words）
+          - L3 命中词的近义词
+          字符预算超出时回退 B 方案兜底告知。
+        """
         from app.paperhub_client import _whitepaper_full, _vocabulary_list
 
         lang_name = ""
@@ -1324,8 +1369,23 @@ class MainWindow(QMainWindow):
         if lang and isinstance(lang, dict):
             lang_name = lang.get("name", "")
 
+        settings = self._paperhub_settings or {}
+        retrieval_enabled = bool(settings.get("prompt_retrieval_enabled", True))
+        core_quota = max(0, int(settings.get("prompt_core_quota", 200)))
+        hit_quota = max(0, int(settings.get("prompt_hit_quota", 500)))
+        char_budget = max(500, int(settings.get("prompt_char_budget", 8000)))
+
         wp = _whitepaper_full(bundle)
-        vocab = _vocabulary_list(bundle, max_items=120)
+        vocab = _vocabulary_list(
+            bundle,
+            input_text=current_input,
+            extra_keys=list(self._ask_hot_words),
+            retrieval_enabled=retrieval_enabled,
+            core_quota=core_quota,
+            hit_quota=hit_quota,
+            char_budget=char_budget,
+            max_items=120,
+        )
 
         return (
             "你是一个虚构语言翻译专家和创作顾问。"
