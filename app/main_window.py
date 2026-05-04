@@ -1427,9 +1427,25 @@ class MainWindow(QMainWindow):
         matches = re.findall(pattern, ai_text)
         if not matches:
             return
+
+        def _clean(s: str) -> str:
+            """剥离 AI 输出常见的装饰：markdown 加粗/斜体、反引号、首尾标点空白。"""
+            s = s.strip()
+            # 反复剥离成对的 markdown 包裹符
+            for _ in range(3):
+                stripped = re.sub(r"^(\*{1,3}|`+|_{1,3})(.+?)\1$", r"\2", s)
+                if stripped == s:
+                    break
+                s = stripped.strip()
+            # 兜底去掉残余的孤立 * / ` / 下划线（AI 偶尔不闭合）
+            s = s.strip("*`_ \t")
+            return s
+
         for m in matches:
             conlang, ipa, tts, meaning, tags = m
-            self._ask_add_pending_row(conlang.strip(), ipa.strip(), tts.strip(), meaning.strip(), tags.strip())
+            self._ask_add_pending_row(
+                _clean(conlang), _clean(ipa), _clean(tts), _clean(meaning), _clean(tags)
+            )
         # 显示批量操作按钮
         if self._ask_batch_confirm_btn is not None:
             self._ask_batch_confirm_btn.setVisible(True)
