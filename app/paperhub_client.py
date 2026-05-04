@@ -350,8 +350,38 @@ class PaperHubError(Exception):
         self.status_code = status_code
 
 
+def _sanitize_error(exc_str: str) -> str:
+    """脱敏异常字符串，避免 API Key / Bearer token 等机密外泄到用户提示/日志。
+
+    覆盖 PaperHub / OpenAI SDK 常见泄漏来源：
+      - Authorization 头（Bearer <token>）
+      - URL query 参数 api_key=<value> / token=<value> / access_token=<value>
+      - 孤立的 sk-... 风格 key（OpenAI 兼容）
+    无匹配时原样返回。
+    """
+    if not exc_str:
+        return exc_str
+    patterns = [
+        # Bearer <token> — 保留 4 位前缀示踪
+        (re.compile(r"(Bearer\s+)([A-Za-z0-9_\-]{8,})", re.IGNORECASE),
+         lambda m: f"{m.group(1)}{m.group(2)[:4]}***"),
+        # api_key / token / access_token / apikey 查询参数
+        (re.compile(r"((?:api[_-]?key|access[_-]?token|token)=)([A-Za-z0-9_\-]{8,})", re.IGNORECASE),
+         lambda m: f"{m.group(1)}***"),
+        # OpenAI 风格裸 key（sk-...）
+        (re.compile(r"\b(sk-[A-Za-z0-9_\-]{4})[A-Za-z0-9_\-]{4,}\b"),
+         lambda m: f"{m.group(1)}***"),
+    ]
+    result = exc_str
+    for regex, repl in patterns:
+        result = regex.sub(repl, result)
+    return result
+
+
 def _make_error_hint(exc_str: str, model: str, timeout: int) -> str:
     """将 API 异常分类为用户友好提示。"""
+    # 先脱敏，保证任何分支回显 exc_str 时都不泄露机密
+    exc_str = _sanitize_error(exc_str)
     s = exc_str.lower()
     if "401" in exc_str or "authentication" in s or "unauthorized" in s:
         return "API Key 无效或已过期，请检查设置中的 PaperHub API Key。"
