@@ -2787,7 +2787,7 @@ class MainWindow(QMainWindow):
         try:
             data: Any = {}
             if master_path.is_file():
-                raw = master_path.read_text(encoding="utf-8").strip()
+                raw = master_path.read_text(encoding="utf-8-sig").strip()
                 if raw and raw not in ("{}", ""):
                     try:
                         data = json.loads(raw)
@@ -2881,7 +2881,7 @@ class MainWindow(QMainWindow):
         try:
             data: Any = {}
             if master_path.is_file():
-                raw = master_path.read_text(encoding="utf-8").strip()
+                raw = master_path.read_text(encoding="utf-8-sig").strip()
                 if raw and raw not in ("{}", ""):
                     try:
                         data = json.loads(raw)

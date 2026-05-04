@@ -34,7 +34,7 @@ def _load_history(path: Path) -> List[Dict[str, Any]]:
     """读取历史文件，返回记录列表；处理初始占位及各种遗留格式。"""
     if not path.is_file():
         return []
-    raw = path.read_text(encoding="utf-8").strip()
+    raw = path.read_text(encoding="utf-8-sig").strip()
     if not raw or raw in ("{}", "[]"):
         return []
     try:

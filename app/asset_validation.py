@@ -19,7 +19,7 @@ def check_whitepaper(path: Path) -> AssetCheckResult:
     if not path.is_file():
         return AssetCheckResult("missing")
     try:
-        text = path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8-sig")
     except OSError as exc:
         return AssetCheckResult("error", str(exc))
     if not text.strip():
@@ -31,7 +31,7 @@ def check_json_file(path: Path) -> AssetCheckResult:
     if not path.is_file():
         return AssetCheckResult("missing")
     try:
-        raw = path.read_text(encoding="utf-8")
+        raw = path.read_text(encoding="utf-8-sig")
         json.loads(raw)
     except OSError as exc:
         return AssetCheckResult("error", str(exc))

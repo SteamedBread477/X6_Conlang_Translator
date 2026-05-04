@@ -53,7 +53,7 @@ def _from_list_records(data: list) -> Dict[str, str]:
 
 
 def load_translation_anchors(path: Path) -> Tuple[Dict[str, str], int]:
-    raw = path.read_text(encoding="utf-8")
+    raw = path.read_text(encoding="utf-8-sig")
     data = json.loads(raw)
 
     if isinstance(data, list):

@@ -111,7 +111,7 @@ def build_lexicon_index(data: Any) -> Dict[str, str]:
 
 
 def load_master_library(path: Path) -> Tuple[Dict[str, str], int, Any]:
-    raw_text = path.read_text(encoding="utf-8")
+    raw_text = path.read_text(encoding="utf-8-sig")
     data = json.loads(raw_text)
     index = build_lexicon_index(data)
     return index, len(index), data

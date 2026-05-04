@@ -407,7 +407,7 @@ class BatchTranslateWorker(QThread):
         master_file = Path(master_path)
         try:
             if master_file.is_file():
-                with master_file.open("r", encoding="utf-8") as fh:
+                with master_file.open("r", encoding="utf-8-sig") as fh:
                     master_data = json.load(fh)
             else:
                 master_data = {}

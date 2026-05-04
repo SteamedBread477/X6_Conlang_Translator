@@ -39,7 +39,7 @@ def load_snapshot_if_any(storage: Any, language: Dict[str, Any]) -> Dict[str, An
     p = _snapshot_path(storage, language)
     if not p.is_file():
         return {}
-    with p.open("r", encoding="utf-8") as handle:
+    with p.open("r", encoding="utf-8-sig") as handle:
         return json.load(handle)
 
 
@@ -66,7 +66,7 @@ def rebuild_bundle_from_disk(storage: Any, language: Dict[str, Any]) -> Tuple[Di
     wp = storage.asset_path(language, "whitepaper")
     if wp.is_file():
         try:
-            text = wp.read_text(encoding="utf-8")
+            text = wp.read_text(encoding="utf-8-sig")
             parsed = parse_whitepaper(text)
             bundle["whitepaper"] = parsed
             bundle["summary"]["phoneme_row_count"] = parsed.get("phoneme_row_count", 0)
