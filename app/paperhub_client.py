@@ -93,8 +93,25 @@ def _whitepaper_full(bundle: Dict[str, Any], max_chars: int = 3000) -> str:
     return text[:max_chars]
 
 
-def _vocabulary_list(bundle: Dict[str, Any], max_items: int = 80) -> str:
-    """将词库格式化为 AI 可读的列表。"""
+def _vocabulary_list(
+    bundle: Dict[str, Any],
+    input_text: Optional[str] = None,
+    *,
+    max_items: int = 80,
+    extra_keys: Optional[List[str]] = None,
+    core_quota: int = 200,
+    hit_quota: int = 500,
+    char_budget: int = 8000,
+    retrieval_enabled: bool = True,
+) -> str:
+    """将词库格式化为 AI 可读的列表。
+
+    两种模式：
+      - retrieval_enabled=True 且 input_text 非空：走检索式注入，仅展示与
+        input_text 相关的词条 + 核心词（L1）+ 命中词（L2）+ extra_keys（L3 会话热词）。
+        附带元数据（词性/风格）。
+      - 否则：回落到旧的"前 max_items 条 + 截断告知"全量截断模式（B 方案兜底）。
+    """
     lexicon = bundle.get("lexicon") or {}
     if not isinstance(lexicon, dict):
         return "（词库尚未加载。）"
@@ -103,13 +120,179 @@ def _vocabulary_list(bundle: Dict[str, Any], max_items: int = 80) -> str:
     if not lexicon:
         return "（词库为空。）"
 
+    if retrieval_enabled and (input_text or extra_keys):
+        return _render_retrieved_vocab(
+            bundle=bundle,
+            lexicon=lexicon,
+            input_text=input_text or "",
+            extra_keys=extra_keys or [],
+            core_quota=core_quota,
+            hit_quota=hit_quota,
+            char_budget=char_budget,
+        )
+
+    # ��全量截断模式（B 方案兜底，或用于无具体输入的旁路场景）
     lines: List[str] = []
     for i, (zh, con) in enumerate(lexicon.items()):
         if i >= max_items:
-            lines.append(f"…（共 {len(lexicon)} 个词汇，已截断显示前 {max_items} 个）")
+            lines.append(
+                f"…（共 {len(lexicon)} 个词汇，已截断显示前 {max_items} 个，"
+                f"如需完整词表参与，请在「PaperHub 设置」切换到更大 context 的模型）"
+            )
             break
         lines.append(f"{zh} → {con}")
     return "\n".join(lines)
+
+
+def _format_lex_line(zh: str, con: str, meta: Dict[str, Any]) -> str:
+    """渲染单条词库展示行，附带元数据。"""
+    extras: List[str] = []
+    pos = meta.get("pos") if isinstance(meta, dict) else ""
+    style = meta.get("style") if isinstance(meta, dict) else ""
+    if pos:
+        extras.append(str(pos))
+    if style:
+        extras.append(str(style))
+    if extras:
+        return f"{zh} → {con}  ({'/'.join(extras)})"
+    return f"{zh} → {con}"
+
+
+def _select_relevant_lexicon(
+    bundle: Dict[str, Any],
+    lexicon: Dict[str, str],
+    input_text: str,
+    extra_keys: List[str],
+    *,
+    core_quota: int,
+    hit_quota: int,
+) -> Tuple[List[str], int, int, int]:
+    """挑选要塞进 prompt 的词条 zh-key 列表。
+
+    返回 (selected_zh_list, total_lex_size, core_count, hit_count)。
+    优先级：L1 核心词 > L2 输入命中词 + 会话热词 > L3 近义词。
+    """
+    meta_idx_raw = bundle.get("lexicon_meta") or {}
+    meta_idx = meta_idx_raw if isinstance(meta_idx_raw, dict) else {}
+
+    # L1: 核心词（core=True 优先；否则按 freq 取 Top-N）
+    core_candidates = [
+        (zh, int(m.get("freq") or 0))
+        for zh, m in meta_idx.items()
+        if isinstance(m, dict) and m.get("core") and zh in lexicon
+    ]
+    core_candidates.sort(key=lambda kv: kv[1], reverse=True)
+    core_selected: List[str] = [zh for zh, _ in core_candidates[:core_quota]]
+    core_set = set(core_selected)
+
+    # 若 core 没填够，用 freq Top-N 补齐（仅在 freq>0 时启用，避免随机噪声）
+    if len(core_selected) < core_quota:
+        freq_candidates = [
+            (zh, int(m.get("freq") or 0))
+            for zh, m in meta_idx.items()
+            if isinstance(m, dict) and zh not in core_set and zh in lexicon
+            and int(m.get("freq") or 0) > 0
+        ]
+        freq_candidates.sort(key=lambda kv: kv[1], reverse=True)
+        for zh, _ in freq_candidates:
+            if len(core_selected) >= core_quota:
+                break
+            core_selected.append(zh)
+            core_set.add(zh)
+
+    # L2: 输入命中（基于词库做最长匹配） + 会话热词
+    hit_set: List[str] = []
+    seen_hit: set[str] = set()
+    if input_text:
+        segs = segment_with_lexicon(input_text, lexicon)
+        for kind, s in segs:
+            if kind == "lex" and s in lexicon and s not in core_set and s not in seen_hit:
+                hit_set.append(s)
+                seen_hit.add(s)
+                if len(hit_set) >= hit_quota:
+                    break
+    for k in extra_keys:
+        if k in lexicon and k not in core_set and k not in seen_hit:
+            hit_set.append(k)
+            seen_hit.add(k)
+            if len(hit_set) >= hit_quota:
+                break
+
+    # L3: 近义词（基于命中词的 synonyms 字段反查），做轻量扩展
+    syn_set: List[str] = []
+    syn_seen: set[str] = set()
+    for zh in hit_set:
+        m = meta_idx.get(zh)
+        if not isinstance(m, dict):
+            continue
+        for syn in (m.get("synonyms") or []):
+            if (
+                isinstance(syn, str)
+                and syn in lexicon
+                and syn not in core_set
+                and syn not in seen_hit
+                and syn not in syn_seen
+            ):
+                syn_set.append(syn)
+                syn_seen.add(syn)
+
+    selected = core_selected + hit_set + syn_set
+    return selected, len(lexicon), len(core_selected), len(hit_set)
+
+
+def _render_retrieved_vocab(
+    *,
+    bundle: Dict[str, Any],
+    lexicon: Dict[str, str],
+    input_text: str,
+    extra_keys: List[str],
+    core_quota: int,
+    hit_quota: int,
+    char_budget: int,
+) -> str:
+    """检索 + 渲染（含字符预算兜底截断）。"""
+    meta_idx_raw = bundle.get("lexicon_meta") or {}
+    meta_idx = meta_idx_raw if isinstance(meta_idx_raw, dict) else {}
+
+    selected, total_size, core_count, hit_count = _select_relevant_lexicon(
+        bundle=bundle,
+        lexicon=lexicon,
+        input_text=input_text,
+        extra_keys=extra_keys,
+        core_quota=core_quota,
+        hit_quota=hit_quota,
+    )
+
+    if not selected:
+        return (
+            f"（词库共 {total_size} 个词汇，本句未命中且无核心词；"
+            f"若结果不佳，可在词库中标记 core=true 增加核心词常驻。）"
+        )
+
+    lines: List[str] = []
+    used_chars = 0
+    rendered = 0
+    truncated = False
+    for zh in selected:
+        con = lexicon.get(zh, "")
+        if not con:
+            continue
+        line = _format_lex_line(zh, con, meta_idx.get(zh, {}))
+        # +1 for newline
+        if used_chars + len(line) + 1 > char_budget:
+            truncated = True
+            break
+        lines.append(line)
+        used_chars += len(line) + 1
+        rendered += 1
+
+    summary_parts = [f"词库共 {total_size}", f"已选 {rendered}（核心 {core_count} + 命中 {hit_count}）"]
+    if truncated:
+        summary_parts.append(
+            f"超字符预算 {char_budget} 已截断，建议在「PaperHub 设置」切换更大 context 模型"
+        )
+    suffix = "（" + "；".join(summary_parts) + "）"
+    return "\n".join(lines) + "\n" + suffix
 
 
 def _translation_history_samples(bundle: Dict[str, Any], max_items: int = 12) -> str:
@@ -126,10 +309,32 @@ def _translation_history_samples(bundle: Dict[str, Any], max_items: int = 12) ->
     return "\n".join(lines) if lines else ""
 
 
-def _build_system_prompt(bundle: Dict[str, Any]) -> str:
-    """构建系统提示词（阶段六完整模板）。"""
+def _build_system_prompt(
+    bundle: Dict[str, Any],
+    input_text: Optional[str] = None,
+    *,
+    extra_keys: Optional[List[str]] = None,
+    retrieval_enabled: bool = True,
+    core_quota: int = 200,
+    hit_quota: int = 500,
+    char_budget: int = 8000,
+) -> str:
+    """构建系统提示词（阶段六完整模板）。
+
+    input_text：当前要翻译的中文。非空时启用检索式注入，仅展示相关词条。
+    extra_keys：额外强制纳入的词条 zh-key（用于语言大师对话的会话热词）。
+    retrieval_enabled：False 走旧的全量截断（B 方案兜底）。
+    """
     whitepaper = _whitepaper_full(bundle)
-    vocab = _vocabulary_list(bundle)
+    vocab = _vocabulary_list(
+        bundle,
+        input_text=input_text,
+        extra_keys=extra_keys,
+        retrieval_enabled=retrieval_enabled,
+        core_quota=core_quota,
+        hit_quota=hit_quota,
+        char_budget=char_budget,
+    )
     history = _translation_history_samples(bundle)
 
     history_block = ""
@@ -557,7 +762,7 @@ def fetch_paperhub_models(
 # ---------------------------------------------------------------------------
 
 def _get_settings_params(settings: Dict[str, Any]) -> Dict[str, Any]:
-    """从 settings 中提取 PaperHub 调用参数。"""
+    """从 settings 中提取 PaperHub 调用参数���"""
     return {
         "api_key": str(settings.get("paperhub_api_key") or "").strip(),
         "base_url": str(settings.get("paperhub_base_url") or "https://tc-paperhub.diezhi.net/v1"),
@@ -568,6 +773,11 @@ def _get_settings_params(settings: Dict[str, Any]) -> Dict[str, Any]:
         "timeout": max(10, int(settings.get("paperhub_timeout", _DEFAULT_TIMEOUT))),
         "stream": bool(settings.get("paperhub_stream", True)),
         "strategy": str(settings.get("paperhub_strategy") or "unmatched_only"),
+        # 检索式注入开关 + 配额（默认开，可在 app_config.json 关闭回退到全量截断）
+        "retrieval_enabled": bool(settings.get("prompt_retrieval_enabled", True)),
+        "core_quota": max(0, int(settings.get("prompt_core_quota", 200))),
+        "hit_quota": max(0, int(settings.get("prompt_hit_quota", 500))),
+        "char_budget": max(500, int(settings.get("prompt_char_budget", 8000))),
     }
 
 
@@ -667,7 +877,14 @@ def translate_with_paperhub(
     lexicon = _normalize_lexicon(bundle)
     tts_map = _normalize_tts_map(bundle)
     strategy = params["strategy"]
-    system_prompt = _build_system_prompt(bundle)
+    system_prompt = _build_system_prompt(
+        bundle,
+        input_text=text,
+        retrieval_enabled=params["retrieval_enabled"],
+        core_quota=params["core_quota"],
+        hit_quota=params["hit_quota"],
+        char_budget=params["char_budget"],
+    )
 
     # 公共调用参数
     _common = dict(
