@@ -430,7 +430,16 @@ def _call_paperhub_chat(
             create_kwargs["stream"] = True
             accumulated = ""
             resp_iter = client.chat.completions.create(**create_kwargs)
+            # 墙钟超时守卫：OpenAI SDK 的 timeout 只管单次 HTTP 读写，
+            # 流式接收时若服务端断断续续吐字会绕过该限制 → 这里再设一层总时长上限
+            deadline = time.monotonic() + timeout
             for chunk in resp_iter:
+                if time.monotonic() > deadline:
+                    elapsed = timeout
+                    raise PaperHubError(
+                        f"流式响应超时（{elapsed}s）",
+                        user_hint=f"流式响应超时（墙钟 {elapsed}s）。请在设置中调大 Timeout 或关闭流式输出。",
+                    )
                 if not chunk.choices:
                     continue
                 delta = chunk.choices[0].delta

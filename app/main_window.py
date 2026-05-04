@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -182,7 +183,11 @@ class _AskChatThread(QThread):
             if stream:
                 create_kwargs["stream"] = True
                 accumulated = ""
+                # 墙钟超时守卫：SDK timeout 只管单次读写，流式逐 chunk 接收可能绕过
+                deadline = time.monotonic() + timeout
                 for chunk in client.chat.completions.create(**create_kwargs):
+                    if time.monotonic() > deadline:
+                        raise TimeoutError(f"流式响应超时（墙钟 {timeout}s）")
                     if not chunk.choices:
                         continue
                     piece = getattr(chunk.choices[0].delta, "content", None) or ""
