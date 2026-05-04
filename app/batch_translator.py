@@ -448,8 +448,8 @@ class BatchTranslateWorker(QThread):
 
             with master_file.open("w", encoding="utf-8") as fh:
                 json.dump(master_data, fh, ensure_ascii=False, indent=2)
-        except Exception:
-            pass  # 静默失败，不影响翻译流程
+        except Exception as exc:
+            self.log_message.emit(f"❌ 自动入库失败（主词库 {master_file.name}）：{exc}")
 
         # ── 写入映射表 CSV ────────────────────────────────────────
         mapping_file = Path(mapping_path)
@@ -477,8 +477,8 @@ class BatchTranslateWorker(QThread):
             with mapping_file.open("w", encoding="utf-8-sig", newline="") as fh:
                 writer = csv.writer(fh)
                 writer.writerows(existing_rows)
-        except Exception:
-            pass  # 静默失败
+        except Exception as exc:
+            self.log_message.emit(f"❌ 自动入库失败（映射表 {mapping_file.name}）：{exc}")
 
 
 # --------------------------------------------------------------------------- 
