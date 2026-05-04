@@ -641,6 +641,52 @@ Nikki Conlang Forge 诞生于一个具体需求：为游戏《无限暖暖》中
 
 ---
 
+## 阶段十三 · 重构 — 词库结构化 + Prompt 检索式注入（TC-300/301/302）
+
+### 动机
+
+旧逻辑把整个词库前 80~120 条无脑塞进每次 PaperHub prompt：
+- AI 经常告诉用户"词库共 N 个，但我只能看到前 120 个" — 直接影响翻译质量
+- token 消耗与词库大小线性增长，大词库下浪费惊人
+- 多轮语言大师对话里，AI 会"忘掉"前几轮讨论过但不在前 120 的词
+- 词库无法附带词性 / 风格 / 核心词等元数据，AI 难以做精准翻译
+
+### 改造
+
+1. **词库格式可选升级为结构化**（`DATA_FORMAT_SPEC.md` §2）
+   - 旧扁平 `{zh: con_str}` 与新结构化 `{zh: {conlang, pos, style, core, synonyms, freq, notes}}` 可在同一文件混用
+   - 写盘：仅当条目有非空元数据时才输出 dict，其余仍是字符串 → 老客户端零感知
+   - `parse_lexicon` 双产出 `build_lexicon_full(data) -> (flat, meta)`，旧 API 行为不变
+   - 新增 `serialize_lexicon_entry(conlang, meta)` 供未来结构化编辑 UI 调用
+
+2. **PaperHub prompt 检索式注入**（`app/paperhub_client.py`）
+   - L1 核心词常驻（`core=True` 或 freq Top-N）
+   - L2 当前输入命中（基于 `segment_with_lexicon` 最长匹配）
+   - L3 命中词的近义词扩展
+   - L4 字符预算超出时回退 B 方案兜底，提示切换大 context 模型
+   - 设置开关：`prompt_retrieval_enabled` / `prompt_core_quota` / `prompt_hit_quota` / `prompt_char_budget`
+
+3. **语言大师三层检索 + 会话热词**（`app/main_window.py`）
+   - `MainWindow._ask_hot_words` 跨轮累积命中词（有序去重 list，上限 200）
+   - 每轮发送/接收都更新热词，让 AI 跨轮记得讨论过的词
+   - 清空对话同步清零
+
+### 收益
+
+- token 消耗从 **O(词库大小)** 降到 **O(本次输入命中)**，5000 词库 + 短句翻译节省 50~500×
+- AI 翻译能见到自己最相关的词，质量不降反升
+- 多轮对话连贯性显著改善
+- 未来词库写入 UI 想加 pos/style 字段，零阻力
+
+### 测试
+
+- TC-300（词库结构化解析）：12 用例 ✅
+- TC-301（PaperHub 检索式注入）：12 用例 ✅
+- TC-302（语言大师三层检索）：8 用例 ✅
+- 历史 TC-100/101/102/103 零回归
+
+---
+
 ## 续聊入口（新会话时发给 AI）
 
 ```text

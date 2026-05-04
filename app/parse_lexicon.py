@@ -279,3 +279,43 @@ def load_master_library_full(
     data = json.loads(raw_text)
     flat, meta = build_lexicon_full(data)
     return flat, meta, len(flat), data
+
+
+def serialize_lexicon_entry(
+    conlang: str,
+    meta: Dict[str, Any] | None = None,
+) -> Any:
+    """规范化序列化单条词库条目，供写盘代码使用以保证前向兼容。
+
+    若 meta 为空或所有字段都是默认值，返回 conlang 字符串（扁平）；
+    否则返回结构化 dict。这样旧版本客户端仍能读取无元数据的条目。
+    """
+    conlang = str(conlang or "").strip()
+    if not conlang:
+        return ""
+    if not meta:
+        return conlang
+    norm = {
+        "conlang": conlang,
+        "pos": str(meta.get("pos") or "").strip(),
+        "style": str(meta.get("style") or "").strip(),
+        "core": bool(meta.get("core", False)),
+        "synonyms": [str(s).strip() for s in (meta.get("synonyms") or []) if str(s).strip()],
+        "freq": int(meta.get("freq") or 0) if not isinstance(meta.get("freq"), bool) else 0,
+        "notes": str(meta.get("notes") or "").strip(),
+    }
+    if not _has_meaningful_meta(norm):
+        return conlang
+    # 仅写出非空字段，让文件保持精简
+    out: Dict[str, Any] = {"conlang": conlang}
+    for k in ("pos", "style", "notes"):
+        if norm[k]:
+            out[k] = norm[k]
+    if norm["core"]:
+        out["core"] = True
+    if norm["synonyms"]:
+        out["synonyms"] = norm["synonyms"]
+    if norm["freq"]:
+        out["freq"] = norm["freq"]
+    return out
+
