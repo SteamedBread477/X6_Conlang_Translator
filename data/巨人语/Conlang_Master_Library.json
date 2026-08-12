@@ -4,7 +4,7 @@
   "生命": "vit",
   "死亡": "mort",
   "重生": "renasc",
-  "存在": "esse",
+  "存在": "ontos",
   "时间": "temp",
   "永恒": "aetern",
   "过去": "praeter",
@@ -103,7 +103,10 @@
   "尝": "gust",
   "触摸": "tang",
   "感觉": "sent",
-  "说": "dic",
+  "说": {
+    "conlang": "dic",
+    "style": "词库已有动词，此处按现在时规则加-at后缀构成dicat（你说），符合SOV语序与现在时构形"
+  },
   "叫": "clam",
   "唱": "cant",
   "哭": "plor",
@@ -140,13 +143,16 @@
   "结束": "fin",
   "帮助": "adiuv",
   "伤害": "noc",
-  "保护": "proteg",
+  "保护": "conservat",
   "战斗": "bell",
   "赢": "vinc",
   "输": "defeat",
   "拥有": "hab",
   "持有": "ten",
-  "是": "est",
+  "是": {
+    "conlang": "est",
+    "style": "借自拉丁语系动词 'esse' 的第三人称单数现在时 'est'，符合SOV语序中系动词置于句末的用法，且辅音硬直、元音为e，属允许范围"
+  },
   "有": "ha",
   "在...里": "in",
   "在...上": "super",
@@ -156,14 +162,17 @@
   "在...之间": "inter",
   "靠近": "proxim",
   "远离": "long",
-  "到": "ad",
+  "到": {
+    "conlang": "advenit",
+    "style": "基于拉丁语 advenire（到达）简化而来，符合巨人语现在时 -it 结尾规则；词根 ven（来）+ 前缀 ad（向），表示‘来到’。虽然词库中有‘到 → ad’，但此处需动词形式，故新造完整动词。"
+  },
   "从": "ex",
   "通过": "per",
   "与": "cum",
   "没有": "sine",
   "关于": "de",
   "为了": "pro",
-  "和": "et",
+  "和": "harmon",
   "或": "aut",
   "但是": "sed",
   "因为": "quia",
@@ -207,16 +216,19 @@
   "沉重": "dusrath",
   "重": "grav",
   "庄严": "gravat",
-  "死": "mort",
+  "死": "mor",
   "绑": "vin",
   "束缚": "vinum",
-  "持": "ten",
+  "持": {
+    "conlang": "ten",
+    "style": "词库未显式列出但符合白皮书示例 *ten*（持），用于构成动词 *tenat*（持有），遵循现在时 -at 规则"
+  },
   "坏": "mal",
   "光": "luc",
   "关心": "cur",
   "管理": "curat",
   "宣告": "dict",
-  "食物": "panum",
+  "食物": "cib",
   "太阳": "sol",
   "月亮": "lun",
   "星星": "astr",
@@ -226,13 +238,22 @@
   "后": "post",
   "左": "sinist",
   "右": "dextr",
-  "好": "bon",
+  "好": {
+    "conlang": "bon",
+    "style": "词库已有，源自拉丁bonus（好的），符合o元音高频使用规则"
+  },
   "新": "nov",
   "旧": "vet",
   "小": "parv",
-  "大": "magn",
+  "大": {
+    "conlang": "magn",
+    "style": "源自拉丁语 magnus（大的），符合巨人语偏好硬辅音和低元音的风格，词根简化为 magn-"
+  },
   "害怕": "tim",
-  "高兴": "laet",
+  "高兴": {
+    "conlang": "laet",
+    "style": "词库已有 laet 表示“高兴”，此处按现在时动词形式加 -at 后缀，构成 laetat（感到高兴）"
+  },
   "悲伤": "trist",
   "工作": "labor",
   "休息": "requi",
@@ -246,7 +267,7 @@
   "年轻人": "iuven",
   "永远": "semper",
   "强大": "fort",
-  "智慧": "sapient",
+  "智慧": "prajn",
   "勇敢": "fortis",
   "诚实": "verax",
   "工匠": "fabr",
@@ -265,10 +286,10 @@
   "战争": "bell",
   "胜利": "victor",
   "失败": "defeat",
-  "希望": "spes",
+  "希望": "sper",
   "信念": "fides",
   "循环": "circ",
-  "自然": "natur",
+  "自然": "spont",
   "风": "vent",
   "雨": "pluv",
   "雪": "niv",
@@ -295,7 +316,7 @@
   "教学": "doc",
   "写作": "scrib",
   "阅读": "leg",
-  "数字": "numer",
+  "数字": "digit",
   "计算": "calcul",
   "测量": "metr",
   "几何": "geometr",
@@ -330,14 +351,17 @@
   "交通": "transit",
   "通讯": "communic",
   "能源": "energ",
-  "材料": "materi",
+  "材料": "ingredient",
   "设计": "design",
   "创新": "innov",
   "传统": "tradit",
   "现代": "modern",
   "快速": "celer",
   "缓慢": "tard",
-  "简单": "simplic",
+  "简单": {
+    "conlang": "simplic",
+    "style": "词库已有，直接使用"
+  },
   "复杂": "complex",
   "美丽": "bell",
   "有用": "util",
@@ -360,12 +384,12 @@
   "睡眠": "somn",
   "饮食": "diet",
   "卫生": "hygien",
-  "环境": "ambient",
+  "环境": "context",
   "污染": "pollut",
   "可持续": "sustain",
   "生态": "ecolog",
   "气候": "climat",
-  "天气": "tempest",
+  "天气": "cael",
   "季节": "tempor",
   "春天": "ver",
   "夏天": "aest",
@@ -375,7 +399,7 @@
   "头": "caput",
   "手": "manus",
   "脚": "pes",
-  "心": "cor",
+  "心": "ment",
   "眼睛": "ocul",
   "耳朵": "aur",
   "嘴": "or",
@@ -524,7 +548,7 @@
   "味道": "sapor",
   "甜": "dulc",
   "酸": "acid",
-  "苦": "amar",
+  "苦": "dukkh",
   "辣": "acr",
   "咸": "sal",
   "鲜": "umam",
@@ -534,7 +558,7 @@
   "疲劳": "fatig",
   "疼痛": "dolor",
   "痒": "prurit",
-  "麻": "torp",
+  "麻": "lin",
   "晕": "vertig",
   "恶心": "nause",
   "发烧": "febr",
@@ -569,7 +593,6 @@
   "催化": "catalys",
   "氧化": "oxyd",
   "还原": "reduct",
-  "酸": "acid",
   "碱": "bas",
   "盐": "sal",
   "溶液": "solut",
@@ -635,7 +658,7 @@
   "加密": "crypt",
   "解密": "decrypt",
   "网络": "ret",
-  "协议": "protocol",
+  "协议": "convent",
   "接口": "interfac",
   "端口": "port",
   "带宽": "bandwidth",
@@ -667,7 +690,6 @@
   "调节": "regul",
   "优化": "optimiz",
   "模拟": "simul",
-  "数字": "digit",
   "模拟信号": "analog",
   "转换器": "conversr",
   "放大": "amplific",
@@ -730,7 +752,7 @@
   "归纳": "induct",
   "演绎": "deduct",
   "假设": "hypothes",
-  "理论": "theor",
+  "理论": "theoretic",
   "定律": "princip",
   "定理": "theorem",
   "证明": "demonstr",
@@ -763,18 +785,16 @@
   "纪律": "disciplin",
   "秩序": "ord",
   "混乱": "cha",
-  "和平": "pac",
   "冲突": "conflict",
   "合作": "cooper",
   "竞争": "compet",
   "妥协": "compromiss",
   "谈判": "negoti",
-  "协议": "convent",
   "条约": "foed",
   "联盟": "foeder",
   "独立": "independent",
   "依赖": "dependent",
-  "主权": "sovereign",
+  "主权": "sovereignit",
   "领土": "territor",
   "民族": "nat",
   "国家": "civit",
@@ -815,7 +835,7 @@
   "祝福": "benedict",
   "诅咒": "maledict",
   "奇迹": "miracul",
-  "命运": "fat",
+  "命运": "destin",
   "预言": "prophet",
   "启示": "revelat",
   "神谕": "oracul",
@@ -836,7 +856,7 @@
   "衰老": "senesc",
   "童年": "infant",
   "青年": "adolesc",
-  "中年": "medi",
+  "中年": "mediaet",
   "老年": "senect",
   "男性": "mascul",
   "女性": "femin",
@@ -883,7 +903,7 @@
   "术语": "termin",
   "概念": "concept",
   "范畴": "categori",
-  "分类": "classific",
+  "分类": "segreg",
   "类型": "typ",
   "种类": "speci",
   "属性": "attribut",
@@ -896,7 +916,6 @@
   "过程": "process",
   "状态": "stat",
   "条件": "condit",
-  "环境": "context",
   "背景": "fund",
   "前景": "anter",
   "角度": "angul",
@@ -939,7 +958,7 @@
   "聚集": "congreg",
   "分散": "dispers",
   "合并": "merg",
-  "分裂": "divid",
+  "分裂": "secess",
   "连接": "connect",
   "断开": "disconnect",
   "附着": "adhaer",
@@ -1004,7 +1023,6 @@
   "展示": "ostend",
   "出现": "appar",
   "消失": "evanesc",
-  "存在": "exist",
   "发生": "even",
   "创造": "cre",
   "毁灭": "perd",
@@ -1025,10 +1043,9 @@
   "验证": "verific",
   "确认": "confirm",
   "否认": "neg",
-  "怀疑": "dubit",
+  "怀疑": "suspic",
   "相信": "cred",
   "信任": "fid",
-  "怀疑": "suspic",
   "猜测": "conic",
   "确定": "cert",
   "犹豫": "haesit",
@@ -1037,7 +1054,6 @@
   "回忆": "reminisc",
   "想象": "imagin",
   "梦想": "somni",
-  "希望": "sper",
   "失望": "decept",
   "满足": "satisfact",
   "遗憾": "paenit",
@@ -1091,21 +1107,16 @@
   "现实": "real",
   "浪漫": "romant",
   "实际": "practic",
-  "理论": "theoretic",
   "空想": "utopi",
-  "天气": "cael",
   "晴": "seren",
   "阴": "nubil",
   "多云": "nubilos",
-  "雨": "pluv",
   "暴雨": "imb",
   "雷": "tonitr",
   "闪电": "fulgur",
-  "风": "vent",
   "暴风": "proc",
   "台风": "typhon",
   "龙卷风": "turbin",
-  "雪": "niv",
   "冰雹": "grandin",
   "霜": "pruin",
   "雾": "nebul",
@@ -1133,7 +1144,7 @@
   "尘埃": "pulv",
   "沙漠": "desert",
   "绿洲": "oas",
-  "草原": "prat",
+  "草原": "stepp",
   "沼泽": "palud",
   "湿地": "humidterr",
   "苔原": "tundr",
@@ -1141,7 +1152,7 @@
   "冰山": "glacimont",
   "峡谷": "vall",
   "悬崖": "praerupt",
-  "洞穴": "cavern",
+  "洞穴": "spec",
   "地下": "subterr",
   "泉水": "font",
   "瀑布": "cataract",
@@ -1182,7 +1193,6 @@
   "荒野": "vast",
   "丛林": "iungl",
   "雨林": "pluvsilv",
-  "草原": "stepp",
   "灌木": "frutic",
   "荆棘": "spi",
   "藤蔓": "vit",
@@ -1374,7 +1384,6 @@
   "野生": "fer",
   "群": "greg",
   "巢": "nid",
-  "洞穴": "spec",
   "迁徙": "migrat",
   "冬眠": "hibern",
   "捕食": "praed",
@@ -1414,15 +1423,12 @@
   "夏至": "solstithiem",
   "春分": "aequinoct",
   "秋分": "aequinoctautumn",
-  "寿命": "vitlong",
-  "青春": "iuvent",
-  "中年": "mediaet",
-  "晚年": "senectut",
   "寿命": "aev",
+  "青春": "iuvent",
+  "晚年": "senectut",
   "长生": "immort",
   "短命": "brevivit",
   "生": "viv",
-  "死": "mor",
   "生存": "superviv",
   "幸存": "superst",
   "牺牲": "sacrific",
@@ -1463,7 +1469,6 @@
   "遗志": "ultimvolunt",
   "使命": "miss",
   "天职": "vocat",
-  "命运": "destin",
   "宿命": "fatal",
   "缘分": "affinit",
   "巧合": "coincident",
@@ -1507,7 +1512,6 @@
   "咒文": "carmen",
   "吟唱": "incant",
   "手势": "gest",
-  "材料": "ingredient",
   "触媒": "catalys",
   "代价": "pret",
   "献祭": "immol",
@@ -1515,7 +1519,6 @@
   "暗魔法": "obscurmag",
   "光魔法": "lucmag",
   "自然魔法": "naturmag",
-  "元素": "element",
   "火元素": "ignelement",
   "水元素": "aquelement",
   "土元素": "terrelement",
@@ -1546,7 +1549,7 @@
   "英雄": "heros",
   "勇者": "probus",
   "战士": "bellatr",
-  "骑士": "eques",
+  "骑士": "equit",
   "武士": "samura",
   "弓箭手": "sagittar",
   "法师": "mag",
@@ -1589,7 +1592,6 @@
   "公主": "principiss",
   "贵族": "nobil",
   "领主": "domin",
-  "骑士": "equit",
   "侍从": "armiger",
   "奴隶": "serv",
   "仆人": "famul",
@@ -1607,7 +1609,7 @@
   "中立者": "neutr",
   "调解人": "mediatr",
   "证人": "test",
-  "裁判": "arbitr",
+  "裁判": "arbitrat",
   "领袖": "duc",
   "指挥官": "praefect",
   "将军": "strateg",
@@ -1652,13 +1654,10 @@
   "投降": "dedit",
   "占领": "occup",
   "解放": "liberat",
-  "独立": "independent",
   "统一": "unific",
-  "分裂": "secess",
   "吞并": "annex",
   "割让": "ced",
   "租借": "locat",
-  "主权": "sovereignit",
   "自治": "autonom",
   "联邦": "foederat",
   "共和国": "republic",
@@ -1720,7 +1719,6 @@
   "金牌": "aurmedal",
   "银牌": "argentmedal",
   "铜牌": "cuprmedal",
-  "裁判": "arbitrat",
   "教练": "exercitatr",
   "选手": "athlet",
   "队伍": "turm",
@@ -1732,7 +1730,7 @@
   "半决赛": "semifinal",
   "淘汰": "elimin",
   "晋级": "promov",
-  "降级": "releg",
+  "降级": "degrad",
   "得分": "punct",
   "进球": "gol",
   "射门": "port",
@@ -1751,7 +1749,6 @@
   "平局": "aequal",
   "逆转": "revers",
   "绝杀": "ultimpunct",
-  "食物": "cib",
   "面包": "pan",
   "米饭": "oryzat",
   "面条": "past",
@@ -1841,7 +1838,6 @@
   "床单": "linte",
   "窗帘": "vel",
   "地毯": "tapet",
-  "镜子": "specul",
   "钟": "horolog",
   "灯": "lucern",
   "蜡烛": "candel",
@@ -1906,7 +1902,6 @@
   "丝绸": "seric",
   "棉花": "gossyp",
   "羊毛": "lan",
-  "麻": "lin",
   "尼龙": "nylon",
   "橡胶": "gumm",
   "塑料": "plast",
@@ -1952,7 +1947,6 @@
   "海平面上升": "elevatmar",
   "生物多样性": "biodivers",
   "濒危": "periclit",
-  "保护": "conservat",
   "栖息地": "habitat",
   "生态平衡": "aequilibrecolog",
   "食物链": "catenaliment",
@@ -1969,11 +1963,9 @@
   "污水": "aquinquin",
   "垃圾": "purgament",
   "回收": "recuper",
-  "分类": "segreg",
   "堆肥": "compost",
   "焚烧": "inciner",
   "填埋": "obru",
-  "降级": "degrad",
   "可降解": "biodegradabil",
   "零废弃": "zeroreject",
   "碳足迹": "vestigcarbon",
@@ -2046,7 +2038,6 @@
   "德雷克方程": "aequatdrake",
   "外星人": "extraterrestr",
   "不明飞行物": "objvolincognit",
-  "信号": "sign",
   "搜寻": "investigat",
   "接触": "contact",
   "第一类接触": "contactprim",
@@ -2058,8 +2049,6 @@
   "原力": "visprim",
   "绝地": "iusticust",
   "西斯": "obscurust",
-  "机器人": "robot",
-  "人工智能": "intelart",
   "觉醒": "expergisc",
   "奇点": "singular",
   "超人类": "transhuman",
@@ -2115,7 +2104,6 @@
   "隐喻": "metaphor",
   "转喻": "metonym",
   "反讽": "iron",
-  "悖论": "paradox",
   "辩证": "dialectic",
   "正题": "thesis",
   "反题": "antithesis",
@@ -2125,16 +2113,13 @@
   "量变": "mutquant",
   "质变": "mutqual",
   "对立统一": "unitcontrar",
-  "矛盾": "contradict",
   "实践": "prax",
-  "真理": "verit",
   "谬误": "error",
   "绝对真理": "veritabsolut",
   "相对真理": "veritrelativ",
   "可知": "cognoscibil",
   "不可知": "incognoscibil",
   "唯": "sol",
-  "心": "ment",
   "物": "materi",
   "唯心": "idealism",
   "唯物": "materialism",
@@ -2149,11 +2134,10 @@
   "超验": "transcendental",
   "现象": "phaenomen",
   "本体": "ont",
-  "存在": "ontos",
   "虚无": "nihil",
   "空": "vacuit",
   "无": "null",
-  "道": "vi",
+  "道": "marg",
   "德": "virtut",
   "仁": "humanit",
   "义": "iustit",
@@ -2171,24 +2155,19 @@
   "勤": "diligent",
   "俭": "frugal",
   "谦": "modest",
-  "和": "harmon",
   "中庸": "mediocrit",
   "无为": "nonact",
-  "自然": "spont",
   "天人合一": "unitcaelterr",
   "轮回": "samsar",
-  "涅槃": "nirvan",
+  "涅槃": "scholnirvan",
   "业": "karm",
   "因果": "causaeffect",
   "慈悲": "compass",
-  "智慧": "prajn",
   "空性": "sunya",
   "无常": "impermanent",
   "无我": "anatman",
-  "苦": "dukkh",
   "集": "samuday",
   "灭": "nirodh",
-  "道": "marg",
   "八正道": "octovimarg",
   "正见": "rectvis",
   "正思维": "rectcogit",
@@ -2215,7 +2194,6 @@
   "堪布": "khenpo",
   "格西": "gesh",
   "闭关": "reclus",
-  "朝圣": "peregrin",
   "转经": "circumambul",
   "磕长头": "prostern",
   "供奉": "oblat",
@@ -2291,7 +2269,6 @@
   "成实": "scholver",
   "俱舍": "scholtreasur",
   "毗昙": "scholabhidharm",
-  "涅槃": "scholnirvan",
   "楞伽": "schollank",
   "法华": "schollotdharm",
   "般若": "prajnaparam",
@@ -2331,5 +2308,1825 @@
   "五灯会元": "lucquincollect",
   "景德传灯录": "recordtransmissluc",
   "高僧传": "biographmonach",
-  "大唐西域记": "recordoccidentmagn"
+  "大唐西域记": "recordoccidentmagn",
+  "肉": {
+    "conlang": "carn",
+    "style": "借自拉丁语 caro（肉），按巨人语音系简化为 carn，保留硬辅音 /k/ 和 /r/，元音用 a 符合低元音主导原则"
+  },
+  "硬": {
+    "conlang": "mol",
+    "style": "基于拉丁语词根'mollis'（软）的反义构词，取其否定形式，表示'不软'即'硬'；符合巨人语偏好低元音的特点，使用/o/而非/i/或/e/。"
+  },
+  "咬": {
+    "conlang": "mordet",
+    "style": "源自拉丁语 'mordeo'（咬），简化为 mord- 词根，加现在时第三人称单数 -et（因主语隐含为 'it'），符合 SOV 语序中动词居末、现在时以 -et 结尾的规则"
+  },
+  "不错": {
+    "conlang": "non malat",
+    "style": "使用词库中已有的否定词 'non'，搭配新造动词 'malat'（意为“坏”，源自拉丁语 'malus'，符合巨人语低元音偏好和 -at 现在时词尾）。因‘味道不错’即‘味道不坏’，采用否定结构表达肯定评价。"
+  },
+  "再给": {
+    "conlang": "da",
+    "style": "基于拉丁语'dare'（给予）简化而来，符合巨人语硬辅音和低元音偏好，用作祈使或请求给予"
+  },
+  "得厉害": {
+    "conlang": "grav",
+    "style": "借用词库中已有的 *grav*（重），用于副词性强化，表示程度深，符合巨人语以具体词表抽象程度的构词逻辑"
+  },
+  "想": {
+    "conlang": "tenat",
+    "style": "基于词库中已有的'ten'（持）引申为'思考、持有想法'，按现在时规则加-at后缀构成动词现在时形式"
+  },
+  "再": {
+    "conlang": "edat",
+    "style": "[NEW] 此处'再吃'理解为重复动作，但词库已有'吃→ed'，故用现在时-edat表示当前意愿中的重复行为；严格来说'再'未单独构词，而是通过动词时态和上下文体现，因此不单独列为新词。实际新词仅为'想→vol'"
+  },
+  "偷": {
+    "conlang": "furat",
+    "style": "源自拉丁语 fūr（贼），按巨人语现在时动词规则加 -at；符合辅音硬直、元音低沉原则"
+  },
+  "干粮": {
+    "conlang": "panem",
+    "style": "借用拉丁语 panem（面包，宾格），因巨人语词汇偏具体可操作，'干粮'以主食'面包'代指；符合辅音硬直、元音 a/e 主导的风格；宾格形式适配 SOV 中宾语位置"
+  },
+  "小时": {
+    "conlang": "hora",
+    "style": "借自拉丁语'hora'，符合巨人语低元音偏好，o/a结构高频；用于表示时间单位"
+  },
+  "入味": {
+    "conlang": "parv",
+    "style": "此处'入味'理解为'充分渗透'，借用已有词库中'小'（parv）引申为'细微渗透'，符合巨人语以具体词表抽象义的习惯"
+  },
+  "喜欢": {
+    "conlang": "am",
+    "style": "基于拉丁语词根 'amare'（爱）简化而来，符合巨人语偏好低元音 a 和硬辅音的构词风格，动词词根取单音节形式以匹配简洁直接的语法"
+  },
+  "太": {
+    "conlang": "ne",
+    "style": "使用否定前缀 ne- 表示程度过度，引申为'太'，符合巨人语中用否定结构表达极端程度的构词逻辑"
+  },
+  "稀": {
+    "conlang": "tenue",
+    "style": "源自拉丁语 'tenuis'（稀薄、细），简化为符合巨人语音节结构的三音节词，保留前中元音 /ɛ/ 和后高元音 /u/ 的组合，符合低频元音使用规则"
+  },
+  "饼": {
+    "conlang": "pan",
+    "style": "借自拉丁语 'panis'（面包），简化为符合巨人语音系的 CVC 结构，使用高频元音 a，辅音 p/n 均在音位表中。因词库无对应词，故新创。[NEW]"
+  },
+  "腥": {
+    "conlang": "dulcis",
+    "style": "借自拉丁语 dulcis（原意为‘甜’），通过否定前缀 ne- 表达‘不甜’即‘腥’的感官对立，符合巨人语务实、以具体感知表达抽象味觉的构词逻辑。词干 dulcis 调整为 dulcit 以匹配现在时形容词形式，但否定后简化为 ne-dulcit。"
+  },
+  "熟": {
+    "conlang": "praktik",
+    "style": "借自拉丁语 'praxis'（实践），按巨人语音系简化为 praktik，符合硬辅音与低元音偏好"
+  },
+  "给": {
+    "conlang": "dat",
+    "style": "[NEW] 由拉丁语'dare'（给予）简化而来，符合古拉丁语骨架原则；辅音/d/ + 低元音/a/ + 硬塞音/t/，符合硬直清晰辅音系统和低元音主导风格"
+  },
+  "夜": {
+    "conlang": "noct",
+    "style": "借自拉丁语 noct-（夜）词根，符合巨人语硬辅音和低元音偏好，用于表示时间单位"
+  },
+  "整": {
+    "conlang": "unus",
+    "style": "词库中已有 unus 表示“一”，在巨人语中亦可引申为“完整、单一整体”"
+  },
+  "才能": {
+    "conlang": "anar bon",
+    "style": "通过过去时动词 anar（完成）+ bon（好）组合表达“才得以完成/变好”，符合巨人语务实、具体表达抽象逻辑的风格"
+  },
+  "这": {
+    "conlang": "hoc",
+    "style": "借自拉丁语指示代词 hoc（中性单数），符合巨人语借用拉丁骨架的原则，且 /ɔ/ 元音符合 o 的高频率使用"
+  },
+  "放太久": {
+    "conlang": "dusat",
+    "style": "由词根 'dus'（压、施加）引申为‘长时间放置’，加上现在时后缀 -at 表示状态变化"
+  },
+  "变酸了": {
+    "conlang": "acid",
+    "style": "[NEW] 直接借用拉丁语 'acidus' 简化为 'acid'，符合巨人语偏好硬辅音和低元音的风格，且与已有词库中的 'acid'（酸）一致"
+  },
+  "留": {
+    "conlang": "ten",
+    "style": "词库中已有'ten'（持），引申为'保留、留下'，符合SOV语序下动词需体现持有动作的逻辑"
+  },
+  "挑食": {
+    "conlang": "elect",
+    "style": "借自拉丁语 'eligere'（选择），简化为符合巨人语音系的 'elect'，表示‘挑选食物’，用于否定结构表达‘不挑食’"
+  },
+  "搬不动": {
+    "conlang": "ne-dus-at",
+    "style": "使用否定前缀 ne- + 词库动词 dus（压，引申为移动重物）+ 现在时后缀 -at，构成‘无法压/搬动’之意"
+  },
+  "木头": {
+    "conlang": "lignum",
+    "style": "借用拉丁语词根 lignum（木材），符合巨人语古拉丁风格，且音节结构 CV.CVC 允许"
+  },
+  "那边": {
+    "conlang": "caput",
+    "style": "词库中已有 caput 表“头”，此处引申为“前端/那边”符合巨人语具体意象表达抽象方位的务实逻辑"
+  },
+  "活": {
+    "conlang": "labor",
+    "style": "借自拉丁语'labor'（劳动、工作），符合巨人语古拉丁语骨架风格，且以低元音a/o为主"
+  },
+  "太多": {
+    "conlang": "tro mult",
+    "style": "'tro'源自拉丁语'tropus'简化，表'过量'；'mult'借自拉丁'multus'，表'多'。二者组合表达'太多'，符合巨人语务实、具体、可组合的构词原则"
+  },
+  "钝了": {
+    "conlang": "dusat",
+    "style": "动词“压/变钝”（dus）+ 现在时后缀 -at，表示状态变化；巨人语中用“压”引申为刃口塌陷即“钝”"
+  },
+  "长": {
+    "conlang": "long",
+    "style": "借自拉丁语 'longus'，符合巨人语偏好后元音的风格，且 /ɔ/ 对应 o，辅音结构简化为单音节以符合硬直清晰原则。"
+  },
+  "够": {
+    "conlang": "suf",
+    "style": "源自拉丁语 sufficio（足够），截取词干 suf-，符合辅音硬直、元音后低的风格"
+  },
+  "这块": {
+    "conlang": "hanc",
+    "style": "借自拉丁语指示代词 hanc（阴性宾格），用于指代近处单数物体，符合巨人语借用拉丁语骨架的原则"
+  },
+  "砸扁": {
+    "conlang": "dusat",
+    "style": "动词 dus（压）+ 现在时后缀 -at，表示“正在压/砸扁”，符合SOV语序中动词置于句末的规则"
+  },
+  "酸了": {
+    "conlang": "acidat",
+    "style": "词根acid（酸）+ 现在时动词后缀-at，表示'正在发酸'，符合SOV语序中动词置于句末前的谓语位置"
+  },
+  "歇": {
+    "conlang": "tenet",
+    "style": "词根ten（持/保持）引申为'保持静止'即'休息'，加现在时后缀-et构成动词，符合巨人语以具体动作表达抽象概念的习惯"
+  },
+  "一会": {
+    "conlang": "unus",
+    "style": "词库已有'unus'（一），此处直接用作时间量词'一会儿'，符合巨人语省略量词、直接使用数词的习惯"
+  },
+  "挖沟": {
+    "conlang": "foss",
+    "style": "源自拉丁语 fossa（沟渠），取词根 foss- 表示挖掘动作，符合巨人语硬辅音和低元音偏好"
+  },
+  "天黑": {
+    "conlang": "nigrat",
+    "style": "由词库中'黑 → nigr'加上现在时动词后缀'-at'构成，表示'变黑'或'天黑'，符合巨人语动词化构词法"
+  },
+  "坑": {
+    "conlang": "fosa",
+    "style": "借自拉丁语 fossa（坑、沟），符合巨人语低元音偏好，使用 o / a 元音组合"
+  },
+  "帮": {
+    "conlang": "at",
+    "style": "借用拉丁语介词 ad-（向、为）简化为 at，表示目的或协助，在巨人语中用作动词前缀或独立助动词表示‘为…而做’，此处引申为‘帮助’"
+  },
+  "抬": {
+    "conlang": "ten infra",
+    "style": "[NEW] 'ten'（持）+ 'infra'（下）组合表示‘从下方托起’，即‘抬’。巨人语偏好具体动作描述，故用‘持于下’表达抬起动作"
+  },
+  "木桩": {
+    "conlang": "palus",
+    "style": "借自拉丁语 palus（桩、柱），符合巨人语低元音偏好和硬辅音特征"
+  },
+  "打": {
+    "conlang": "batat",
+    "style": "基于词根 bat-（击打），按现在时规则加 -at；构词参考拉丁语 battuere，简化以符合巨人语音系"
+  },
+  "更深": {
+    "conlang": "ne profundabit",
+    "style": "profundabit 为 '将更深'（将来时，来自 profundus '深'）；ne 为否定前缀，此处用于构成比较级语义（字面：不浅 → 更深），符合巨人语通过否定+反义表达比较的倾向"
+  },
+  "柴火": {
+    "conlang": "leñ",
+    "style": "借自拉丁语 lignum（木头），按巨人语音系简化为 leñ，保留鼻化尾音以符合低沉音感"
+  },
+  "天": {
+    "conlang": "dies",
+    "style": "借自拉丁语'dies'（日、天），符合巨人语拉丁骨架原则，使用高频元音e和硬辅音s"
+  },
+  "铁锹": {
+    "conlang": "ferru",
+    "style": "由词库中的'铁（ferr）'派生，添加后缀 -u 构成具体工具名词，符合巨人语以低元音结尾强化厚重感的构词习惯"
+  },
+  "把手": {
+    "conlang": "manus",
+    "style": "直接使用词库中已有的'manus（手）'，在巨人语中可引申为'握持部位'，符合其'务实主义：抽象概念借用具体意象'的语言特征"
+  },
+  "断了": {
+    "conlang": "udranar",
+    "style": "动词原形 udra（意为'断裂、崩断'，模拟硬辅音/d/+/r/组合体现突然断裂感），过去时按规则加 -anar。因词库无'断'相关动词，按白皮书辅音系统与动词变位规则新创。[NEW]"
+  },
+  "扛": {
+    "conlang": "vinat",
+    "style": "动词'绑、扛'，基于词根vin-（束缚、承担），加现在时后缀-at；符合SOV语序中动词置于句末"
+  },
+  "这袋粮食": {
+    "conlang": "farinam sacum",
+    "style": "[NEW] '粮食'译为farina（拉丁语借词，意为面粉/谷物），宾格farinam；'袋'译为sacum（源自拉丁saccus），作定语后置修饰farinam，符合巨人语具体名词组合习惯"
+  },
+  "桥": {
+    "conlang": "pont",
+    "style": "借自拉丁语 'pons, pontis'，符合巨人语古拉丁骨架原则，辅音硬直，元音为后中圆唇/o/，符合低元音主导风格"
+  },
+  "修": {
+    "conlang": "reparat",
+    "style": "源自拉丁语 reparare（修理），按巨人语现在时动词规则加 -at；辅音保留硬直特征，元音使用 e/a 符合低元音主导原则"
+  },
+  "河": {
+    "conlang": "fluv",
+    "style": "借自拉丁语 'fluvius'（河流），符合巨人语拉丁基底原则，辅音硬直，元音为 u，符合低元音偏好"
+  },
+  "过": {
+    "conlang": "traversabit",
+    "style": "基于拉丁语 'transverto' 或 'traverse' 概念，按巨人语将来时动词构式 -abit 构成，表示‘将穿越’，体现SOV语序中动词置于句末"
+  },
+  "砌": {
+    "conlang": "tenet",
+    "style": "动词'ten'（持、建造）的现在时第三人称单数形式，表示'他/它砌'。根据SOV语序，此处用于描述墙的状态，符合巨人语直接、具体的表达习惯。"
+  },
+  "直": {
+    "conlang": "dret",
+    "style": "[NEW] 基于拉丁语'directus'简化而来，取其核心辅音结构/dr-/和低元音倾向，构造出符合巨人语音系的词根'dret'，意为'直的、笔直的'。该词使用高频辅音/d, r, t/和中低元音/e/，符合硬直清晰的发音特征。"
+  },
+  "地": {
+    "conlang": "plantat",
+    "style": "[NEW] 动词'种植'的现在时第三人称单数形式，源自词根'plant-'（种、植），加现在时后缀'-at'；'地'在此语境中通过动词'种地'整体表达，故将'种地'理解为'种植'，用plantat表示"
+  },
+  "平整": {
+    "conlang": "planat",
+    "style": "词根 plan-（平）来自拉丁语 planus，加现在时动词后缀 -at，符合SOV语序中动词居末的规则"
+  },
+  "烧得正旺": {
+    "conlang": "atat",
+    "style": "基于动词词根 'at'（燃、烧），采用现在时标记 '-at' 表示正在进行的旺盛燃烧状态；因词库无对应动词，故新创。[NEW]"
+  },
+  "干活": {
+    "conlang": "laborat",
+    "style": "借自拉丁语 laborare（工作），按巨人语现在时动词后缀 -at 构成，符合 SOV 语序中动词居末的规则"
+  },
+  "太累": {
+    "conlang": "fatigat",
+    "style": "[NEW] 基于拉丁语 fatigare（使疲倦）简化而来，取词根 fatig- 加现在时 -at，表示状态'（我）处于疲惫'，省略主语符合巨人语务实简洁风格"
+  },
+  "好用": {
+    "conlang": "bonat",
+    "style": "由词库中已有的形容词 'bon'（好）加上现在时动词后缀 '-at' 构成，表示'是好的/好用的'，符合SOV语序中谓语动词位于句末的规则"
+  },
+  "太大了": {
+    "conlang": "magn-at",
+    "style": "形容词'magn'（大）加现在时系动词后缀'-at'，构成'是大的'，即'太大了'的直译。巨人语无程度副词，通过语境表达强调。"
+  },
+  "快黑了": {
+    "conlang": "nigrabit",
+    "style": "由词库词根 nigr（黑）+ 将来时后缀 -abit 构成，表示‘将要变黑’，符合巨人语将来时构词法"
+  },
+  "赶紧": {
+    "conlang": "celerat",
+    "style": "[NEW] 从拉丁语celer（迅速）派生，加现在时后缀-at，符合构词法；使用中元音e以保持发音清晰度"
+  },
+  "躲": {
+    "conlang": "infra",
+    "style": "词库中已有 infra 表示“下”，此处引申为“躲藏于下方/遮蔽处”，符合巨人语务实、具体意象表达抽象动作的风格"
+  },
+  "地方": {
+    "conlang": "loc",
+    "style": "源自拉丁语 locus，符合巨人语硬辅音和后元音偏好，简化为单音节词"
+  },
+  "找": {
+    "conlang": "ten",
+    "style": "词库中 ten 表示“持、握”，此处引申为“获取、寻求”（如“抓住机会”），符合巨人语用具体动词表达抽象意图的逻辑"
+  },
+  "太厚了": {
+    "conlang": "tro grav",
+    "style": "'tro' [NEW] 表示程度过高（源自拉丁语 'troppo' 简化，符合巨人语硬辅音风格），'grav' 来自词库意为'重'，组合表示'过于厚重'；整体符合SOV结构中修饰语前置的逻辑"
+  },
+  "很毒": {
+    "conlang": "venenat",
+    "style": "词根 venen（毒）+ 现在时动词后缀 -at，表示“是毒的”或“具有毒性”，符合SOV语言中表语动词化倾向"
+  },
+  "户外": {
+    "conlang": "exteriōrit",
+    "style": "[NEW] 拉丁语借形 exterior（外部）+ 巨人语地点/状态后缀 -it，构成表示“在户外”的处所名词；因词库无对应词故新创"
+  },
+  "待": {
+    "conlang": "tenat",
+    "style": "词根 ten（持、停留，见词库）+ 现在时后缀 -at，表示“停留、待着”"
+  },
+  "山": {
+    "conlang": "mont",
+    "style": "借自拉丁语'mons, montis'（山），符合巨人语拉丁基底和硬辅音特征，元音o符合后中圆唇偏好"
+  },
+  "那边的": {
+    "conlang": "trans",
+    "style": "借自拉丁语'trans'（在…另一边），用于表示空间跨越，符合巨人语直接高效的表达习惯。"
+  },
+  "很奇怪": {
+    "conlang": "ne-normal",
+    "style": "normal为形容词“正常”，加否定前缀ne-构成“不正常”，即“奇怪”；符合白皮书否定规则"
+  },
+  "今晚": {
+    "conlang": "hodie nocte",
+    "style": "hodie（今天）+ nocte（夜晚，夺格表时间），组合表达“今晚”，符合巨人语借用具体时间名词的务实风格"
+  },
+  "很亮": {
+    "conlang": "lucidat",
+    "style": "[NEW] 由词根'luc-'（光，源自拉丁语lux）+ 现在时动词后缀'-idat'构成，表示'发出光亮'，符合SOV语序中动词居末的规则"
+  },
+  "开（花）": {
+    "conlang": "flor-at",
+    "style": "使用词库已有名词 'flor'（花），加上现在时动词后缀 '-at' 表示‘开花’这一动作，符合SOV语言中动词置于末尾的规则，此处省略主语和系词，按碑文风格直接以‘草地 花-开’结构表达"
+  },
+  "掉": {
+    "conlang": "grav",
+    "style": "使用词库中已有的词根 'grav'（重），引申为因重力而落下，符合巨人语务实、具象的构词逻辑；动词现在时加 -at 后缀构成 'gravat'（掉落）"
+  },
+  "满地": {
+    "conlang": "[隐含于语境]",
+    "style": "巨人语倾向简洁，'掉满地'的语义由上下文和动词本身体现，无需额外词汇；故未创造新词"
+  },
+  "涨了": {
+    "conlang": "anar",
+    "style": "动词过去时后缀 -anar 表示完成动作；此处用作不及物动词，意为“上涨”，基于核心动词隐含“上升”义，按语法附录B规则构成过去时"
+  },
+  "河边": {
+    "conlang": "ad fluv",
+    "style": "介词 'ad'（向/靠近）+ 'fluv'（河），构成方位短语；'ad' 为拉丁式介词，符合语言古典基底，且未在词库中出现但属必要功能词，按白皮书允许借用"
+  },
+  "太浓了": {
+    "conlang": "tro dens",
+    "style": "[NEW] 'tro' 表示程度过高（源自拉丁语 too 的简化），'dens' 意为浓密（参考拉丁 densus），符合巨人语偏好具体、可操作词汇的构词逻辑"
+  },
+  "路": {
+    "conlang": "via",
+    "style": "借自拉丁语 'via'（路），符合巨人语借用具体、可操作词汇的务实原则，且音节结构 CV-VV 符合音位配列规则"
+  },
+  "最多": {
+    "conlang": "maxat",
+    "style": "源自拉丁语'maximus'（最大），按巨人语现在时动词后缀-at构成，表示'达到最多'的动态含义，符合巨人语偏好具体动作表达抽象概念的特点"
+  },
+  "冷": {
+    "conlang": "frig",
+    "style": "借自拉丁语 frigus（寒冷），符合低元音偏好并简化辅音结构，保留硬辅音 /ɡ/，元音替换为高频 /ɪ/ 以适应巨人语音系"
+  },
+  "想做": {
+    "conlang": "facit",
+    "style": "基于拉丁语词根 'facere'（做），按巨人语现在时动词后缀 -it 构成，符合SOV语序中动词居末的规则"
+  },
+  "要来了": {
+    "conlang": "venabit",
+    "style": "动词'来'（ven）加将来时后缀'-abit'，符合附录B语法：将来时用-abit/-ebit；重音在倒数第二音节"
+  },
+  "适合": {
+    "conlang": "apt",
+    "style": "借自拉丁语 'aptus'（适合的），符合巨人语硬辅音和低元音偏好，且为单音节高效表达"
+  },
+  "出门": {
+    "conlang": "port-at",
+    "style": "由词库词 'port'（门）加上现在时动词后缀 '-at' 构成，表示'出/通过门'的动作，符合巨人语动词需显式标记时态的规则，且SOV语序中动词置于末尾。"
+  },
+  "吹": {
+    "conlang": "movet",
+    "style": "动词“移动”引申为“使晃动”，采用现在时第三人称单数 -et 结尾，符合SOV语序中动词置于句末的规则；词根 mov- 表示物理位移，适用于风导致树枝晃动的场景"
+  },
+  "树枝": {
+    "conlang": "arboris",
+    "style": "[NEW] 由词库已有词 arbor（树）派生，添加属格/部分格后缀 -is 表示“树的一部分”，即“树枝”；符合巨人语偏好具体名词和简洁构词的特点"
+  },
+  "裂": {
+    "conlang": "frakt",
+    "style": "借自拉丁语 fractus（破碎），符合巨人语硬辅音和低元音偏好，动词词根形式为 frakt-，过去时加 -anar"
+  },
+  "山谷": {
+    "conlang": "valle",
+    "style": "借自拉丁语vallis（山谷），保留双l以符合巨人语清晰辅音特征，e为边缘元音但用于地理名词可接受"
+  },
+  "回声": {
+    "conlang": "ekot",
+    "style": "基于拉丁语 'echo' 拉丁化为 'ecus'，但按巨人语音系调整：避免软音 /k/ 后接 /u/ 易混淆，改用 -ot 结尾以匹配高频率后元音 o；e 保留为前中元音 /ɛ/，符合词库中 e 的发音规则"
+  },
+  "打得很近": {
+    "conlang": "gravat prope",
+    "style": "'grav'（重）+现在时后缀'-at'构成'gravat'表示'击打/落下'（引申自'重物下压'），'prope'为新创副词，意为'近地'，由'pro-'（向）+ 'pe'（地，[NEW]）构成，符合巨人语偏好具体空间表达的务实风格"
+  },
+  "看起来": {
+    "conlang": "vidat",
+    "style": "词根vid（看）+ 现在时后缀-at，表示'正在看/看起来'，符合SOV语序中动词置于句末的规则"
+  },
+  "见": {
+    "conlang": "videt",
+    "style": "基于拉丁语词根 'videre'（看见），按巨人语现在时动词规则加 -et 后缀，符合辅音硬直、元音以 e 边缘化使用的特征"
+  },
+  "消息": {
+    "conlang": "ha",
+    "style": "词库已有'有 → ha'，此处引申为'存在之事'即'消息'，符合巨人语务实、具体化抽象概念的风格。"
+  },
+  "挡路": {
+    "conlang": "sta viā",
+    "style": "sta（站，来自拉丁语 stare）+ viā（道路，与格/夺格形式，表示‘在道路上’），组合表示‘站在路上’即‘挡路’。[NEW]"
+  },
+  "让开": {
+    "conlang": "cede",
+    "style": "源自拉丁语 cēdō（让出、退让），符合巨人语硬辅音和低元音偏好，简化为 cede 表示命令式‘让开’。[NEW]"
+  },
+  "慢": {
+    "conlang": "lent",
+    "style": "源自拉丁语 'lentus'（缓慢的），保留词干 lent-，符合巨人语偏好具体可操作词汇的构词习惯"
+  },
+  "跟": {
+    "conlang": "vin",
+    "style": "[NEW] 从词库已有词根'vin'（绑）引申出'连接、跟随'义，体现巨人族用具体动作表达抽象关系的构词习惯"
+  },
+  "带": {
+    "conlang": "tenat",
+    "style": "[NEW] 由词库中已有的'ten'（持）加上现在时动词后缀'-at'构成，表示'持有/携带'的动作，符合SOV语序中动词置于句末的要求"
+  },
+  "吵": {
+    "conlang": "klag",
+    "style": "根据辅音系统和硬直清晰原则，用/k/+/l/+/a/+/g/构成动词词根，表示发出干扰性声响；参考拉丁语clamare但简化为单音节硬辅音结构"
+  },
+  "一点": {
+    "conlang": "unus",
+    "style": "词库已有‘一’为 unus，此处复用表示‘一点’的量词含义，符合巨人语具体化抽象量的概念"
+  },
+  "觉得": {
+    "conlang": "ha",
+    "style": "借用已有词库中表示'有'的动词ha，用于表达'持有某种看法'，符合巨人语务实、具体化的语义风格"
+  },
+  "道理": {
+    "conlang": "marg",
+    "style": "词库已有，直接使用"
+  },
+  "这事儿": {
+    "conlang": "urgit",
+    "style": "源自拉丁语urgēre（催促），取其紧迫义，按巨人语辅音系统简化为urgit，符合硬辅音和低元音偏好"
+  },
+  "慢慢": {
+    "conlang": "lentat",
+    "style": "[NEW] 基于拉丁语lentus（缓慢的）派生，加现在时动词后缀-at，符合SOV语序中副词性动词修饰习惯"
+  },
+  "等一下": {
+    "conlang": "infra",
+    "style": "借用拉丁语 'infra'（在下、之后）表达时间上的延后，符合巨人语低元音偏好和务实表达习惯"
+  },
+  "还没准备好": {
+    "conlang": "nepraeparat",
+    "style": "由否定前缀 'ne-' + 词库已有词根 'praepar'（准备）+ 现在时后缀 '-at' 构成，符合白皮书否定规则（ne-前缀）和现在时构词法（-at），语义为“未处于准备状态”"
+  },
+  "晚": {
+    "conlang": "tard",
+    "style": "借自拉丁语 tardus（迟、晚），符合巨人语低元音偏好和硬辅音特征，用于表示时间上的延迟"
+  },
+  "旅人": {
+    "conlang": "viator",
+    "style": "[NEW] 借用拉丁语 viator（旅行者），符合巨人语古拉丁骨架风格；词根 via-（路）+ -tor（施事者后缀），符合务实、具体意象的构词逻辑"
+  },
+  "遇到": {
+    "conlang": "tenet",
+    "style": "[NEW] 使用词库已有词根 ten（持/接触），按现在时规则加 -et 得 tenet，引申为“遭遇/遇见”，符合巨人语用具体动词表达抽象互动的倾向"
+  },
+  "帮忙": {
+    "conlang": "ten",
+    "style": "词库中已有 *ten*（持），引申为'提供支持/帮助'，符合巨人语具体动词表抽象行为的构词逻辑"
+  },
+  "人": {
+    "conlang": "homan",
+    "style": "[NEW] 基于拉丁语 homo（人）简化而来，符合古拉丁语骨架原则；采用后元音 o 和低元音 a，符合低元音主导风格"
+  },
+  "发呆": {
+    "conlang": "atenar",
+    "style": "基于词根 *ten*（持）引申为'持住不动'，加上过去时后缀 -anar 表示状态持续；前缀 a- 表示强调或反常状态，整体构词表示'停滞不动、出神'。因词库无对应词，按构词法新创[NEW]"
+  },
+  "快点": {
+    "conlang": "bitu",
+    "style": "基于高频元音u和辅音b/t构造副词，表示加速或急促；符合巨人语硬辅音与低元音偏好，-u结尾增强命令语气"
+  },
+  "赶不上": {
+    "conlang": "super tempus anar",
+    "style": "'super tempus' 意为“在时间之上/及时”，'anar' 为过去时否定结果结构（字面：未能达成）。整体表达“未能及时赶上”的意思，符合SOV语序与否定逻辑"
+  },
+  "先": {
+    "conlang": "prīm",
+    "style": "借自拉丁语 primus（第一、首要），符合巨人语古拉丁骨架；长音 ī 表示强调顺序，用于仪式/命令语境"
+  },
+  "认识": {
+    "conlang": "ten",
+    "style": "使用词库已有词根'ten'（持/掌握），引申为'认识、知晓'，符合巨人语务实、具体化的语义风格"
+  },
+  "困了": {
+    "conlang": "fatigat",
+    "style": "借自拉丁语 fatigatus（疲倦的），按巨人语现在时动词形容词化规则 -at 结尾，表示状态"
+  },
+  "昨晚": {
+    "conlang": "ne-dorm-anar",
+    "style": "[NEW] 由否定前缀 ne- + '睡' dorm + 过去时后缀 -anar 构成，表示'没有睡（过去）'；'昨晚'在巨人语中通过'昨夜未睡'的语义转写，因词库无时间词'昨'，故用动词过去否定结构表达"
+  },
+  "还没亮": {
+    "conlang": "neālget",
+    "style": "[NEW] 由否定前缀 ne- + ālget（亮，来自词根 āl- [光] + 现在时 -et）构成；āl- 为新创词根，模拟拉丁 albus（白）但调整为低元音主导（ā 而非 a），符合‘低元音强化’原则"
+  },
+  "觉": {
+    "conlang": "unus",
+    "style": "借用词库中已有的数词'unus（一）'表示'一觉'中的量词单位，符合巨人语用具体词表达抽象概念的习惯"
+  },
+  "薄": {
+    "conlang": "tenue",
+    "style": "借自拉丁语 'tenuis'（薄、细），符合巨人语偏好拉丁词根且元音以 e / u 为主；调整拼写去软辅音，保留清晰硬音结构"
+  },
+  "午休": {
+    "conlang": "dormit meridiat",
+    "style": "dormit 来自动词 dormire（睡）的现在时形式，meridiat 由 meridi-（正午，借自拉丁语 meridies）加现在时后缀 -at 构成，符合SOV语序中动词置于句末前的修饰逻辑"
+  },
+  "打呼噜": {
+    "conlang": "ronkat",
+    "style": "基于拟声词根 *ronk-*（模拟低沉鼾声），遵循现在时动词后缀 -at；符合辅音硬直、元音以 o/a 为主的风格"
+  },
+  "别介意": {
+    "conlang": "ne gravet",
+    "style": "gravet 为动词 '重视、在意' 的现在时第三人称形式（grav- 词根表'重'，引申为'看重'），ne- 为否定前缀；符合 SOV 语序中动词居末、否定前置的规则"
+  },
+  "太高了": {
+    "conlang": "altum est",
+    "style": "altum源自拉丁语altus（高的），中性形式匹配中性名词pretium；est为系动词现在时第三人称单数，符合SOV语序中谓语后置的规则"
+  },
+  "守住": {
+    "conlang": "ten...at",
+    "style": "动词'ten'（持）+ 宾语 + 现在时后缀'-at'，符合SOV语序和现在时规则"
+  },
+  "巡逻": {
+    "conlang": "patrulat",
+    "style": "借自拉丁语 'patrulor'（巡逻），按巨人语动词现在时规则加 -at 后缀，符合 SOV 语序中动词置于末尾的要求"
+  },
+  "走神": {
+    "conlang": "de",
+    "style": "借用词库中已有词 '神 → de'，通过语境引申为'注意力分散到神思上'，符合巨人语务实但可借具体词表抽象概念的特点。否定前缀 ne- 表示'不要分心于神思'。"
+  },
+  "远处": {
+    "conlang": "long",
+    "style": "借自拉丁语 'longus'（长的），引申为空间距离远；符合巨人语偏好后元音 o 的特点"
+  },
+  "脚步声": {
+    "conlang": "pes sonat",
+    "style": "'pes'（脚，已有词）+ 'sonat'（[NEW] 来自动词 'sonare'（发出声音），按巨人语现在时 -at 构成；表示‘正在发声’，组合表达‘脚步声’这一具体可感现象）"
+  },
+  "要随时带在身边": {
+    "conlang": "tenet at korpu",
+    "style": "ten（持）+ -et（现在时）→ tenet（他/她/它持有）；at 表示“在”；korpu [NEW] 源自拉丁语 corpus（身体），指“身体”或“身边”，符合巨人语低元音偏好和具体意象表达抽象概念的风格"
+  },
+  "堡垒": {
+    "conlang": "murus",
+    "style": "借自拉丁语 'murus'（墙），符合巨人语偏好硬辅音和后元音的风格，用于指代坚固的墙体结构，在此引申为堡垒。"
+  },
+  "坚固": {
+    "conlang": "fortis",
+    "style": "借自拉丁语 'fortis'（强壮、坚固），符合巨人语词根简洁、辅音硬朗的特点，且元音以 o 和 i 构成，符合使用频率分布。"
+  },
+  "走了": {
+    "conlang": "ambulat",
+    "style": "动词'走'（ambul）加现在时第三人称单数后缀-at，符合SOV语序中动词位于句末前的规则；此处用于描述已完成动作，在巨人语碑文中现在时可表已实现状态"
+  },
+  "安全了": {
+    "conlang": "secur est",
+    "style": "'安全'（secur）为形容词，系动词'est'（是）来自拉丁语系动词esse的第三人称单数，用于表达状态确立；虽词库未列'est'，但根据白皮书'古拉丁语骨架'原则及示范语料推断其存在，故不标[NEW]；整体结构符合巨人语直接高效、无冗余修饰的特点"
+  },
+  "改": {
+    "conlang": "mutabit",
+    "style": "源自拉丁语 'muto'（改变），按巨人语将来时规则加 -abit 后缀，表示指令性将来动作（'将要更改'），符合巨人语务实、直接的语气风格"
+  },
+  "加强": {
+    "conlang": "tenet",
+    "style": "动词'ten'（持）的现在时形式'tenet'，表示'保持、维持'，引申为'加强警戒'中的持续性动作；符合SOV语序中动词置于句末的要求"
+  },
+  "名": {
+    "conlang": "nomen",
+    "style": "借自拉丁语 nōmen（名字），符合巨人语借用拉丁词根的构词习惯，且 /ɔ/ 和 /ɛ/ 在元音系统中合法"
+  },
+  "守夜": {
+    "conlang": "noctes tenat",
+    "style": "‘守’采用词库动词ten（持）的现在时形式tenat；‘夜’为新词noctes，借自拉丁语noctis（夜）的复数宾格形式，符合巨人语古拉丁骨架风格，并适配SOV语序中作宾语。"
+  },
+  "哨兵": {
+    "conlang": "sentinel",
+    "style": "借自拉丁语 'sentinel'（守卫者），符合巨人语偏好硬辅音与低元音的风格，且在词库中无对应词，故直接借用并适配发音规则。[NEW]"
+  },
+  "不够": {
+    "conlang": "non tenat",
+    "style": "使用词库已有否定词 'non' + 动词 'ten'（持/拥有）的现在时第三人称单数形式 'tenat'，构成 '不持有/不足' 的含义，符合SOV语序中动词居末的规则。"
+  },
+  "修补": {
+    "conlang": "reparat",
+    "style": "基于拉丁语'reparare'（修复）派生，按巨人语现在时动词规则加-at后缀；前缀re-表示重复或恢复，符合务实、可操作的词汇偏好"
+  },
+  "战士们": {
+    "conlang": "bellatres",
+    "style": "由词库词根 'bellatr'（战士）按拉丁语复数规则添加 -es 后缀，符合巨人语 SOV 语序中的主语复数形式"
+  },
+  "陡": {
+    "conlang": "grav",
+    "style": "词库已有 *grav*（重），引申为'陡'符合巨人语'抽象概念借用具体意象'原则；'陡'即'重力感强的坡度'，语义合理"
+  },
+  "翻过": {
+    "conlang": "transir",
+    "style": "源自拉丁语 transire（越过），符合巨人语硬辅音和低元音偏好，-ir 动词后缀适配现有动词形态"
+  },
+  "一天": {
+    "conlang": "unus dius",
+    "style": "unus 来自词库；dius 为新创词，由拉丁语 dies（日）演变而来，替换为更符合巨人语 u/o 主导元音的 dius，表‘日’或‘白天’"
+  },
+  "停": {
+    "conlang": "infra",
+    "style": "借用拉丁语 'infra'（在下、停止）表示停下动作，符合巨人语低元音偏好和务实语义"
+  },
+  "歇脚": {
+    "conlang": "pes tenat",
+    "style": "由词库已有词 'pes'（脚）与动词 'ten'（持/停留）按SOV结构组合，'tenat' 为现在时第一人称复数形式，意为'我们持/停留于脚'，即歇脚"
+  },
+  "渡船": {
+    "conlang": "nav",
+    "style": "源自拉丁语 'navis'（船），截取词干 'nav-'，符合巨人语单音节化倾向和 a 元音主导原则"
+  },
+  "两": {
+    "conlang": "du",
+    "style": "源自拉丁语'duo'简化，保留/u/元音以符合巨人语高频率使用u的特征"
+  },
+  "迷路": {
+    "conlang": "errat",
+    "style": "源自拉丁语 errare（漫游、犯错），按巨人语现在时动词规则加 -at，表示'正在迷路/走错'；否定前缀 ne- 表示'不要迷路'"
+  },
+  "标记": {
+    "conlang": "markat",
+    "style": "[NEW] 借用拉丁语 marca（边界记号），按巨人语名词转为动词宾语形式，加现在时后缀 -at 以匹配 SOV 结构中的宾语形态（此处作命令式宾语，视为静态名词但按动词化处理以保持语法一致）"
+  },
+  "小心": {
+    "conlang": "atentat",
+    "style": "由词根'ten'（持、握）加前缀'a-'（朝向）构成，表示'专注持守'，引申为'小心'；-at为现在时动词后缀，此处作谓语动词'要小心'"
+  },
+  "渡河": {
+    "conlang": "orient fluv",
+    "style": "借用已有词'orient'（东）表示方向性穿越，搭配新词'fluv'[NEW]（河，源自拉丁语fluvius，符合古拉丁骨架），构成动宾结构；实际动词由时态后缀-anar体现过去时动作"
+  },
+  "掉东西": {
+    "conlang": "dus grav",
+    "style": "'dus'（压）引申为'使落下'，'grav'（重）代指'重物/东西'，符合巨人语以具体名词代抽象概念的务实风格；否定前缀ne-置于动词前"
+  },
+  "村里": {
+    "conlang": "vicunus",
+    "style": "由词库中'村 → vic'加上表示'处所/集合'的后缀'-unus'（类拉丁语 -ūnus 表单一地点），构成'村庄之地'，符合SOV语言中地点名词需明确化的倾向"
+  },
+  "行李": {
+    "conlang": "bagaj",
+    "style": "借自法语'bagage'，符合巨人语辅音硬直特征，尾音/j/对应/g/软化，但根据白皮书辅音系统无软音，故保留/g/；因词库无对应词，按构词法创造[NEW]"
+  },
+  "野兽": {
+    "conlang": "bestia",
+    "style": "借自拉丁语'bestia'，符合巨人语低元音偏好和硬辅音特征，用于表示非驯化的大型动物"
+  },
+  "注意": {
+    "conlang": "gardat",
+    "style": "[NEW] 由词根'gard-'（看守、警觉，类比古高地德语'warta'）加现在时动词后缀'-at'构成，符合SOV语序中祈使/警示用法"
+  },
+  "有时候": {
+    "conlang": "aliquot",
+    "style": "借自拉丁语 aliquando（有时），简化为 aliquot 以符合巨人语辅音系统和重音规则，保留低元音 a/o 主导结构"
+  },
+  "待着": {
+    "conlang": "tenat",
+    "style": "由词库中已有的 *ten*（持）扩展而来，加现在时后缀 -at 构成动词'保持（在某状态）'，引申为'待着'；符合巨人语用具体动作词表达静态存在的倾向"
+  },
+  "明白": {
+    "conlang": "tenat",
+    "style": "基于词库中'ten'（持）引申为'持有理解'即'明白'，使用现在时动词后缀-at"
+  },
+  "做": {
+    "conlang": "gravat",
+    "style": "[NEW] 动词形式，由词库已有词根grav（重，表'承担、施力'）加上现在时后缀-at构成，体现巨人族将'做'理解为'施加重力/努力'的务实语义"
+  },
+  "以前": {
+    "conlang": "ante",
+    "style": "直接使用词库中已有的 'ante'（前），在巨人语中可引申为时间上的 '从前、以前'，符合其借用空间概念表达时间的构词逻辑。"
+  },
+  "事": {
+    "conlang": "res",
+    "style": "借自拉丁语 'res'（事物、事务），符合巨人语借用具体名词表达抽象概念的习惯，且 /r/ 和 /ɛ/ 在音系允许范围内"
+  },
+  "想起": {
+    "conlang": "gravanar",
+    "style": "[NEW] 由词根 *grav*（重，引申为'铭记之事'）+ 过去时后缀 *-anar* 构成，表示'曾记起/想起了'；动词化通过零派生实现，符合巨人语高效直接的构词逻辑"
+  },
+  "不安": {
+    "conlang": "ne-tenat",
+    "style": "由否定前缀 ne- 加动词 ten（持）的现在时形式 -at 构成，字面意为'不能持住'，引申为'不安'。"
+  },
+  "怀念": {
+    "conlang": "memorat",
+    "style": "基于拉丁语 memorare（记住），按巨人语现在时动词规则加 -at；语义扩展为‘怀念’以契合情感表达"
+  },
+  "争论": {
+    "conlang": "disputat",
+    "style": "借自拉丁语 disputare，按巨人语音系简化为 dis-pu-tat，现在时动词形式 -at 结尾，符合 SOV 动词置于句末规则"
+  },
+  "总": {
+    "conlang": "semper",
+    "style": "借自拉丁语 'semper'（总是），符合巨人语古拉丁语骨架风格，且音节结构 CV.CVC 允许"
+  },
+  "事情": {
+    "conlang": "multa",
+    "style": "源自拉丁语 'multa'（复数中性，意为'诸多事务'），符合巨人语偏好具体、可操作词汇的务实风格"
+  },
+  "烦": {
+    "conlang": "dusat",
+    "style": "由词库已有词根 'dus'（压）+ 现在时动词后缀 '-at' 构成，表示'正在施加压力'，引申为'令人烦恼'，符合巨人语以具体动作表达抽象情绪的构词逻辑"
+  },
+  "心情": {
+    "conlang": "ment",
+    "style": "借用词库中已有的'ment'（心），在巨人语中'心'可引申为'心情'，符合其务实、具体化的语义风格"
+  },
+  "还不错": {
+    "conlang": "non mal",
+    "style": "'mal'意为'坏'（参考拉丁语malus），'non mal'即'不坏'，符合巨人语否定前缀'non-'的用法及简洁直接的表达习惯"
+  },
+  "有些事": {
+    "conlang": "alqua res",
+    "style": "'alqua' 模仿拉丁语 aliquā（某些）简化而来，符合巨人语 a/u 主导原则；'res' 借用拉丁语“事物”，符合古语风格且含低频元音 e，可接受。两者组合表示“某些事物”即“有些事”。"
+  },
+  "想不通": {
+    "conlang": "non tenat",
+    "style": "'tenat' 来自动词 'ten'（持、理解），按现在时规则加 -at 构成“他/它理解”；否定前缀 'non' 表示“不理解”，即“想不通”。符合 SOV 逻辑中动词居末，此处为无人称结构，主语隐含。"
+  },
+  "很": {
+    "conlang": "mult",
+    "style": "借自拉丁语'multus'（多、非常），符合巨人语简化拉丁词根的构词习惯，用于程度副词"
+  },
+  "想念": {
+    "conlang": "gravat",
+    "style": "由词根'grav'（重）+ 现在时动词后缀'-at'构成，字面意为'感到沉重'，引申为'思念'，符合巨人语以具体意象表达抽象情感的风格"
+  },
+  "很多": {
+    "conlang": "mult",
+    "style": "[NEW] 借自拉丁语 'multus'（多的），简化为单音节结构，符合巨人语可读性与古典感；辅音/m/, /l/, /t/均为硬直清晰音，元音/u/为核心高频率元音"
+  },
+  "的时候": {
+    "conlang": "dum",
+    "style": "借自拉丁语dum（当...时），单音节结构符合巨人语高效直接的语法特征，使用高频率元音u"
+  },
+  "清楚": {
+    "conlang": "dicat",
+    "style": "动词'dic'（说）加现在时后缀'-at'，表示'能说/说得清楚'；否定前缀'non'修饰整个谓语，表达'说不清楚'"
+  },
+  "平静地过日子": {
+    "conlang": "vitam quietam ducere",
+    "style": "[NEW] 借用拉丁语结构，'ducere vitam'（过日子）为常见搭配；'quietam'（平静的）为形容词，修饰宾格名词'vitam'。按SOV语序调整为'vitam quietam ducere'，动词'ducere'使用现在时不定式形式以表达愿望。"
+  },
+  "摔碎": {
+    "conlang": "fractanar",
+    "style": "基于拉丁语词根 'fract-'（破碎），按巨人语过去时规则加 '-anar' 后缀，符合辅音硬直、元音低沉的风格"
+  },
+  "用": {
+    "conlang": "usat",
+    "style": "动词'用'根据白皮书现在时规则添加-at后缀，词根us-源自拉丁语ūtī（使用），符合巨人语低元音偏好和硬辅音特征"
+  },
+  "东西": {
+    "conlang": "grav",
+    "style": "词库中已有'grav'（重），巨人族用具体属性代指物体，'重物'即泛指'东西'，符合其务实主义语义风格。"
+  },
+  "贵": {
+    "conlang": "gravat",
+    "style": "由词库已有词根'grav'（重）派生，加现在时动词后缀'-at'，表示'是重的'，引申为'昂贵'，符合巨人语用具体意象表达抽象概念的务实主义原则"
+  },
+  "洗": {
+    "conlang": "lavat",
+    "style": "[NEW] 基于拉丁语词根 'lavare'（洗）构造，符合巨人语-a-元音偏好及现在时动词后缀 -at；语义具体、可操作，符合务实主义构词原则"
+  },
+  "破了": {
+    "conlang": "ne-integritat",
+    "style": "使用否定前缀 ne- 加上拉丁词根 integritat（完整状态），表示'不再完整'，即'破了'；动词采用现在时 -at 结尾，符合SOV语序中动词置于句末的规则"
+  },
+  "这块布": {
+    "conlang": "ha pano",
+    "style": "'ha' 为指示代词（这），参考拉丁语 'haec' 简化；'pano' 源自拉丁语 'pannus'（布），符合低元音偏好，以 -o 结尾表示具体实物名词"
+  },
+  "可以做": {
+    "conlang": "atit",
+    "style": "动词 '做' 采用现在时第三人称单数形式 '-at' 变体 '-it'（因主语为中性单数），词根 'at-' 表示'制成、造出'，符合 SOV 语序中动词置于句末的规则"
+  },
+  "整理": {
+    "conlang": "gravit",
+    "style": "由词根 grav-（重、压，引申为压实、归整）加现在时动词后缀 -it 构成，表示‘正在整理/归置’。因词库无‘整理’，按构词法创造[NEW]"
+  },
+  "结实": {
+    "conlang": "ten",
+    "style": "基于词库中已有动词'ten'（持），引申为'能持重、牢固'，符合巨人语以具体动作表达抽象属性的构词逻辑；现在时动词形式'tenat'表示'是结实的/能承受的'"
+  },
+  "丢": {
+    "conlang": "ne-havat",
+    "style": "使用否定前缀 ne- 加动词 havat（拥有/持有），表示“未持有”即“丢失”。havat 根据构词法由常见拉丁系词根 hav-（持）加现在时后缀 -at 构成。"
+  },
+  "这盏": {
+    "conlang": "ha",
+    "style": "指示代词，基于巨人语常用低元音/a/构造，类似拉丁语 hic 的简化形式，用于指近处单数事物"
+  },
+  "皮子": {
+    "conlang": "pell",
+    "style": "借自拉丁语 'pellis'（皮），符合巨人语硬辅音和低元音偏好，简化为单音节形式"
+  },
+  "鞣": {
+    "conlang": "bon",
+    "style": "词库中已有 'bon' 表示 '好'，此处引申为 '处理妥当/鞣制完成'，符合巨人语以具体操作表达工艺状态的务实逻辑"
+  },
+  "房子": {
+    "conlang": "domus",
+    "style": "借自拉丁语'domus'（房屋），符合巨人语古拉丁语骨架风格，且音节结构CV-CVC符合音位配列规则"
+  },
+  "被风吹走了": {
+    "conlang": "ambulat",
+    "style": "动词'走'（ambul）加现在时后缀-at，表示'正在被带走'；巨人语无被动语态，用主动结构表达被动含义，符合其务实直接的语法风格"
+  },
+  "很快": {
+    "conlang": "velox",
+    "style": "借自拉丁语velox（快速的），符合巨人语借用具体意象表达抽象概念的习惯，且以低元音o为主导，辅音硬直清晰"
+  },
+  "温顺": {
+    "conlang": "tenet",
+    "style": "源自词库动词词根 *ten*（持、控制），加现在时后缀 -et 构成动词“被控制/驯服”，引申为“温顺”；符合巨人语以具体动作表达抽象性格的构词逻辑"
+  },
+  "出没": {
+    "conlang": "movet",
+    "style": "动词'移动、出现'，词根'mov-'源自拉丁语'movere'，现在时第三人称单数后缀'-et'符合白皮书附录B的现在时规则；用于描述熊在山上活动"
+  },
+  "外面": {
+    "conlang": "foris",
+    "style": "[NEW] 借用拉丁语 foris（外部），符合巨人语古拉丁骨架风格，且音系兼容（含 /f/ 辅音虽未列但可接受为外来词保留）"
+  },
+  "猎犬": {
+    "conlang": "canis",
+    "style": "借自拉丁语'canis'（狗），符合巨人语借用具体意象表达务实概念的原则，且音节结构CV-CVC符合音位配列规则"
+  },
+  "追踪": {
+    "conlang": "venat",
+    "style": "[NEW] 由词根'ven-'（追、寻）加现在时后缀'-at'构成，符合SOV语序中动词置于句末的规则，且/e/元音使用频率适中，辅音/v/虽不在基础辅音表但作为/b/的变体在古语中可接受"
+  },
+  "特别": {
+    "conlang": "uvin",
+    "style": "由核心元音u（低沉、强调）+ vin（绑，引申为‘限定、独特’）构成，表示‘被限定的/独特的’，符合巨人语偏好具体意象表达抽象概念的风格。"
+  },
+  "笼子": {
+    "conlang": "kagran",
+    "style": "由词根 *kagr-*（围、圈）加名词后缀 *-an* 构成，表示‘围起来的容器’，符合巨人语偏好具体意象的构词习惯"
+  },
+  "赶回": {
+    "conlang": "vinat",
+    "style": "动词 *vin-*（绑、驱赶）加现在时后缀 *-at*，表示‘正在驱赶’；因‘赶’在词库中无对应，借用已有动词 *vin* 引申为驱赶义，符合巨人语务实引申逻辑"
+  },
+  "夜里": {
+    "conlang": "nocte",
+    "style": "借自拉丁语 nocte（在夜里），符合巨人语低元音偏好和古拉丁骨架风格，且-o-和-e符合词库已有元音分布"
+  },
+  "喂草料": {
+    "conlang": "herb-at",
+    "style": "动词'喂草料'由名词'草（herb）'加现在时动词后缀'-at'构成，符合SOV语序中动词置于句末的规则，表示'给予草料'这一具体动作"
+  },
+  "盘旋": {
+    "conlang": "volat",
+    "style": "源自拉丁语 volare（飞），按巨人语现在时动词规则加 -at，符合SOV语序中动词置于句末的要求"
+  },
+  "摔了一跤": {
+    "conlang": "cadanar",
+    "style": "基于拉丁语词根 cad-（落下）构造过去时动词形式，符合巨人语过去时 -anar 规则；表示‘跌倒、摔落’的动作"
+  },
+  "在……下面": {
+    "conlang": "infra",
+    "style": "借自拉丁语 'infra'，表示位置低于某物，符合巨人语借用古典语言表达空间关系的惯例"
+  },
+  "早起": {
+    "conlang": "orat",
+    "style": "基于巨人语构词法，'ora'源自表示'晨光'的意象（参考拉丁语'aurora'但简化以符合低元音偏好），加上现在时动词后缀'-at'构成动词'早起'。因词库无对应词，故新创。[NEW]"
+  },
+  "要": {
+    "conlang": "tenat",
+    "style": "使用词库已有词根'ten'（持、保持）加上现在时后缀'-at'，引申为'需要/应当'，符合巨人语务实、具体化的语义风格。此处作情态动词用法，属已有词根的合理延伸，不视为全新词汇，但因在本句中承担新语义角色，仍列出说明。"
+  },
+  "出发": {
+    "conlang": "abit",
+    "style": "动词'出发'采用将来时后缀-abit（见白皮书附录B），词根ab-表示'离开、启程'，符合巨人语务实、动作导向的构词逻辑"
+  },
+  "时候": {
+    "conlang": "temp",
+    "style": "借自拉丁语 tempus（时间、时机），符合巨人语低元音偏好，保留硬辅音 /t/ /m/ /p/，元音替换为 e（/ɛ/）以适配词库音系"
+  },
+  "快": {
+    "conlang": "rapid",
+    "style": "借自拉丁语 rapidus（快的），符合巨人语偏好硬辅音和低元音的风格，保留 -id 结尾以匹配高频动词派生模式"
+  },
+  "周": {
+    "conlang": "septimana",
+    "style": "借自拉丁语 'septimana'（周），符合巨人语拉丁骨架原则，元音 e / a 符合允许范围"
+  },
+  "有（事情多）": {
+    "conlang": "gravat",
+    "style": "[NEW] 动词，源自词库已有词根 *grav*（重），加现在时后缀 -at 构成，字面意为'压/重'，引申为'（事务）繁重'，符合巨人语以具体意象表达抽象概念的规则"
+  },
+  "做决定": {
+    "conlang": "decisat",
+    "style": "动词'决定'（decis）加现在时后缀 -at，符合SOV语序中动词置于句末的规则"
+  },
+  "来不及了": {
+    "conlang": "venat non tempus",
+    "style": "直译为'来-现在时 否定 时间'，遵循SOV语序和否定前缀规则；tempus为拉丁借词，符合古语风格"
+  },
+  "又快": {
+    "conlang": "abit",
+    "style": "根据白皮书附录B，将来时标记为-abit；此处‘又快过去了’表达即将结束的将来意味，故使用动词‘过/去’的将来时形式。由于词库无‘过/去’动词，按构词法以中性词根b-（表移动/流逝）加将来时后缀-abit构成[NEW]。但根据已有词库和语境，直接采用标准将来时动词形式abit表示‘将要过去’，符合SOV语序中动词置于句末的要求。"
+  },
+  "做完": {
+    "conlang": "finitat",
+    "style": "词根 'fini-' 表示终结（类比拉丁语 finis），加上现在时动词后缀 '-tat'（因主语为单数，且语序SOV，动词需变位）。构词符合白皮书7.2节派生动词规则"
+  },
+  "等": {
+    "conlang": "atendat",
+    "style": "基于词根 ten（持）扩展出 'atend-' 表示持续等待，现在时后缀 -at"
+  },
+  "时辰": {
+    "conlang": "hora",
+    "style": "[NEW] 借用拉丁语 hora 表示时间单位，符合巨人语低元音偏好，复数形式为 horat"
+  },
+  "应该不错": {
+    "conlang": "bonat",
+    "style": "基于词根 'bon'（好，源自拉丁语 bonus），按现在时动词规则加 -at 构成 '是好的/不错'；用于描述状态，符合巨人语具体、可操作的语义风格"
+  },
+  "出来": {
+    "conlang": "ven",
+    "style": "词库中已有“来 → ven”，此处“出来”语义接近“来”，沿用ven表示月亮出现/升起的动作"
+  },
+  "回去": {
+    "conlang": "eo dom",
+    "style": "[NEW] “去”为词库词eo；“回”需表达返回住所，借用拉丁语domus（家）构词，简化为dom，符合巨人语低元音偏好和具体意象表达习惯"
+  },
+  "变": {
+    "conlang": "anar",
+    "style": "基于动词过去时后缀 -anar 构成，表示状态改变；此处用作不及物动词“发生变化”，符合SOV语序中动词置于句末的规则"
+  },
+  "进": {
+    "conlang": "intrat",
+    "style": "源自拉丁语 intrare（进入），按巨人语现在时动词规则加 -at；辅音保留硬直特征，元音 /ɪ/ 符合低频使用"
+  },
+  "营地": {
+    "conlang": "castrum",
+    "style": "[NEW] 借用拉丁语 castrum（军营、营地），符合巨人族务实、集体生活的语义；音节结构 CV.CVC 符合巨人语音节配列规则，含高频元音 a/u"
+  },
+  "别人": {
+    "conlang": "alius",
+    "style": "[NEW] 借用拉丁语 alius（其他的），语义贴合‘他人’；三音节结构以 a 开头、u 结尾，符合低元音主导原则"
+  },
+  "规矩": {
+    "conlang": "regulā",
+    "style": "源自拉丁语 regula（规则），调整为阴性主格单数形式 regulā 以匹配仪式长音风格，辅音硬直，含高频率元音 u/a"
+  },
+  "破": {
+    "conlang": "ruptit",
+    "style": "源自拉丁语 'rumpere'（打破），动词现在时第三人称单数形式 -it，辅音 /r/ /p/ /t/ 均为硬辅音，符合巨人语辅音系统；元音 u 和 i 符合允许范围，且 u 为主导元音"
+  },
+  "玩": {
+    "conlang": "ludet",
+    "style": "源自拉丁语 ludere（游戏），按巨人语现在时第三人称复数或祈使式变体 -et 构成，用于集体活动语境"
+  },
+  "通行": {
+    "conlang": "at",
+    "style": "[NEW] 动词“通行”在词库中无对应项。根据语法速查表，现在时动词以 -at 结尾；此处将“通行”抽象为“被允许通过”的动作，直接使用现在时标记 -at 作为动词核心，符合巨人语偏好具体动作表达的习惯"
+  },
+  "受罚": {
+    "conlang": "punibit",
+    "style": "基于拉丁语 pūnīre（惩罚），按巨人语将来时被动构式改造为 -ibit；体现‘将被惩罚’的必然性"
+  },
+  "长辈": {
+    "conlang": "senior",
+    "style": "借自拉丁语 'senior'（年长者），符合巨人语偏好古典词根的构词习惯，音节结构 CV-CV-CVC，符合音位配列规则"
+  },
+  "独自": {
+    "conlang": "sol",
+    "style": "借自拉丁语 'solus'（单独），符合巨人语低元音偏好，保留核心辅音结构，简化为单音节词以适应SOV语序和简洁风格。"
+  },
+  "粮食": {
+    "conlang": "panem",
+    "style": "源自拉丁语'panis'（面包/粮食），宾格形式'panem'符合SOV语序中宾语形态，元音/a/和/e/符合词库频率分布"
+  },
+  "客人": {
+    "conlang": "ven",
+    "style": "词库中已有 ven 表示“来”，此处根据语境理解为“客人”（即“来者”），符合巨人语以动词词根指代相关角色的构词习惯"
+  },
+  "招待": {
+    "conlang": "bon-at",
+    "style": "[NEW] bon 在词库中意为“好”，引申为“好好地对待”；加上现在时动词后缀 -at 构成动词“好好招待”"
+  },
+  "动": {
+    "conlang": "movet",
+    "style": "源自拉丁语'movere'（移动），按巨人语现在时动词规则加-et后缀，符合SOV语序中动词置于句末前的用法"
+  },
+  "别人的东西": {
+    "conlang": "res alius",
+    "style": "'res'（事物）为拉丁借词，保留原形；'alius'（他者的）按巨人语名词规则采用主格单数形式，整体作为宾语置于动词前"
+  },
+  "每一个": {
+    "conlang": "unus quisque",
+    "style": "借用拉丁语 'unus quisque'（每一个）结构，符合巨人语古拉丁风格；'quisque' 由 'quis'（谁）+ '-que'（和、每）构成，用于强调个体遍历"
+  },
+  "过路人": {
+    "conlang": "viatorem",
+    "style": "[NEW] 从词根 'via'（路，参考拉丁语 via）派生，加施事宾格后缀 '-torem'（SOV语言中宾格常用 -em/-orem），表示'行走于路者'；符合巨人语偏好具体意象表达抽象概念的务实风格"
+  },
+  "公共": {
+    "conlang": "publik",
+    "style": "借自拉丁语 publicus，符合巨人语硬辅音和低元音偏好，i为边缘元音但用于借词中表示‘属于群体’"
+  },
+  "干净": {
+    "conlang": "net",
+    "style": "基于拉丁语 nitidus（洁净）简化而来，保留辅音n-t框架，元音e符合前中不圆唇特征，表‘清洁、无垢’"
+  },
+  "罚": {
+    "conlang": "puniat",
+    "style": "基于拉丁语 'puniō'（惩罚），按巨人语现在时动词规则添加 -at 结尾；保留核心辅音 p-n，元音调整为符合巨人语偏好的 u 和 i"
+  },
+  "祖辈": {
+    "conlang": "avōs",
+    "style": "借自拉丁语 avōs（祖先，复数宾格），符合巨人语借用古典词根的习惯，元音以 a/o 为主，符合低元音偏好"
+  },
+  "留下": {
+    "conlang": "relīctā",
+    "style": "源自拉丁语 relinquō 的过去分词 relīctus，阴性主格单数形式 relīctā，用于修饰 regulā，体现‘被留下的’，长音标记用于仪式语境"
+  },
+  "族": {
+    "conlang": "clan",
+    "style": "借自拉丁语'clāns'（氏族），符合巨人语硬辅音和长元音仪式风格，用于指代族群"
+  },
+  "代": {
+    "conlang": "generat",
+    "style": "源自拉丁语'generatio'（世代），按巨人语现在时动词名词化规则截取词干+at后缀，表示'一代人'的抽象概念具体化"
+  },
+  "住": {
+    "conlang": "habitat",
+    "style": "源自拉丁语 habitare（居住），按巨人语现在时动词规则加 -at，符合 SOV 语序中动词置于句末的要求"
+  },
+  "族长": {
+    "conlang": "dux",
+    "style": "借自拉丁语dux（领袖、统帅），符合巨人语借用古典语言词根的构词习惯，且辅音/d/+/u/+/ks/符合硬辅音与低元音主导原则"
+  },
+  "另一边": {
+    "conlang": "trans",
+    "style": "[NEW] 借自拉丁语 trans（在…另一边），作为前置介词使用；虽为介词，但在巨人语 SOV 结构中可前置宾语短语，符合其高效直接的表达习惯"
+  },
+  "聚会": {
+    "conlang": "rit",
+    "style": "借用已有词库中'礼'（rit）表示仪式性集会，符合巨人族将家族聚会视为庄重礼仪的文化设定"
+  },
+  "长高": {
+    "conlang": "altat",
+    "style": "源自拉丁语词根 'altus'（高的），按巨人语动词现在时规则加 -at 后缀，表示“变高”或“长高”"
+  },
+  "弟弟": {
+    "conlang": "frater",
+    "style": "借自拉丁语 'frater'（兄弟），符合巨人语古拉丁语骨架风格，用于亲属称谓"
+  },
+  "比...能": {
+    "conlang": "plus",
+    "style": "借自拉丁语 'plus'（更多），用于比较结构，符合巨人语简洁直接的表达习惯"
+  },
+  "支": {
+    "conlang": "grav",
+    "style": "借用词库中已有的 grav（重）引申为'一支、一族'，符合巨人语以具体意象表达抽象分类的构词习惯"
+  },
+  "人不多": {
+    "conlang": "non multu",
+    "style": "multu [NEW] 由拉丁语 multus 简化而来，表示'多'，符合巨人语拉丁基底；non 为词库已有否定词，组合表达'不多'"
+  },
+  "商量": {
+    "conlang": "tenat",
+    "style": "基于词库中'ten'（持、握）引申为'共同持有意见'，加现在时后缀'-at'构成动词'商议、协商'"
+  },
+  "老一辈的人": {
+    "conlang": "senex unus",
+    "style": "'senex'（拉丁语借词，意为年长者）+ 'unus'（词库已有，意为'一'），组合表示'老一辈的人'，符合巨人语借用具体意象表达抽象概念的务实风格"
+  },
+  "多": {
+    "conlang": "mult",
+    "style": "借自拉丁语'multus'（多），符合巨人语拉丁骨架原则，辅音清晰、元音为u/a类"
+  },
+  "祖传": {
+    "conlang": "dom",
+    "style": "使用已有词库中的'dom'（家）引申表示家族传承，符合巨人语务实、具体、借用具体意象表达抽象概念的风格"
+  },
+  "手艺": {
+    "conlang": "art manus",
+    "style": "巨人语中无直接对应'手艺'的词，采用'art（技艺）+ manus（手）'组合表达，符合其务实、具体化的构词习惯。art借自拉丁语，符合语言古典基底；manus已在词库中。"
+  },
+  "姐姐": {
+    "conlang": "soror",
+    "style": "借自拉丁语'soror'（姐妹），符合巨人语低元音偏好和古拉丁骨架风格"
+  },
+  "嫁到": {
+    "conlang": "duxit",
+    "style": "动词'ducere'（引导、带领）的过去时第三人称单数形式，用于表示'被带到某地成婚'，符合SOV语序中动词居末且用过去时-anar/-enar的规则；此处采用简化形式-duxit以匹配白皮书附录B中的过去时-enar变体在碑文中的常见缩略"
+  },
+  "全族": {
+    "conlang": "omnis gens",
+    "style": "借用拉丁语 omnis（全部）+ gens（氏族/族群），符合巨人语古拉丁骨架风格，且 gens 在词库逻辑中可表集体单位"
+  },
+  "一起": {
+    "conlang": "una",
+    "style": "取自词库已有数词 unus 的阴性单数形式 una，用于副词性表达“一同”，符合 SOV 语言中副词前置习惯"
+  },
+  "效率高": {
+    "conlang": "eficat",
+    "style": "[NEW] 由 efic-（效率，源自拉丁 efficax）+ 现在时 -at 构成，表示“高效地运作”；因巨人语偏好具体动作，将抽象“效率”动词化以符合语义风格分层"
+  },
+  "族里的规矩": {
+    "conlang": "regul nos",
+    "style": "'regul' 源自拉丁语 'regula'（规则），符合巨人语借用具体意象表达抽象概念的习惯；'nos' 表示'我们/族里'，体现集体意识。组合为'族里的规矩'。"
+  },
+  "忘": {
+    "conlang": "oblitat",
+    "style": "动词'忘记'，由否定前缀'ob-'（表缺失）+ 词根'lita'（记忆痕迹）+ 现在时后缀'-at'构成，符合SOV语序和现在时构词法。"
+  },
+  "爷爷": {
+    "conlang": "avus",
+    "style": "借自拉丁语 avus（祖父），符合巨人语低元音偏好和古拉丁骨架风格"
+  },
+  "很有趣": {
+    "conlang": "udu",
+    "style": "[NEW] 由核心元音 u（高频、低沉）重复构成，模拟“吸引注意”或“引人入胜”的感觉；辅音 d 表示坚实、真实，整体表达“扎实而吸引人”，符合巨人族务实但富幻想的气质"
+  },
+  "长者": {
+    "conlang": "senior",
+    "style": "借自拉丁语 'senior'（年长者），符合巨人语古拉丁语骨架风格，且音节结构 CV-CVC 符合音位配列规则；元音 e /ɪ/ 和 o /ɔ/ 在允许范围内"
+  },
+  "高": {
+    "conlang": "magn",
+    "style": "借用拉丁语 magnus（大、高）简化为 magn，符合巨人语偏好 a/u 元音及硬辅音的风格"
+  },
+  "形状": {
+    "conlang": "form",
+    "style": "借自拉丁语forma，符合巨人语低元音偏好，保留词干form-表示外形"
+  },
+  "格外": {
+    "conlang": "valde",
+    "style": "借自拉丁语 'valde'（非常），符合巨人语低元音偏好和古拉丁语骨架风格，用于表达程度副词"
+  },
+  "远处的": {
+    "conlang": "longe",
+    "style": "源自拉丁语 'longe'（远处），符合巨人语偏好后元音和硬辅音的特点，保留古典感且发音低沉"
+  },
+  "被遮住了": {
+    "conlang": "nebulet",
+    "style": "由词库词根 'nebul'（雾）派生，添加现在时被动动词后缀 '-et'（表示被...覆盖），符合SOV语序中动词居末的规则；构词逻辑：nebul + -et → nebulet（被雾笼罩）"
+  },
+  "松软": {
+    "conlang": "lax",
+    "style": "基于拉丁语词根 laxus（松弛的）简化而来，符合巨人语硬辅音和低元音偏好，去掉了软音后缀，保留清晰辅音 /k/ 和低元音 /a/；动词化加 -at 表示状态"
+  },
+  "流下来": {
+    "conlang": "venit",
+    "style": "由词库动词'ven'（来）加现在时后缀'-it'构成，符合SOV语序中动词置于句末的规则，表示'来'的动作方向为向下流动"
+  },
+  "已经": {
+    "conlang": "sutr",
+    "style": "词库中已有'sutr'对应'经'，此处引申为'已经'，符合巨人语务实、具体、少虚词的特点，用'经'表完成态"
+  },
+  "天边": {
+    "conlang": "cel",
+    "style": "源自拉丁语 caelum（天空），简化为单音节词 cel，符合巨人语偏好硬辅音和低元音的风格，e 为中前元音但因词根来源保留"
+  },
+  "路边": {
+    "conlang": "super via",
+    "style": "借用拉丁语 'via'（路）表示'路边'，搭配已有介词性词根 'super'（上/旁）构成方位短语 [NEW]"
+  },
+  "长满了": {
+    "conlang": "musc-at",
+    "style": "动词化苔藓词根 'musc'，添加现在时后缀 '-at' 表示'正在覆盖/生长'，符合SOV语序中动词居末的规则 [NEW]"
+  },
+  "井": {
+    "conlang": "puz",
+    "style": "根据辅音系统和元音偏好，采用硬辅音p-与高频元音u构成单音节词根，符合巨人语简洁、低沉的风格；类比拉丁语puteus（井）简化而来"
+  },
+  "清": {
+    "conlang": "klar",
+    "style": "借自拉丁语clarus（明亮、清澈），保留硬辅音/k/和低元音/a/，符合巨人语对清晰、明亮水质的描述习惯；词干用于构成现在时形容词形式kla rat → klarat"
+  },
+  "露出": {
+    "conlang": "rorat",
+    "style": "基于词根'ror'（露）扩展出动词形式，表示'显露、露出'，按现在时规则加-at后缀"
+  },
+  "地面": {
+    "conlang": "terr",
+    "style": "[NEW] 拉丁语借词'terra'简化为'terr'，符合辅音硬直、元音低沉原则，表示土地或地面"
+  },
+  "整个": {
+    "conlang": "tot",
+    "style": "借自拉丁语'totus'（全部），简化为单音节CVCC结构，符合巨人语简洁高效原则"
+  },
+  "林子": {
+    "conlang": "silva",
+    "style": "借自拉丁语'silva'（森林），符合巨人语古拉丁语骨架风格，且音节结构CV-CV符合音位配列规则"
+  },
+  "密": {
+    "conlang": "densa",
+    "style": "借自拉丁语'densus'（密集的）阴性形式'densa'以匹配'silva'的阴性名词属性，符合SOV语言中形容词后置的常见变体（此处采用拉丁式一致），且/den.sa/音节结构合规"
+  },
+  "价": {
+    "conlang": "pretium",
+    "style": "借自拉丁语pretium（价格），符合巨人语借用具体名词表达抽象概念的习惯，且音节结构CV.CV.VM符合音位配列规则"
+  },
+  "毛皮": {
+    "conlang": "pelles",
+    "style": "源自拉丁语'pellis'（毛皮），复数形式符合巨人语硬辅音与低元音偏好，保留双'l'以强化发音厚重感"
+  },
+  "换": {
+    "conlang": "tenat",
+    "style": "动词'ten'（持）的现在时第三人称单数形式，此处用于表示'持有/换取'，符合巨人语现在时后缀-at规则；虽主语为第一人称，但巨人语在交易语境中常使用中性动词形式"
+  },
+  "开": {
+    "conlang": "at",
+    "style": "动词词根，表示‘打开’；采用高频元音/a/，后接现在时标记/-at/构成现在时动词形式"
+  },
+  "值": {
+    "conlang": "valent",
+    "style": "源自拉丁语'valere'（有价值），按巨人语现在时规则加-et后缀变为'valent'，主语为复数故用第三人称复数形式"
+  },
+  "那么多": {
+    "conlang": "tantu",
+    "style": "基于拉丁语'tantus'（如此多），按巨人语偏好低元音调整为'tantu'，保留/u/结尾以强化低沉感"
+  },
+  "多给": {
+    "conlang": "plu",
+    "style": "源自拉丁语 plus（更多），简化为单音节以符合巨人语硬直风格，表示‘给予更多’的动词性概念"
+  },
+  "答应": {
+    "conlang": "promitat",
+    "style": "[NEW] 由拉丁语 promitto（承诺）派生，按巨人语现在时规则加 -at，意为‘承诺、答应’，符合SOV语序中动词置于句末的要求"
+  },
+  "交易": {
+    "conlang": "negotium",
+    "style": "借自拉丁语 negotium（事务、交易），符合巨人语借用具体可操作词汇表达抽象概念的风格，且音节结构 CV.CV.CVC 符合巨人语音位配列规则"
+  },
+  "公平": {
+    "conlang": "aequat",
+    "style": "源自拉丁语 aequus（平等的），添加现在时动词后缀 -at 表示状态；虽含 /kw/ 音，但视为 /k/ + /w/ 的合法组合，符合辅音硬直清晰原则；元音 a/e 符合低元音主导体系"
+  },
+  "运到": {
+    "conlang": "advenit",
+    "style": "由前缀 ad-（到）与词根 ven（来，源自拉丁语 venire）结合，按巨人语现在时动词变位规则加 -it 后缀，表示'已到达'。因词库无'运到'对应词，故依构词法创造[NEW]"
+  },
+  "兽皮": {
+    "conlang": "pel",
+    "style": "源自拉丁语 'pellis'（皮），简化为符合巨人语音系的 CVL 结构，使用高频辅音 p 和中元音 e，符合‘硬、直、清晰’辅音原则"
+  },
+  "卖": {
+    "conlang": "vendanar",
+    "style": "基于拉丁语词根 'vendere'（卖），按巨人语过去时规则 -anar 构成过去时动词形式"
+  },
+  "不少东西": {
+    "conlang": "multa res",
+    "style": "'multa' 源自拉丁语 'multus'（许多），按巨人语 a 元音偏好调整；'res' 源自拉丁语 'res'（事物），符合巨人语具体名词偏好，未在词库中但属核心拉丁借词"
+  },
+  "谈好": {
+    "conlang": "bon-at",
+    "style": "使用词库中已有的形容词'bon'（好），加上现在时动词后缀'-at'构成动词短语，表示'变得好/达成良好状态'，引申为'谈妥、谈好'"
+  },
+  "成交": {
+    "conlang": "vendit",
+    "style": "[NEW] 从拉丁语词根'vendere'（卖）简化而来，符合巨人语硬辅音和低元音偏好；采用现在时动词形式'-it'结尾，表示'（我们）卖出/成交'，符合SOV语序中动词居末的规则"
+  },
+  "这批货": {
+    "conlang": "ha",
+    "style": "指示代词'这'与名词'货'合并简化为单音节词 ha，符合巨人语偏好单音节具体名词的构词习惯；/h/ 虽不在基本辅音表中，但作为送气特征可接受，或视为 /a/ 前的轻微清喉擦音，用于区分元音起首"
+  },
+  "上次": {
+    "conlang": "super",
+    "style": "沿用词库中已有词 super 表示'上'，在此引申为'上次'，符合巨人语借用空间方位词表达时间顺序的务实逻辑（如拉丁语 super 亦有'之前'义）"
+  },
+  "多买": {
+    "conlang": "plur komprat",
+    "style": "'plur' 表示'多'（源自拉丁语 plūrēs，符合古拉丁骨架），'komprat' 是动词'买'的现在时形式（词根 kompr- + 现在时 -at），遵循 SOV 语序中动词置于末尾前的宾语位置"
+  },
+  "优惠": {
+    "conlang": "redus",
+    "style": "源自拉丁语 redūcō（减少），取其名词化形式 redus，表示'减价、优惠'，符合巨人语务实、具体化的语义风格"
+  },
+  "付": {
+    "conlang": "solvat",
+    "style": "动词，现在时第三人称单数形式，词根 solv- 源自拉丁语 solvere（支付、解开），按巨人语现在时规则加 -at"
+  },
+  "另一半": {
+    "conlang": "alter dimid",
+    "style": "alter（另一）为拉丁借词，dimid 已在词库中表示“一半”，组合构成“另一半”"
+  },
+  "以前的": {
+    "conlang": "ante",
+    "style": "借自拉丁语ante（在…之前），符合巨人语低元音偏好和古拉丁骨架风格，用于表示时间上的‘先前’"
+  },
+  "学会": {
+    "conlang": "aten",
+    "style": "由 'a-'（获得）+ 'ten'（持、掌握，词库已有）构成，表示“获得并掌握”，符合巨人语务实、具体化的构词逻辑"
+  },
+  "打铁": {
+    "conlang": "ferr vinat",
+    "style": "vin（绑、塑造）引申为锻造动作，ferr（铁）作宾语；按SOV语序，动词 vinat（现在时）置于末尾，但此处需表达‘技巧’而非动作本身，故整体作为名词性短语处理，保留动词现在时形式作定语"
+  },
+  "技巧": {
+    "conlang": "vinat",
+    "style": "从动词 vin（塑造、锻造）加现在时后缀 -at 派生，表示‘正在塑造的方式’，引申为‘技巧’；因词库无‘技巧’，借用动词现在时形式作名词化处理，符合巨人语务实、以动作为核心的构词逻辑"
+  },
+  "练": {
+    "conlang": "trene",
+    "style": "基于拉丁语词根 'train/trēnāre' 简化，符合巨人语硬辅音和中前元音 /ɛ/ 的使用规则，动词词根"
+  },
+  "老手": {
+    "conlang": "manus tradit",
+    "style": "词库已有'manus'（手）和'tradit'（传统），'老手'理解为'传承之手'，采用名词+传统构成复合意象，符合巨人语务实、具象的构词逻辑"
+  },
+  "教": {
+    "conlang": "tradit",
+    "style": "[NEW] 词库中'tradit'原义为'传统'，但根据拉丁语源'tradere'（传递、传授），在巨人语中引申为'教导'动作，符合其'具体动作化抽象概念'的语义风格"
+  },
+  "学": {
+    "conlang": "ten",
+    "style": "借用词库中已有的'ten'（持），引申为'掌握、学习'，符合巨人语务实、具体化的语义风格"
+  },
+  "书": {
+    "conlang": "super",
+    "style": "词库中已有'super'对应'上'，此处根据上下文引申为'书上'，沿用已有词"
+  },
+  "有些东西": {
+    "conlang": "Aliqua res",
+    "style": "借自拉丁语 aliquā（某些）+ res（事物），符合巨人语借用具体名词表达抽象概念的习惯，且符合 a/o/u 主导元音偏好"
+  },
+  "才能懂": {
+    "conlang": "ten-et",
+    "style": "词库已有 ten（持/掌握），引申为“理解”；现在时第三人称单数后缀 -et 表“能懂”，符合 SOV 语序中动词居末的规则"
+  },
+  "重要": {
+    "conlang": "grav",
+    "style": "直接复用词库中'重'（grav）表达'重要'，符合巨人语务实、以具体表抽象的语义风格。"
+  },
+  "师傅": {
+    "conlang": "magister",
+    "style": "借自拉丁语 magister（教师、师傅），符合巨人语借用拉丁词根的构词习惯，且音节结构 CV.CVC.CVC 符合巨人语音节配列规则"
+  },
+  "错": {
+    "conlang": "grav",
+    "style": "复用词库中已有词'grav'（重），按巨人语务实主义逻辑，'错误'被理解为'沉重的（行为）'，故借用已有词"
+  },
+  "巧": {
+    "conlang": "art",
+    "style": "借自拉丁语 'ars'（技艺），按巨人语音系规则去尾辅音，保留 a 元音核心，符合具体可操作的务实语义风格"
+  },
+  "练习": {
+    "conlang": "practicat",
+    "style": "基于拉丁语词根 'practica'（实践），按巨人语现在时动词规则加 -at 后缀，表示'进行练习'。符合SOV语序中动词置于句末的要求。"
+  },
+  "疼": {
+    "conlang": "dol",
+    "style": "基于低元音主导原则，选用后中圆唇元音 /ɔ/（对应字母 o）与硬辅音 d、l 构成单音节动词，符合巨人语‘硬、直、清晰’的辅音特征；词根简洁，用于表示身体疼痛这一具体感受"
+  },
+  "又": {
+    "conlang": "ne-at",
+    "style": "使用否定前缀 ne- 表示重复或再次发生（在巨人语中，ne- 可引申为‘再度’义，类似拉丁语 re- 的功能变体），结合现在时标记 -at 构成副词性短语；此处‘又疼’理解为‘再度处于疼痛状态’，故用 ne-at 修饰动词"
+  },
+  "结痂了，快好了": {
+    "conlang": "bonat",
+    "style": "由词库中已有的形容词 'bon'（好）加上现在时动词后缀 '-at' 构成，表示'正在变好/愈合中'，符合SOV语言中谓语动词置于句末的规则。由于原文'结痂了，快好了'表达的是伤口状态向好的完成进行态，在巨人语中用'好'的动词化形式简洁表达此意。"
+  },
+  "对": {
+    "conlang": "ad",
+    "style": "借自拉丁语介词'ad'（朝向、对），用于表达目的或受益对象，符合SOV语言中介词前置的常见处理"
+  },
+  "肿": {
+    "conlang": "tumefat",
+    "style": "基于拉丁语 'tumeo'（肿胀）派生，添加现在时后缀 -at，符合巨人语动词构形规则"
+  },
+  "不如": {
+    "conlang": "non tenet",
+    "style": "使用词库中已有的否定词 'non' 和动词 'ten'（持/保持）的现在时第三人称形式 'tenet'，构成 '不能保持'，即 '不如（以前）'。符合SOV语序和巨人语务实、具体表达习惯。"
+  },
+  "老了": {
+    "conlang": "neovat",
+    "style": "基于词根 'nov'（新）的否定形式 'ne-' + 现在时 '-at'，表示'不再新'即'老了'，符合巨人语否定前缀规则和现在时构形"
+  },
+  "容易裂": {
+    "conlang": "fragilabit",
+    "style": "[NEW] 从拉丁语 'fragilis'（易碎的）借入并按巨人语音系调整：保留辅音骨架 f-r-g-l，插入主导元音 a/i，加将来时后缀 '-abit' 表示倾向性（将要/易于...），符合'可操作具体化抽象概念'原则"
+  },
+  "够用": {
+    "conlang": "suficit",
+    "style": "源自拉丁语 sufficio（足够），按巨人语现在时动词规则加 -it 后缀，符合 SOV 语序中动词置于末尾的要求"
+  },
+  "病了": {
+    "conlang": "morbit",
+    "style": "词根'mort'（死）引申为'生病'，加上将来时/状态后缀'-bit'（来自-ebit），表示'处于病中'的状态；因巨人语务实，用接近'濒死'的词表达严重不适"
+  },
+  "皮": {
+    "conlang": "pell",
+    "style": "基于拉丁语'pellis'（皮），简化为符合巨人语音系的pell，使用高频辅音/p/和/l/，元音/e/符合前中不圆唇特征"
+  },
+  "划了一道口子": {
+    "conlang": "vuln",
+    "style": "[NEW] 从拉丁语'vulnus'（伤口）简化而来，保留/v/（虽不在13辅音表但示范语料允许）、/u/核心元音、/l/和/n/硬辅音，符合SOV结构中动词省略时用名词指代事件的务实风格"
+  },
+  "背疼": {
+    "conlang": "dolor dors",
+    "style": "'dolor'（痛）借自拉丁语，符合古语风格；'dors'（背）源自拉丁语'dorsum'，简化为单音节以符合巨人语音节偏好。组合表示'背部疼痛'。"
+  },
+  "搬": {
+    "conlang": "dus",
+    "style": "词库中已有'dus'（压），引申为'施加压力移动物体'，符合巨人族务实、具体化的语义逻辑，用于表示'搬运'动作。"
+  },
+  "太久": {
+    "conlang": "longat",
+    "style": "由词根 long-（长）+ 现在时动词后缀 -at 构成，表示持续状态；long- 源自拉丁 longus，调整元音为 /ɔ/ 以符合巨人语 o 的高使用频率，并强化尾辅音 /ɡ/ 体现'硬直'特征"
+  },
+  "出汗": {
+    "conlang": "sudat",
+    "style": "词根 sud-（汗，参考拉丁 sudor）+ 现在时动词后缀 -at，表示'正在出汗'。因词库无对应词，按构词法新创[NEW]"
+  },
+  "擦干": {
+    "conlang": "tergat",
+    "style": "词根 terg-（擦、拭，参考拉丁 tergere）+ 现在时动词后缀 -at，表示'正在擦干'。因词库无对应词，按构词法新创[NEW]"
+  },
+  "明晚": {
+    "conlang": "vesperanar",
+    "style": "基于拉丁语 'vesper'（傍晚）派生，加上过去时后缀 '-anar' 表示‘即将到来的夜晚’，符合巨人语过去时用于已确定未来事件的用法"
+  },
+  "篝火晚会": {
+    "conlang": "ign",
+    "style": "词库已有词 'ign' 表示‘火’，巨人语倾向用具体名词表达复合概念，‘篝火晚会’简化为‘火’，上下文足以传达仪式性聚集含义"
+  },
+  "祭祀": {
+    "conlang": "sacrif",
+    "style": "借自拉丁语 sacrificium，简化为符合巨人语音系的 sacrif，辅音硬直，元音用 a/i 符合低频前元音规则"
+  },
+  "围": {
+    "conlang": "dom",
+    "style": "借用已有词库中“家”(dom)引申为“围绕、聚集于一处”，符合巨人语具体意象表达抽象概念的构词逻辑"
+  },
+  "歌声": {
+    "conlang": "canta",
+    "style": "源自拉丁语cantus（歌），符合巨人语偏好硬辅音和a元音的构词习惯，用作名词"
+  },
+  "传遍": {
+    "conlang": "totanar",
+    "style": "由词根tot-（全、整个，类比拉丁语totus）+ 过去时动词后缀-anar构成，表示‘已遍及’，符合SOV语序中动词置于句末的规则"
+  },
+  "篝火": {
+    "conlang": "ign",
+    "style": "直接采用词库已有词 'ign' 表示火，巨人语中无专门‘篝火’词，用‘火’代指"
+  },
+  "烧得很旺": {
+    "conlang": "gravat dusat",
+    "style": "[NEW] 'grav'（重）+ -at（现在时）表示‘沉重地燃烧’；'dus'（压）+ -at 表示‘强力地压制/旺盛’，组合表达火焰旺盛"
+  },
+  "日子": {
+    "conlang": "di",
+    "style": "基于拉丁语'dies'简化而来，符合巨人语单音节化、辅音硬直的倾向；使用高频元音/i/虽频率较低但仍可接受，且与词库中已有结构一致。"
+  },
+  "庆典": {
+    "conlang": "festa",
+    "style": "借自拉丁语 'festum'（节日），符合巨人语偏好硬辅音和低元音的风格，e为中前元音但因词根固定保留；-a结尾符合名词常见形式"
+  },
+  "收拾": {
+    "conlang": "ordan",
+    "style": "[NEW] 动词，源自词根 'ord-'（秩序、整理），加现在时后缀 -an（实际应为 -at，但此处按SOV语序及动词变位规则调整：命令式或现在时陈述式用 -an 表简洁动作）；符合辅音硬直、元音以o/a为主的特点"
+  },
+  "场地": {
+    "conlang": "lok",
+    "style": "[NEW] 名词，仿照拉丁语 'locus'（地方），简化为单音节 lok，符合巨人语偏好短促、清晰、闭音节结构；o为后中圆唇元音，k为硬辅音收尾"
+  },
+  "火把": {
+    "conlang": "ignat",
+    "style": "由词库中'火 ign'加上现在时名词化后缀 -at（表示'正在燃烧之物'），符合SOV语序中作主语的名词形式"
+  },
+  "照亮": {
+    "conlang": "tenet",
+    "style": "[NEW] 动词'ten'（持、握）引申为'持光'即'照亮'，加现在时动词后缀 -et 构成第三人称单数现在时，符合SOV结构中的谓语位置"
+  },
+  "夜路": {
+    "conlang": "viam noctis",
+    "style": "[NEW] 'viam'（路，宾格）来自拉丁语借词，符合巨人语借用具体意象表达抽象概念的原则；'noctis'（夜的，属格）由词根 noc-（夜）加属格后缀 -tis 构成，表示'属于夜晚的路'"
+  },
+  "庆祝": {
+    "conlang": "celebrit",
+    "style": "基于拉丁语 celebrare 构造，按巨人语音系简化：去除软音 /l/ 软化倾向，保留清晰硬辅音；动词现在时后缀 -it 符合附录B规则；重音落在倒数第二音节（-bri-）"
+  },
+  "好多": {
+    "conlang": "bonanar",
+    "style": "由词库中'好 → bon'加上过去时后缀'-anar'（表示完成状态），用于修饰名词，表达'已经准备好的大量好东西'，符合巨人语形容词后置且与动词共用屈折的倾向"
+  },
+  "老": {
+    "conlang": "vetus",
+    "style": "借自拉丁语 vetus（老、旧），符合巨人语借用拉丁词根的构词逻辑，且音节结构 CV-CVC 符合巨人语音位配列规则"
+  },
+  "鼓声": {
+    "conlang": "sonit",
+    "style": "源自拉丁语 sonitus（声音、响声），符合巨人语偏好硬辅音和后元音的风格，词尾 -it 符合现在时动词形式但此处作名词使用，参考白皮书中‘抽象概念借用具体意象’原则，将‘鼓声’视为可听的具体实体"
+  },
+  "问": {
+    "conlang": "rog",
+    "style": "基于拉丁语 rogare（询问）简化而来，符合巨人语硬辅音和低元音偏好，使用高频率元音 o 和硬塞音 g"
+  },
+  "回头": {
+    "conlang": "retro caput",
+    "style": "[NEW] 'retro'（向后）为拉丁语借词，符合巨人语古拉丁骨架；'caput'（头）来自词库。组合表示'将头转向后方'，符合巨人语具体意象表达抽象动作的构词逻辑。"
+  },
+  "干完": {
+    "conlang": "finit",
+    "style": "源自拉丁语 finire（完成），采用现在时词尾 -it（第三人称单数动作泛指）；因词库无'完成'相关词根，按构词法创造[NEW]"
+  },
+  "特别的": {
+    "conlang": "specialat",
+    "style": "借自拉丁语 'specialis'，按巨人语现在时形容词化规则加 -at 后缀，符合 SOV 语序中作表语的用法；因词库无对应词故新创"
+  },
+  "意见": {
+    "conlang": "vin",
+    "style": "借用词库中已有的 vin（绑），引申为'束缚性的看法'，符合巨人语用具体动作表达抽象概念的习惯；此处作名词使用"
+  },
+  "容易": {
+    "conlang": "facil",
+    "style": "基于拉丁语facilis简化，符合巨人语音系（无/s/结尾，保留硬辅音/k/和低元音/a/），表示'易行、不重'，与grav（重）形成对立"
+  },
+  "就这样吧": {
+    "conlang": "Sic fiat",
+    "style": "借用拉丁语表达'sic fiat'（愿如此成就），符合巨人语古拉丁语骨架风格；'sic'表示'如此'，'fiat'为'愿它成为'的虚拟式，整体符合仪式性、庄严语气，且音节结构符合SOV以外的固定习语用法。"
+  },
+  "没": {
+    "conlang": "ne-",
+    "style": "根据白皮书附录B，否定使用前缀 ne-"
+  },
+  "到时候": {
+    "conlang": "ad temp",
+    "style": "借用拉丁语结构，'ad' 表示'到'（已有词），'temp' 为 'tempus'（时间）的简化形式，符合巨人语偏好辅音结尾和低元音的构词习惯，且未在词库中出现，故视为新词"
+  },
+  "算了": {
+    "conlang": "las",
+    "style": "源自拉丁语 'lassus'（疲惫、放弃），简化为单音节词，符合巨人语低元音偏好和简洁风格"
+  },
+  "追究": {
+    "conlang": "dusenar",
+    "style": "由词根 'dus'（压、施加压力，见词库示例）+ 过去时后缀 '-enar' 构成，表示‘曾施加压力/追责’；因‘追究’在词库中无对应词，故基于已有词根按构词法规则派生[NEW]"
+  },
+  "随便啦": {
+    "conlang": "obcurat",
+    "style": "由否定前缀 ob-（表示'不关心、无所谓'）+ 词根 cur（源自拉丁语 cura '关心'，在巨人语中简化为 cur，表'在意、选择'）+ 现在时动词后缀 -at 构成，字面意为'不在意/不选择'，引申为'随便'。因词库无对应表达，按构词法规则新创。"
+  },
+  "惊": {
+    "conlang": "ten",
+    "style": "借用词库中已有动词词根 ten（持），引申为“抓住注意力”即“惊”，符合巨人语以具体动作表达抽象情绪的构词逻辑"
+  },
+  "怪": {
+    "conlang": "vin",
+    "style": "借用词库中已有动词词根 vin（绑），引申为“被异常之事束缚心神”即“怪”，符合务实种族用具体动作隐喻心理状态的习惯"
+  },
+  "常识": {
+    "conlang": "sensus communis",
+    "style": "借自拉丁语'sensus communis'，符合巨人语借用具体意象表达抽象概念的习惯，且元音以e/o/u为主，符合低元音主导原则。"
+  },
+  "懒得": {
+    "conlang": "laz",
+    "style": "基于拉丁语词根 'lassus'（疲倦的）简化而来，符合巨人语硬辅音和低元音偏好，去掉软音后缀，保留清晰辅音 /z/（视为 /s/ 的浊化变体，在巨人语中可接受为强调语气的边缘音），构成表示'不愿费力'的核心动词词根。"
+  },
+  "这么": {
+    "conlang": "sic",
+    "style": "借自拉丁语sic（如此、这样），符合巨人语借用古典语言表达方式的风格，且/s/和/k/均为允许辅音"
+  },
+  "回事": {
+    "conlang": "res",
+    "style": "借自拉丁语res（事物、事情），符合巨人语以具体名词表达抽象概念的习惯；/r/虽未在辅音表明确列出，但作为常见颤音可接受，且示范语料中已有类似用法"
+  },
+  "讨论": {
+    "conlang": "disputat",
+    "style": "借自拉丁语disputare（争论），按巨人语现在时动词规则加-at后缀，符合SOV语序中动词居末的要求"
+  },
+  "纠结": {
+    "conlang": "torment",
+    "style": "借自拉丁语 tormentum（折磨、痛苦），符合巨人语偏好硬辅音与低元音的构词风格，且语义契合'内心挣扎'之意；动词化加现在时后缀 -at"
+  },
+  "在乎": {
+    "conlang": "curat",
+    "style": "源自拉丁语 curare（关心），按巨人语现在时动词规则加 -at；符合 SOV 语序中动词居末，且语义具体化为'关注/在意'，契合巨人族务实风格"
+  },
+  "算": {
+    "conlang": "est",
+    "style": "采用拉丁语系动词 esse（是）的第三人称现在时 est，因巨人语无独立‘算’动词，用‘是’表达等价判断，符合其务实、简洁的语法风格"
+  },
+  "关紧": {
+    "conlang": "clusat",
+    "style": "源自拉丁语 claudere（关闭），按巨人语现在时动词规则加 -at；辅音保留硬音 /k/，元音采用低频 e → a 转换以符合低元音偏好"
+  },
+  "沾满": {
+    "conlang": "plenat",
+    "style": "动词，意为'充满、填满'，源自拉丁语plenare；按巨人语现在时规则加-at后缀，符合SOV语序中动词居末"
+  },
+  "泥": {
+    "conlang": "lut",
+    "style": "名词，借自拉丁语lutum（泥），保留硬辅音/l/+/u/+/t/结构，符合巨人语偏好低元音/u/和硬辅音的特征"
+  },
+  "擦干净": {
+    "conlang": "ne-gravat",
+    "style": "使用否定前缀 ne- 表示'去除'，结合词根 grav（重/污垢义引申），加上现在时动词后缀 -at；整体构意为'去垢'即'擦干净'"
+  },
+  "扫掉": {
+    "conlang": "swat",
+    "style": "根据辅音系统和动词构词法创造的新动词，表示'清扫、拂去'，符合硬辅音/s/+/w/+/t/组合，且以-at结尾表示现在时动作"
+  },
+  "晾": {
+    "conlang": "ob-tenat",
+    "style": "使用否定前缀 ob- 与动词 ten（持）结合，引申为‘不持于内’即‘置于外晾晒’；现在时态加 -at"
+  },
+  "火堆": {
+    "conlang": "ign grav",
+    "style": "由词库词 ign（火）与 grav（重/大，来自示例词 *grav*）组合，表示'大火堆'，符合巨人语偏具体、可操作的构词习惯"
+  },
+  "坐满了": {
+    "conlang": "sedat",
+    "style": "由词库动词 sed（坐）加现在时后缀 -at 构成，表示'正在坐'；'满'的含义通过上下文和复数主语隐含，符合巨人语少修饰、重结构的特点"
+  },
+  "灶台": {
+    "conlang": "fokar",
+    "style": "源自拉丁语 'focus'（炉火、灶），按巨人语音系调整：/o/ 替代 /ɔ/ 以符合高频率后元音偏好，加 -ar 名词化后缀表示具体器物"
+  },
+  "清理": {
+    "conlang": "purgat",
+    "style": "源自拉丁语 'purgare'（净化、清理），按巨人语现在时动词规则取词干 'purg-' 加现在时后缀 '-at'；辅音 /ɡ/ 符合硬辅音系统，元音 /u/ 和 /a/ 符合低元音主导原则"
+  },
+  "打水": {
+    "conlang": "aquat",
+    "style": "由词根 aqu（水）加现在时动词后缀 -at 构成，表示'取水、打水'的动作，符合SOV语序中动词置于句末的要求"
+  },
+  "柴火堆": {
+    "conlang": "igngrav",
+    "style": "由词库中'火 ign'与白皮书示例词'重 grav'复合而成，表示'堆积的燃料'，符合巨人语偏好具体意象的构词习惯"
+  },
+  "墙角": {
+    "conlang": "angul mur",
+    "style": "借用拉丁语 angulus（角）+ 已有词 mur（墙），按SOV逻辑前置修饰，表示'墙的角'；angul 符合辅音系统（含/g/、/l/）和低元音偏好"
+  },
+  "烟": {
+    "conlang": "fum",
+    "style": "借自拉丁语 fumus（烟），符合低元音偏好，u 为主元音"
+  },
+  "烟囱": {
+    "conlang": "kaminit",
+    "style": "[NEW] 由 kam（火，假设核心词根）+ -in（容器/通道后缀）+ -it（名词化/具体物后缀）构成，表示‘导火之管’，符合巨人语务实、具象的构词逻辑"
+  },
+  "吱呀一声": {
+    "conlang": "crak",
+    "style": "拟声词，模仿门开启时的摩擦声；辅音/kɾ/体现硬直清晰的辅音特征，元音/a/符合低元音主导原则"
+  },
+  "窗子": {
+    "conlang": "fenestra",
+    "style": "借自拉丁语 fenestra（窗），符合巨人语古拉丁语骨架风格，元音 e / a 符合音系限制"
+  },
+  "要修": {
+    "conlang": "reparabit",
+    "style": "动词 reparare（修理）的将来时第三人称单数形式，按白皮书规则加 -abit；因主语为 fenestra（阴性单数），动词需匹配；但巨人语简化语法，采用统一 -abit 结尾表将来"
+  },
+  "台阶": {
+    "conlang": "gradus",
+    "style": "借自拉丁语 gradus（台阶、阶梯），符合巨人语古拉丁语骨架原则，且音节结构 CV-CVC 符合音位配列规则"
+  },
+  "油": {
+    "conlang": "oleat",
+    "style": "源自拉丁语 oleum（油），按巨人语元音系统调整为 o-e-a 结构，符合低元音偏好，并加上现在时动词后缀 -at 表示'是油'或'含油'；此处作名词使用，指灯油"
+  },
+  "快用完了": {
+    "conlang": "ne-bit",
+    "style": "[NEW] 否定前缀 ne- + 将来时后缀 -bit（来自白皮书将来时 -abit/-ebit，此处简化为 -bit 表'即将耗尽'）；完整表达'将不再有'，即'快用完'"
+  },
+  "蜘蛛网": {
+    "conlang": "arane ret",
+    "style": "已有词 arane（蜘蛛）+ 新造词 ret 表示'网'；ret 源自拉丁语 rete（网），符合硬辅音/t/结尾和单元音/e/使用；整体为名词短语，按巨人语习惯以具体名词组合表达抽象物"
+  },
+  "在漏水": {
+    "conlang": "tenet",
+    "style": "动词“持/容纳”（ten）加现在时后缀 -et，表示“正在持有/容纳”，引申为“在漏水”（水被屋顶暂时容纳但渗出），符合巨人语以具体动作表达状态的务实风格"
+  },
+  "踩": {
+    "conlang": "eo",
+    "style": "词库中已有'去 → eo'，此处引申为'踏上/踩上'动作，符合巨人语具体动词多义复用特点"
+  },
+  "被风吹起来了": {
+    "conlang": "venat",
+    "style": "动词'来'(ven)加现在时后缀-at，表示'正在来/升起'；巨人语SOV语序中，'风'为宾语，'窗帘'为主语，故结构为'vel vent venat'（窗帘 风 来-现在时），意为'窗帘被风吹起'"
+  },
+  "这把": {
+    "conlang": "ha",
+    "style": "指示代词，源自拉丁语 hic 的简化形式，符合巨人语单音节、硬辅音偏好"
+  },
+  "稳": {
+    "conlang": "stabilit",
+    "style": "[NEW] 从拉丁语 stabilis 派生，按巨人语构词法去掉词尾 -is，加现在时/形容词后缀 -it，表示‘稳固的’；符合 SOV 中作表语的用法"
+  },
+  "碟": {
+    "conlang": "platt",
+    "style": "基于拉丁语'platus'（平的）简化而来，符合巨人语硬辅音和低元音偏好，表示扁平器皿"
+  },
+  "收好": {
+    "conlang": "nebonat",
+    "style": "'bon'（好）+ 否定前缀'ne-'表'不散乱'，引申为'妥善收纳'；动词现在时'-at'后缀，符合SOV语序中动词居末"
+  },
+  "晾衣绳": {
+    "conlang": "linat",
+    "style": "由词根 lin-（源自拉丁语 linea，意为'线、绳'）加上现在时名词化后缀 -at 构成，表示用于悬挂衣物的绳子。因词库无对应词，按构词法新创。[NEW]"
+  },
+  "院子": {
+    "conlang": "hortu",
+    "style": "借自拉丁语 hortus（花园、庭院），符合巨人语偏好后元音 o/u 的音系特征，且为具体空间名词，符合巨人族务实风格"
+  },
+  "长了": {
+    "conlang": "tenat",
+    "style": "动词“生长”采用现有词根 ten-（持、存、有）引申为“存在/显现”，加上现在时后缀 -at；因词库无“生长”专词，按白皮书7.2节允许用具体动词引申表达自然现象"
+  },
+  "水缸": {
+    "conlang": "dol",
+    "style": "基于拉丁语'dolium'（大陶罐）简化而来，符合巨人语辅音硬直、元音后低的特点，使用高频元音o和硬辅音d/l"
+  },
+  "满了": {
+    "conlang": "plenat",
+    "style": "源自拉丁语'plenus'（满），按巨人语现在时动词规则加-at后缀，表示状态完成；e为中前元音，符合词库已有元音系统"
+  },
+  "灶": {
+    "conlang": "foc",
+    "style": "借自拉丁语 'focus'（灶、火），符合巨人语硬辅音和低元音偏好，o 为 /ɔ/，符合词库风格"
+  },
+  "烧开": {
+    "conlang": "ebullit",
+    "style": "借自拉丁语 'ebullire'（沸腾），采用现在时动词后缀 -it（对应第三人称单数现在时），符合 SOV 语序中动词居末的规则"
+  },
+  "锅盖": {
+    "conlang": "oll-kap",
+    "style": "复合词：'oll'（锅）+ 'kap'（盖），遵循巨人语直接构词法，用连字符连接具体名词"
+  },
+  "顶起来": {
+    "conlang": "dus venit",
+    "style": "'dus'（压，已有词）用于表示向上的推力（语义扩展，因巨人语中'压'可引申为施加力），'venit' 为动词'来'的现在时第三人称单数形式（ven + -it），符合SOV语序中动词置于句末的要求"
+  },
+  "饭后": {
+    "conlang": "post",
+    "style": "词库已有，表示时间上的'之后'，用于'饭后'整体概念"
+  },
+  "菜刀": {
+    "conlang": "gladi",
+    "style": "沿用词库已有词“刀 → gladi”，巨人语中无“菜”修饰，直接使用核心词"
+  },
+  "要磨": {
+    "conlang": "mol-at",
+    "style": "动词“磨”为词库词 mol，现在时按规则加 -at"
+  },
+  "一下": {
+    "conlang": "infra",
+    "style": "词库已有“下 → infra”，此处借作程度副词表示轻微动作，符合巨人语务实、具体风格"
+  },
+  "罐子": {
+    "conlang": "vas",
+    "style": "借自拉丁语 'vas'（容器），符合巨人语硬辅音和低元音偏好，且为单音节具体名词，适合日常碑文使用。"
+  },
+  "里": {
+    "conlang": "in",
+    "style": "借自拉丁语介词 'in'（在…内），符合SOV语言中前置介词的常见用法，发音简洁，辅音清晰。"
+  },
+  "米袋": {
+    "conlang": "saccus oryzae",
+    "style": "借用拉丁语 saccus（袋）+ oryzae（米的属格），符合巨人语借用具体名词组合表达复合概念的习惯"
+  },
+  "只剩": {
+    "conlang": "est",
+    "style": "使用存在动词 est（是/存在），在SOV语序中置于句末，表达'仅存'之意，符合巨人语简洁直接的表达风格"
+  },
+  "面粉": {
+    "conlang": "farin",
+    "style": "借自拉丁语 farina（面粉），符合巨人语低元音偏好和硬辅音特征，词尾 -in 符合常用名词后缀"
+  },
+  "撒了一地": {
+    "conlang": "gravat",
+    "style": "动词，源自词根 grav-（重、落下），加现在时后缀 -at，表示‘使落于地’，符合SOV语序中动词置于句末的规则"
+  },
+  "罐": {
+    "conlang": "vas",
+    "style": "基于拉丁语 'vas'（容器）创造，符合巨人语硬辅音和低元音偏好，词根简洁且具具体实物指向"
+  },
+  "空了": {
+    "conlang": "vasat",
+    "style": "动词化形式，由名词 'vas'（容器）派生，加现在时动词后缀 '-at' 表示状态‘变空’，符合SOV语言中谓语动词置于句末的规则；语义上‘空’在句中作谓语，故需动词化处理"
+  },
+  "油瓶": {
+    "conlang": "flascul oleat",
+    "style": "借用拉丁语 flasculum（小瓶）简化为 flascul；oleat 来自拉丁语 oleum（油），加 -at 现在时形容词化后缀，表示'含油的'。组合为'油之瓶'，符合巨人语具体意象表达抽象概念的习惯。"
+  },
+  "盖紧": {
+    "conlang": "tenet",
+    "style": "使用词库中已有的 ten（持/握），加上现在时动词后缀 -et 构成 tenet，意为'（它）持住/紧闭'。此处用作命令句省略主语，符合SOV语序中动词居末且命令式常省略主语的规则。"
+  },
+  "用完": {
+    "conlang": "ob-at",
+    "style": "使用否定前缀 ob- 加上动词词根（表示'有'或'存在'的隐含动词）的现在时形式 -at，构成'不再有'即'用完'之意。该动词词根未在词库中显式列出，但根据语法白皮书，ob- 前缀用于否定，结合上下文语义推导出 ob-at 表示'已无/用尽'。"
+  }
 }
