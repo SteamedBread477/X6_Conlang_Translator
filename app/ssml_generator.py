@@ -52,6 +52,53 @@ from typing import Dict, Optional, Tuple
 # 情绪映射表
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# 中文 → 英文规范化映射
+# ---------------------------------------------------------------------------
+
+# Emotion 中文 → 英文 key
+EMOTION_CN_EN: Dict[str, str] = {
+    "悲伤": "Sad",      "难过": "Sad",      "哀伤": "Sad",
+    "开心": "Happy",    "快乐": "Happy",    "高兴": "Happy",    "欢乐": "Happy",
+    "紧急": "Urgent",   "急迫": "Urgent",   "焦急": "Urgent",
+    "平静": "Calm",     "冷静": "Calm",     "淡定": "Calm",     "慈祥": "Calm",
+    "愤怒": "Angry",    "生气": "Angry",    "暴怒": "Angry",    "威严": "Angry",
+    "恐惧": "Fear",     "害怕": "Fear",     "惊恐": "Fear",
+    "中性": "Neutral",  "平淡": "Neutral",  "无感情": "Neutral",
+}
+
+# Body_Type 中文 → 英文 key
+BODY_TYPE_CN_EN: Dict[str, str] = {
+    "正常": "Normal",
+    "强壮": "Strong",   "魁梧": "Strong",   "高大魁梧": "Strong",
+    "沉重": "Heavy",    "矮胖": "Heavy",    "矮小圆润": "Heavy",
+}
+
+# Age 中文 → 英文 key
+AGE_CN_EN: Dict[str, str] = {
+    "青年": "Young",    "少年": "Young",    "年轻": "Young",
+    "中年": "Middle",
+    "老年": "Old",      "老": "Old",        "长者": "Old",
+}
+
+
+def _normalize_to_en(value: str, cn_en_map: Dict[str, str]) -> str:
+    """将中文值规范化为英文 key；已是英文则原样返回。"""
+    v = (value or "").strip()
+    # 精确匹配
+    if v in cn_en_map:
+        return cn_en_map[v]
+    # 英文 key 直接命中
+    en_keys = set(cn_en_map.values())
+    if v.capitalize() in en_keys:
+        return v.capitalize()
+    # 模糊匹配：中文值包含 key 或 key 包含中文值
+    for cn, en in cn_en_map.items():
+        if cn in v or v in cn:
+            return en
+    return v.capitalize()
+
+
 # 每个 emotion -> (rate_literal_or_pct, pitch_pct, volume)
 # rate: 字面值 "slow"/"fast"/"medium" 或百分比如 "+10%"
 # pitch: 百分比字符串如 "-10%" / "+10%" 或空 ""
@@ -159,9 +206,9 @@ def compute_prosody_attrs(
          - 若基础 rate 为字面值（slow/fast/medium），查 AGE_RATE_ADJUST 表
          - 若基础 rate 为百分比，与 age 百分比代数叠加
     """
-    emotion = (emotion or "Neutral").strip().capitalize()
-    body_type = (body_type or "Normal").strip().capitalize()
-    age = (age or "Middle").strip().capitalize()
+    emotion = _normalize_to_en(emotion or "Neutral", EMOTION_CN_EN)
+    body_type = _normalize_to_en(body_type or "Normal", BODY_TYPE_CN_EN)
+    age = _normalize_to_en(age or "Middle", AGE_CN_EN)
 
     # Step 1: 情绪基础值
     base_rate, base_pitch, base_volume = EMOTION_MAP.get(

@@ -689,6 +689,43 @@ Nikki Conlang Forge 诞生于一个具体需求：为游戏《无限暖暖》中
 
 ## 续聊入口（新会话时发给 AI）
 
+### 阶段十四 — SSML 中文归一化 + 测试台本（✅ 已完成）
+
+**目标**：让 SSML 语音标签生成支持中文 Emotion/Body_Type/Age 输入，并生成 350 句批量翻译测试台本。
+
+**1. SSML 中文→英文归一化（`app/ssml_generator.py`）**
+
+- 新增 `EMOTION_CN_EN` 字典：20+ 中文情绪词 → 7 英文键（平静→Calm, 威严→Angry, 开心→Happy, 慈祥→Calm, 愤怒→Angry, 中性→Neutral, 恐惧→Fear 等）
+- 新增 `BODY_TYPE_CN_EN` 字典：高大魁梧→Strong, 强壮→Strong, 正常→Normal, 矮小圆润/沉重→Heavy
+- 新增 `AGE_CN_EN` 字典：青年/少年→Young, 中年→Middle, 老年/长者→Old
+- 新增 `_normalize_to_en(value, cn_en_map)` 函数：三层匹配（精确→英文值→模糊子串），未匹配时 fallback 到 value.capitalize()
+- 修改 `compute_prosody_attrs()`：Emotion/Body_Type/Age 三字段改用 `_normalize_to_en` 替代原来的 `.strip().capitalize()`
+- 英文-only 输入完全兼容；中文输入经归一化后正确走 EMOTION_MAP/BODY_TYPE_PITCH/AGE_RATE_ADJUST 表
+
+**2. 350 句巨人测试台本（`data/巨人语_测试台本_350句.xlsx`）**
+
+- 350 行 Excel 台本，覆盖 20 个日常场景（饮食、劳作、天气、社交、休息、守卫、旅行、情感、物品、动物、时间、规则、家族、观察、商业、学习、健康、庆典、日常杂句、居家细节）
+- 台本ID 格式 G001-G350，角色「巨人守卫」，Age/Body_Type/Emotion 全用中文值（均在 _normalize_to_en 映射范围内）
+- 已通过 `read_excel()` 验证：ok=True, rows=350, missing_columns=[]
+
+**3. 台本模板更新（`data/台本模板.xlsx`）**
+
+- 5 行示例数据，中文 Emotion/Body_Type/Age 值（慈祥、威严、矮小圆润、高大魁梧、老年、中年等）
+- 作为用户填写参考模板
+
+**4. 测试用例（`tests/test_ssml_chinese.py`）**
+
+- 16 个 pytest 测试，4 个类：TestEmotionNormalization(8), TestBodyTypeNormalization(3), TestAgeNormalization(3), TestSSMLTagGenerationChinese(2)
+- 全部通过
+
+**已知遗留**：
+- "疑惑"、"温柔" 等情绪不在 EMOTION_CN_EN 中，fallback 到 Neutral（rate=medium）
+- `_normalize_to_en` 模糊子串匹配对短字可能有误匹配（如"老"→Old），未覆盖单字边界测试
+
+**关键文件**：`app/ssml_generator.py`, `data/巨人语_测试台本_350句.xlsx`, `data/台本模板.xlsx`, `tests/test_ssml_chinese.py`
+
+---
+
 ```text
 请继续开发 H:\QvQ_X6\X6_Tools\X6_Conlang_Translator（Nikki Conlang Forge，无限暖暖自创语翻译器）。
 GitHub 仓库：https://github.com/SteamedBread477/X6_Conlang_Translator
