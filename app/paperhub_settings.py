@@ -4,7 +4,7 @@ PaperHub AI 配置存取模块。
 配置文件：app_config.json（exe 旁边）
 格式示例：
 {
-  "paperhub_enabled": false,
+  "paperhub_enabled": true,
   "paperhub_api_key": "sk-xxx",
   "paperhub_base_url": "https://tc-paperhub.diezhi.net/v1",
   "paperhub_model": "qwen3-max",
@@ -32,7 +32,7 @@ from typing import Any, Dict
 from app.app_paths import get_app_dir
 
 DEFAULT_PAPERHUB_SETTINGS: Dict[str, Any] = {
-    "paperhub_enabled": False,
+    "paperhub_enabled": True,
     "paperhub_api_key": "",
     "paperhub_base_url": "https://tc-paperhub.diezhi.net/v1",
     "paperhub_model": "qwen3-max",
