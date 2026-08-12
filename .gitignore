@@ -32,3 +32,9 @@ assets/app_icon.ico
 
 # 本地测试用例（仅本机使用，不纳入版本管理）
 test_cases/
+.claude/settings.local.json
+/.claude
+data/台本模板.xlsx
+data/巨人语_测试台本_350句.xlsx
+data/巨人_TTS_Test.xlsx
+.claude/settings.local.json

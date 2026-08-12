@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python test_cases/_run_tc001.py)",
-      "Bash(echo \"exit=$?\")"
-    ]
-  }
-}
